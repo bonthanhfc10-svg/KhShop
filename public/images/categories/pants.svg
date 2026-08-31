@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" width="800" height="900">
+  <rect width="800" height="900" fill="#e8e8e8"/>
+  <path d="M 350 300 L 300 420 L 360 450 L 330 640 L 470 640 L 440 450 L 500 420 L 450 300 Z" fill="#2a2a2a"/>
+  <rect x="380" y="280" width="40" height="40" rx="4" fill="#e63946"/>
+  <line x1="350" y1="360" x2="450" y2="360" stroke="#e63946" stroke-width="8"/>
+  <rect x="0" y="120" width="800" height="120" fill="#000000" fill-opacity="0.06"/>
+  <text x="400" y="180" font-family="Arial" font-size="46" font-weight="900" letter-spacing="4" fill="#ffffff" text-anchor="middle">PANTS</text>
+</svg>

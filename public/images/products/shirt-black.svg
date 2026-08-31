@@ -1,0 +1,10 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" width="800" height="900">
+  <rect width="800" height="900" fill="#e2e2e2"/>
+  <rect x="280" y="240" width="240" height="420" rx="10" fill="#f4f4f4" stroke="#ccc" stroke-width="4"/>
+<rect x="250" y="270" width="100" height="30" rx="4" fill="#cfcfcf"/>
+<rect x="180" y="320" width="70" height="110" rx="6" fill="#4a4a4a"/>
+<rect x="550" y="320" width="70" height="110" rx="6" fill="#4a4a4a"/>
+<rect x="300" y="640" width="200" height="60" rx="6" fill="#171717"/>
+<line x1="300" y1="580" x2="500" y2="580" stroke="#e63946" stroke-width="6"/>
+  <text x="400" y="90" font-family="Arial" font-size="28" font-weight="800" letter-spacing="6" fill="#888" text-anchor="middle">KHSHOP</text>
+</svg>

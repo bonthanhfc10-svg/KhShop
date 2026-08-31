@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" width="800" height="900">
+  <rect width="800" height="900" fill="#e8e8e8"/>
+  <ellipse cx="400" cy="560" rx="220" ry="90" fill="#dadada"/>
+  <path d="M290 500 C 300 420, 340 400, 380 420 L 420 360 C 440 330, 480 330, 490 360 L 520 420 C 560 400, 600 420, 610 500 L 630 560 L 170 560 Z" fill="#2a2a2a"/>
+  <path d="M330 430 L 360 380 L 420 360" fill="none" stroke="#000" stroke-width="8"/>
+  <rect x="0" y="120" width="800" height="120" fill="#000000" fill-opacity="0.06"/>
+  <text x="400" y="180" font-family="Arial" font-size="46" font-weight="900" letter-spacing="4" fill="#ffffff" text-anchor="middle">SHOES</text>
+</svg>

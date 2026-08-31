@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" width="800" height="900">
+  <rect width="800" height="900" fill="#dedede"/>
+  <ellipse cx="400" cy="660" rx="220" ry="70" fill="#c9c9c9"/>
+  <circle cx="400" cy="470" r="150" fill="none" stroke="#8a5a2b" stroke-width="70"/>
+  <circle cx="400" cy="470" r="150" fill="none" stroke="#6f471f" stroke-width="12"/>
+  <circle cx="400" cy="470" r="120" fill="#c99a5e" stroke="#6f471f" stroke-width="8"/>
+  <circle cx="400" cy="420" r="14" fill="#633d19" stroke="#4e2f12" stroke-width="3"/>
+  <circle cx="400" cy="470" r="14" fill="#633d19" stroke="#4e2f12" stroke-width="3"/>
+  <circle cx="400" cy="520" r="14" fill="#633d19" stroke="#4e2f12" stroke-width="3"/>
+  <text x="400" y="90" font-family="Arial" font-size="28" font-weight="800" letter-spacing="6" fill="#888" text-anchor="middle">KHSHOP</text>
+</svg>

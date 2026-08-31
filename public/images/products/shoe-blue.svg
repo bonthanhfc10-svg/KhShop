@@ -1,0 +1,7 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" width="800" height="900">
+  <rect width="800" height="900" fill="#d6dbe8"/>
+  <ellipse cx="400" cy="560" rx="220" ry="90" fill="#c9c9c9"/>
+<path d="M290 500 C 300 420, 340 400, 380 420 L 420 360 C 440 330, 480 330, 490 360 L 520 420 C 560 400, 600 420, 610 500 L 630 560 L 170 560 Z" fill="#303030"/>
+<path d="M330 430 L 360 380 L 420 360" fill="none" stroke="#e63946" stroke-width="8"/>
+  <text x="400" y="90" font-family="Arial" font-size="28" font-weight="800" letter-spacing="6" fill="#888" text-anchor="middle">KHSHOP</text>
+</svg>

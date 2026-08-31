@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" width="800" height="900">
+  <rect width="800" height="900" fill="#f2f2f2"/>
+  <ellipse cx="400" cy="650" rx="210" ry="64" fill="#dedede"/>
+  <path d="M335 280 L 372 540 C 375 580 365 610 336 612 L 304 612 C 330 585 340 556 334 528 L 296 280 Z" fill="#e9e9e9" stroke="#c3c3c3" stroke-width="4"/>
+  <path d="M338 610 C 366 634 398 638 416 622 L 418 590 L 310 584 Z" fill="#e2e2e2" stroke="#c3c3c3" stroke-width="4"/>
+  <path d="M465 280 L 502 540 C 505 580 495 610 466 612 L 434 612 C 460 585 470 556 464 528 L 426 280 Z" fill="#f4f4f4" stroke="#c3c3c3" stroke-width="4"/>
+  <path d="M468 610 C 496 634 528 638 546 622 L 548 590 L 440 584 Z" fill="#efefef" stroke="#c3c3c3" stroke-width="4"/>
+  <path d="M348 460 L 320 300" stroke="#b0b0b0" stroke-width="14"/>
+  <path d="M478 460 L 450 300" stroke="#b0b0b0" stroke-width="14"/>
+  <text x="400" y="90" font-family="Arial" font-size="28" font-weight="800" letter-spacing="6" fill="#888" text-anchor="middle">KHSHOP</text>
+</svg>
