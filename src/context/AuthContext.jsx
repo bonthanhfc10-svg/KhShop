@@ -11,6 +11,16 @@ const mockUser = {
   email: 'alex@example.com',
   avatar: null,
   phone: '+1 555 010 2030',
+  role: 'user',
+};
+
+const mockAdmin = {
+  id: 99,
+  name: 'Bonthanh',
+  email: 'bonthanhfc10@gmail.com',
+  avatar: null,
+  phone: '+1 555 000 0000',
+  role: 'admin',
 };
 
 export const AuthProvider = ({ children }) => {
@@ -24,8 +34,13 @@ export const AuthProvider = ({ children }) => {
     try {
       if (USE_MOCK) {
         await new Promise((r) => setTimeout(r, 600));
+        const isAdmin =
+          (credentials.email === 'bonthanhfc10@gmail.com' &&
+            credentials.password === '2222') ||
+          credentials.email === 'admin@khshop.com' ||
+          credentials.email === 'admin';
         const u = {
-          ...mockUser,
+          ...(isAdmin ? mockAdmin : mockUser),
           email: credentials.email,
         };
         storage.set('user', u);
@@ -115,6 +130,7 @@ export const AuthProvider = ({ children }) => {
     () => ({
       user,
       isAuthenticated: Boolean(user),
+      isAdmin: user?.role === 'admin',
       loading,
       error,
       login,

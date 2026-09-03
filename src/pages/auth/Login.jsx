@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useAdminAuth } from '../../admin/context/AdminAuthContext';
 import { validateLogin } from '../../utils/validation';
 import AuthLayout from '../../components/common/AuthLayout';
 
 export default function Login() {
-  const { login, error } = useAuth();
+  const { login, isAdmin, error } = useAuth();
+  const adminLogin = useAdminAuth().login;
   const navigate = useNavigate();
   const [values, setValues] = useState({ email: '', password: '', remember: false });
   const [errors, setErrors] = useState({});
@@ -21,8 +23,13 @@ export default function Login() {
     if (Object.keys(v).length > 0) return;
     setSubmitting(true);
     try {
-      await login({ email: values.email, password: values.password });
-      navigate('/account');
+      const user = await login({ email: values.email, password: values.password });
+      if (user?.role === 'admin' || isAdmin) {
+        await adminLogin({ email: values.email, password: values.password });
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/account');
+      }
     } catch {
       setSubmitting(false);
     }
