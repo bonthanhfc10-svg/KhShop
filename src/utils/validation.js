@@ -23,8 +23,10 @@ export const validateRegister = (values) => {
   if (!isRequired(values.email)) errors.email = 'Email is required.';
   else if (!isEmail(values.email)) errors.email = 'Enter a valid email address.';
   if (!isRequired(values.password)) errors.password = 'Password is required.';
-  else if (values.password.length < 6) errors.password = 'Password must be at least 6 characters.';
-  if (values.confirmPassword !== values.password) errors.confirmPassword = 'Passwords do not match.';
+  else if (values.password.length < 8) errors.password = 'Password must be at least 8 characters.';
+  if (!isRequired(values.confirmPassword)) errors.confirmPassword = 'Confirm password is required.';
+  else if (values.confirmPassword.length < 8) errors.confirmPassword = 'Confirm password must be at least 8 characters.';
+  else if (values.confirmPassword !== values.password) errors.confirmPassword = 'Passwords do not match.';
   return errors;
 };
 
@@ -46,5 +48,22 @@ export const validateCheckout = (values) => {
   if (!isRequired(values.postalCode)) errors.postalCode = 'Postal code is required.';
   if (!isRequired(values.phone)) errors.phone = 'Phone is required.';
   else if (!isPhone(values.phone)) errors.phone = 'Enter a valid phone number.';
+  return errors;
+};
+
+export const validateOtp = (otp) => {
+  const errors = {};
+  if (!otp || otp.length !== 6) errors.otp = 'Enter a valid 6-digit code.';
+  else if (!/^\d{6}$/.test(otp)) errors.otp = 'Code must contain only digits.';
+  return errors;
+};
+
+export const validateResetPassword = (values) => {
+  const errors = {};
+  if (!isRequired(values.password)) errors.password = 'Password is required.';
+  else if (values.password.length < 8) errors.password = 'Password must be at least 8 characters.';
+  if (!isRequired(values.confirmPassword)) errors.confirmPassword = 'Confirm password is required.';
+  else if (values.confirmPassword.length < 8) errors.confirmPassword = 'Confirm password must be at least 8 characters.';
+  else if (values.confirmPassword !== values.password) errors.confirmPassword = 'Passwords do not match.';
   return errors;
 };

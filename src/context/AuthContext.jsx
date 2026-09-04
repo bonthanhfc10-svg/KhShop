@@ -49,10 +49,17 @@ export const AuthProvider = ({ children }) => {
         return u;
       }
       const data = await authService.login(credentials);
-      storage.set('token', data.access_token || data.token);
-      storage.set('user', data.user);
-      setUser(data.user);
-      return data.user;
+      // Backend returns: { status: true, message: 'Login successfully!', data: { token: '...', token_type: 'bearer' } }
+      // Axios 'data' is the full response, so the payload is at data.data
+      const token = data.data.token || data.token || data.access_token;
+      storage.set('token', token);
+
+      // Fetch user profile to populate authenticated user state
+      const profileData = await authService.getProfile();
+      const user = profileData.data.user || profileData.user || null;
+      storage.set('user', user);
+      setUser(user);
+      return user;
     } catch (err) {
       const message =
         USE_MOCK && credentials.email && credentials.password
@@ -78,14 +85,14 @@ export const AuthProvider = ({ children }) => {
         return u;
       }
       const data = await authService.register(payload);
-      storage.set('token', data.access_token || data.token);
-      storage.set('user', data.user);
-      setUser(data.user);
-      return data.user;
+      return data.data.user;
     } catch (err) {
-      const message = err?.response?.data?.message || 'Registration failed. Please try again.';
-      setError(message);
-      throw new Error(message);
+      const hasFieldErrors = err?.response?.data?.errors;
+      if (!hasFieldErrors) {
+        const message = err?.response?.data?.message || 'Registration failed. Please try again.';
+        setError(message);
+      }
+      throw err;
     } finally {
       setLoading(false);
     }

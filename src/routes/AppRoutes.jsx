@@ -18,6 +18,9 @@ const OrderSuccess = lazy(() => import('../pages/checkout/OrderSuccess'));
 const Login = lazy(() => import('../pages/auth/Login'));
 const Register = lazy(() => import('../pages/auth/Register'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'));
+const VerifyEmail = lazy(() => import('../pages/auth/VerifyEmail'));
+const VerifyResetOtp = lazy(() => import('../pages/auth/VerifyResetOtp'));
+const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'));
 const Account = lazy(() => import('../pages/account/Account'));
 const Profile = lazy(() => import('../pages/account/Profile'));
 const Orders = lazy(() => import('../pages/account/Orders'));
@@ -62,6 +65,9 @@ export default function AppRoutes() {
         <Route path="/login" element={<Page><Login /></Page>} />
         <Route path="/register" element={<Page><Register /></Page>} />
         <Route path="/forgot-password" element={<Page><ForgotPassword /></Page>} />
+        <Route path="/verify-email" element={<Page><VerifyEmail /></Page>} />
+        <Route path="/verify-reset-otp" element={<Page><VerifyResetOtp /></Page>} />
+        <Route path="/reset-password" element={<Page><ResetPassword /></Page>} />
 
         <Route path="/account" element={<AuthPage><Account /></AuthPage>} />
         <Route path="/account/profile" element={<AuthPage><Profile /></AuthPage>} />

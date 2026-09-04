@@ -16,8 +16,15 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (name, value) =>
+  const handleChange = (name, value) => {
     setValues((v) => ({ ...v, [name]: value }));
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[name];
+      if (name === 'confirmPassword') delete next['password_confirm'];
+      return next;
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,9 +37,20 @@ export default function Register() {
         name: values.name,
         email: values.email,
         password: values.password,
+        password_confirm: values.confirmPassword,
       });
-      navigate('/account');
-    } catch {
+      navigate('/verify-email?email=' + encodeURIComponent(values.email));
+    } catch (err) {
+      const backendErrors = err?.response?.data?.errors;
+      if (backendErrors) {
+        const mapped = {};
+        for (const [key, val] of Object.entries(backendErrors)) {
+          const frontendKey = key === 'password_confirm' ? 'confirmPassword' : key;
+          mapped[frontendKey] = Array.isArray(val) ? val[0] : val;
+        }
+        setErrors(mapped);
+      }
+    } finally {
       setSubmitting(false);
     }
   };
@@ -84,7 +102,7 @@ export default function Register() {
             className="input-kh"
             value={values.password}
             onChange={(e) => handleChange('password', e.target.value)}
-            placeholder="Minimum 6 characters"
+            placeholder="Minimum 8 characters"
           />
           {errors.password && <p className="mt-1 text-xs text-accent">{errors.password}</p>}
         </div>
@@ -104,7 +122,7 @@ export default function Register() {
           )}
         </div>
 
-        {error && (
+        {error && Object.keys(errors).length === 0 && (
           <p className="mb-4 rounded border border-accent/30 bg-accent/5 px-4 py-3 text-sm text-accent" role="alert">
             {error}
           </p>

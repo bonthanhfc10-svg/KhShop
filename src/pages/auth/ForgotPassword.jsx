@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
 import AuthLayout from '../../components/common/AuthLayout';
 import { validateForgotPassword } from '../../utils/validation';
+import { authService } from '../../services/authService';
+import { Loader2 } from 'lucide-react';
 
 export default function ForgotPassword() {
-  const { forgotPassword } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
@@ -18,18 +19,21 @@ export default function ForgotPassword() {
     if (Object.keys(v).length > 0) return;
     setSubmitting(true);
     try {
-      const res = await forgotPassword(email);
-      setMessage(res?.message || 'Check your email for a reset link.');
-      setEmail('');
-    } catch {
+      await authService.forgotPassword(email);
+      navigate(`/verify-reset-otp?email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Something went wrong. Please try again.';
+      setMessage('');
+      setErrors({ api: msg });
+    } finally {
       setSubmitting(false);
     }
   };
 
   return (
     <AuthLayout
-      title="Forgot Password"
-      subtitle="Enter your email and we'll send you a reset link."
+      title="Forgot Password?"
+      subtitle="Enter your email and we&apos;ll send you a 6-digit OTP to reset your password."
       footer={
         <Link to="/login" className="font-semibold text-black underline">
           Back to sign in
@@ -37,17 +41,18 @@ export default function ForgotPassword() {
       }
     >
       <form onSubmit={handleSubmit} noValidate>
-        <div className="mb-6">
+        <div className="mb-4">
           <label htmlFor="email" className="label-kh">Email</label>
           <input
             id="email"
             type="email"
             className="input-kh"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setErrors({}); }}
             placeholder="you@example.com"
           />
           {errors.email && <p className="mt-1 text-xs text-accent">{errors.email}</p>}
+          {errors.api && <p className="mt-1 text-xs text-red-600">{errors.api}</p>}
         </div>
 
         {message && (
@@ -57,7 +62,14 @@ export default function ForgotPassword() {
         )}
 
         <button type="submit" disabled={submitting} className="btn-primary w-full">
-          {submitting ? 'Sending…' : 'Send Reset Link'}
+          {submitting ? (
+            <span className="inline-flex items-center gap-2">
+              <Loader2 size={16} className="animate-spin" />
+              Sending…
+            </span>
+          ) : (
+            'Send OTP'
+          )}
         </button>
       </form>
     </AuthLayout>
