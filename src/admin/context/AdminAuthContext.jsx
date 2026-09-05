@@ -1,10 +1,10 @@
 import { createContext, useContext, useMemo, useState, useCallback } from 'react';
+import { storage } from '../../utils/storage';
+import { authService } from '../../services/authService';
 import { USE_MOCK } from '../../services/config';
-import { adminApi } from '../services/adminApi';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminAuthContext = createContext(null);
-
-const ADMIN_STORAGE_KEY = 'khshop_admin';
 
 const mockAdmin = {
   id: 99,
@@ -16,8 +16,7 @@ const mockAdmin = {
 
 const loadStoredAdmin = () => {
   try {
-    const raw = localStorage.getItem(ADMIN_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return storage.get('user', null);
   } catch {
     return null;
   }
@@ -27,6 +26,7 @@ export const AdminAuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(loadStoredAdmin);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { updateUser } = useAuth();
 
   const login = useCallback(async ({ email, password }) => {
     setLoading(true);
@@ -36,40 +36,54 @@ export const AdminAuthProvider = ({ children }) => {
         await new Promise((r) => setTimeout(r, 700));
         if (email === 'bonthanhfc10@gmail.com' && password === '2222') {
           const a = { ...mockAdmin, email };
-          localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(a));
-          localStorage.setItem('khshop_admin_token', 'mock-admin-token');
+          storage.set('user', a);
+          storage.set('token', 'mock-admin-token');
           setAdmin(a);
+          updateUser(a);
           return a;
         }
-        const message = 'Invalid admin credentials.';
+        const message = 'Invalid email or password.';
         setError(message);
         throw new Error(message);
       }
-      const { data } = await adminApi.post('/admin/login', { email, password });
-      localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data.user || data.admin));
-      localStorage.setItem('khshop_admin_token', data.access_token || data.token);
-      setAdmin(data.user || data.admin);
+      const { data } = await authService.login({ email, password });
+      const user = data.data?.user || data.user || null;
+
+      if (user?.role !== 'admin' && user?.role !== 'superAdmin') {
+        const message = 'Invalid email or password.';
+        setError(message);
+        throw new Error(message);
+      }
+
+      storage.set('user', user);
+      storage.set('token', data.data?.token);
+      setAdmin(user);
+      updateUser(user);
       return data;
     } catch (err) {
       const message =
-        USE_MOCK ? error : err?.response?.data?.message || 'Login failed.';
+        err?.response?.data?.message ||
+        err?.message ||
+        (USE_MOCK ? 'Invalid email or password.' : 'Login failed.');
       setError(message);
       throw new Error(message);
     } finally {
       setLoading(false);
     }
-  }, [error]);
+  }, [updateUser]);
 
   const logout = useCallback(() => {
-    localStorage.removeItem(ADMIN_STORAGE_KEY);
-    localStorage.removeItem('khshop_admin_token');
+    storage.remove('user');
+    storage.remove('token');
     setAdmin(null);
-  }, []);
+    updateUser(null);
+  }, [updateUser]);
 
   const value = useMemo(
     () => ({
       admin,
       isAuthenticated: Boolean(admin),
+      isAdmin: admin?.role === 'admin' || admin?.role === 'superAdmin',
       loading,
       error,
       login,

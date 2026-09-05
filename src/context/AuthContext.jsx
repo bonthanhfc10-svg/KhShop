@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useMemo, useState, useCallback, useEffect } from 'react';
 import { storage } from '../utils/storage';
 import { authService } from '../services/authService';
 import { USE_MOCK } from '../services/config';
@@ -14,19 +14,20 @@ const mockUser = {
   role: 'user',
 };
 
-const mockAdmin = {
-  id: 99,
-  name: 'Bonthanh',
-  email: 'bonthanhfc10@gmail.com',
-  avatar: null,
-  phone: '+1 555 000 0000',
-  role: 'admin',
-};
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => storage.get('user', null));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const handler = () => {
+      setUser(null);
+      storage.remove('user');
+      storage.remove('token');
+    };
+    window.addEventListener('auth:401', handler);
+    return () => window.removeEventListener('auth:401', handler);
+  }, []);
 
   const login = async (credentials) => {
     setLoading(true);
@@ -39,32 +40,37 @@ export const AuthProvider = ({ children }) => {
             credentials.password === '2222') ||
           credentials.email === 'admin@khshop.com' ||
           credentials.email === 'admin';
-        const u = {
-          ...(isAdmin ? mockAdmin : mockUser),
-          email: credentials.email,
-        };
+        if (isAdmin) {
+          const message = 'Invalid email or password.';
+          setError(message);
+          throw new Error(message);
+        }
+        const u = { ...mockUser, email: credentials.email };
         storage.set('user', u);
         storage.set('token', 'mock-token');
         setUser(u);
         return u;
       }
       const data = await authService.login(credentials);
-      // Backend returns: { status: true, message: 'Login successfully!', data: { token: '...', token_type: 'bearer' } }
-      // Axios 'data' is the full response, so the payload is at data.data
+      const user = data.data?.user || data.user || null;
+
+      if (user?.role === 'admin' || user?.role === 'superAdmin') {
+        const message = 'Invalid email or password.';
+        setError(message);
+        throw new Error(message);
+      }
+
       const token = data.data.token || data.token || data.access_token;
       storage.set('token', token);
 
-      // Fetch user profile to populate authenticated user state
-      const profileData = await authService.getProfile();
-      const user = profileData.data.user || profileData.user || null;
       storage.set('user', user);
       setUser(user);
       return user;
     } catch (err) {
       const message =
-        USE_MOCK && credentials.email && credentials.password
-          ? 'Invalid email or password.'
-          : err?.response?.data?.message || 'Login failed. Please try again.';
+        err?.response?.data?.message ||
+        err?.message ||
+        (USE_MOCK ? 'Invalid email or password.' : 'Login failed. Please try again.');
       setError(message);
       throw new Error(message);
     } finally {
@@ -125,19 +131,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const updateUser = (data) => {
+  const updateUser = useCallback((data) => {
     setUser((prev) => {
       const next = { ...prev, ...data };
       storage.set('user', next);
       return next;
     });
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
       user,
       isAuthenticated: Boolean(user),
-      isAdmin: user?.role === 'admin',
+      isAdmin: user?.role === 'admin' || user?.role === 'superAdmin',
       loading,
       error,
       login,
@@ -146,7 +152,7 @@ export const AuthProvider = ({ children }) => {
       forgotPassword,
       updateUser,
     }),
-    [user, loading, error]
+    [user, loading, error, updateUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

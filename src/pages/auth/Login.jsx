@@ -1,17 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useAdminAuth } from '../../admin/context/AdminAuthContext';
 import { validateLogin } from '../../utils/validation';
 import AuthLayout from '../../components/common/AuthLayout';
 
 export default function Login() {
-  const { login, isAdmin, error } = useAuth();
-  const adminLogin = useAdminAuth().login;
+  const { login, error, user } = useAuth();
   const navigate = useNavigate();
   const [values, setValues] = useState({ email: '', password: '', remember: false });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/account/profile', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleChange = (name, value) =>
     setValues((v) => ({ ...v, [name]: value }));
@@ -23,13 +27,8 @@ export default function Login() {
     if (Object.keys(v).length > 0) return;
     setSubmitting(true);
     try {
-      const user = await login({ email: values.email, password: values.password });
-      if (user?.role === 'admin' || isAdmin) {
-        await adminLogin({ email: values.email, password: values.password });
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/account');
-      }
+      await login({ email: values.email, password: values.password });
+      navigate('/account/profile');
     } catch {
       setSubmitting(false);
     }

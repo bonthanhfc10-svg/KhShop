@@ -1,13 +1,11 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAdminAuth } from '../../context/AdminAuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function AdminRoute({ children }) {
-  const { admin, loading } = useAdminAuth();
+  const { user, isAdmin } = useAuth();
   const location = useLocation();
 
-  if (loading) return null;
-
-  if (!admin) {
+  if (!user || !isAdmin) {
     return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
   }
 

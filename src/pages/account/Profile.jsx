@@ -1,16 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import AccountLayout from './AccountLayout';
 import { useAuth } from '../../context/AuthContext';
+import { authService } from '../../services/authService';
 
 export default function Profile() {
   const { user, updateUser } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
     phone: user?.phone || '',
   });
   const [saved, setSaved] = useState(false);
+
+  const fetchProfile = useCallback(async () => {
+    try {
+      const profileData = await authService.getProfile();
+      const profileUser = profileData.data || profileData?.user;
+      if (profileUser) {
+        updateUser(profileUser);
+        setForm({
+          name: profileUser.name || '',
+          email: profileUser.email || '',
+          phone: profileUser.phone || '',
+        });
+      }
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        navigate('/login', { replace: true });
+      }
+    }
+  }, [updateUser, navigate]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const handleChange = (name, value) => setForm((f) => ({ ...f, [name]: value }));
 

@@ -1,4 +1,5 @@
-import { BrowserRouter, useLocation } from 'react-router-dom';
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -12,18 +13,31 @@ const RouterSwitch = () => {
   return isAdminPath ? <AdminRoutes /> : <AppRoutes />;
 };
 
+function Auth401Handler() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const handler = () => {
+      navigate('/login', { replace: true });
+    };
+    window.addEventListener('auth:401', handler);
+    return () => window.removeEventListener('auth:401', handler);
+  }, [navigate]);
+  return null;
+}
+
 export default function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AdminAuthProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <AdminAuthProvider>
           <WishlistProvider>
             <CartProvider>
+              <Auth401Handler />
               <RouterSwitch />
             </CartProvider>
           </WishlistProvider>
-        </AuthProvider>
-      </AdminAuthProvider>
+        </AdminAuthProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
