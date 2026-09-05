@@ -5,7 +5,7 @@ export default function InfoPage({ title, intro, children, crumb }) {
   return (
     <main className="container-kh py-12 sm:py-16">
       <nav
-        className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-neutral-500"
+        className="mb-6 flex flex-wrap items-center gap-2 text-sm text-neutral-500"
         aria-label="Breadcrumb"
       >
         <Link to="/" className="transition-colors hover:text-black">

@@ -33,7 +33,7 @@ export default function ProductDetail() {
     <main>
       <div className="container-kh pt-8">
         {/* Breadcrumb */}
-        <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-neutral-500" aria-label="Breadcrumb">
+        <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-neutral-500" aria-label="Breadcrumb">
           <Link to="/" className="hover:text-black">Home</Link>
           <ChevronRight size={12} />
           <Link to="/shop" className="hover:text-black">Shop</Link>

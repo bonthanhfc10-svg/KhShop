@@ -12,13 +12,13 @@ export default function ProductSort({ value, onChange, count }) {
   const id = useId();
   return (
     <div className="flex flex-wrap items-center gap-4">
-      <span className="text-xs font-semibold uppercase tracking-widest text-neutral-500">
+      <span className="text-sm font-bold uppercase tracking-widest text-neutral-900">
         {count} {count === 1 ? 'product' : 'products'}
       </span>
       <div className="flex items-center gap-2">
         <label
           htmlFor={id}
-          className="text-xs font-semibold uppercase tracking-widest text-neutral-500"
+          className="text-sm font-bold uppercase tracking-widest text-neutral-900"
         >
           Sort by
         </label>

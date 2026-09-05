@@ -10,10 +10,10 @@ export default function Navbar() {
             <NavLink
               to={item.path}
               className={({ isActive }) =>
-                `group relative py-2 text-sm font-bold uppercase tracking-[0.15em] transition-colors duration-200 ${
+                `group relative py-2 text-[15px] font-bold uppercase tracking-[0.15em] transition-colors duration-200 ${
                   isActive
                     ? 'text-black'
-                    : 'text-neutral-700 hover:text-black'
+                    : 'text-black hover:text-black'
                 } ${
                   item.isSale
                     ? 'text-accent hover:text-accent'

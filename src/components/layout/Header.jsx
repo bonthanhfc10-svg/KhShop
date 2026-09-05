@@ -44,8 +44,8 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-white transition-shadow duration-300 ${
-        scrolled ? 'shadow-sm' : 'border-b border-neutral-200'
+      className={`sticky top-0 z-50 bg-white shadow-md transition-shadow duration-300 ${
+        scrolled ? 'shadow-lg' : ''
       }`}
     >
       <div className="container-kh">

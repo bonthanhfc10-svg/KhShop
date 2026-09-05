@@ -25,7 +25,7 @@ export default function OrderDetail() {
 
   return (
     <AccountLayout>
-      <nav className="mb-6 flex items-center gap-1.5 text-xs text-neutral-500" aria-label="Breadcrumb">
+      <nav className="mb-6 flex items-center gap-2 text-sm text-neutral-500" aria-label="Breadcrumb">
         <Link to="/account/orders" className="hover:text-black">Orders</Link>
         <ChevronRight size={12} />
         <span className="text-neutral-900">{order.id}</span>

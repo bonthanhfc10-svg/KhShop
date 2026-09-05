@@ -12,13 +12,6 @@ export default function ProductFilter({ facets, filters, onChange, onReset, onAp
   return (
     <div className="space-y-8">
       <Facet
-        title="Category"
-        type="radio"
-        options={facets.categories}
-        value={filters.category}
-        onChange={(v) => onChange({ category: v })}
-      />
-      <Facet
         title="Size"
         type="checkbox"
         options={facets.sizes}
@@ -276,14 +269,6 @@ export function FilterBar({ facets, filters, onChange, onReset, onApply }) {
       </span>
       <span className="mr-2 hidden h-6 w-px bg-neutral-200 sm:block" />
 
-      <Facet
-        title="Category"
-        type="radio"
-        options={facets.categories}
-        value={filters.category}
-        onChange={(v) => onChange({ category: v })}
-        {...facetProps('category')}
-      />
       <Facet
         title="Size"
         type="checkbox"

@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import ProductGrid from './ProductGrid';
 import ProductSort from './ProductSort';
-import ProductFilter, { FilterBar } from './ProductFilter';
+import ProductFilter from './ProductFilter';
 import Pagination from '../common/Pagination';
 import {
   categories,
@@ -53,7 +53,7 @@ export default function ShopLayout({
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [sort, setSort] = useState(searchParams.get('sort') || 'featured');
   const [page, setPage] = useState(1);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const facets = useMemo(
     () => buildFacets(fixedCategory, categoryOptions),
@@ -165,7 +165,7 @@ export default function ShopLayout({
       filters={filters}
       onChange={changeFilter}
       onReset={resetFilters}
-      onApply={() => setMobileFiltersOpen(false)}
+      onApply={() => setSidebarOpen(false)}
     />
   );
 
@@ -191,23 +191,14 @@ export default function ShopLayout({
         <div className="mb-5 flex items-center justify-between gap-4">
           <ProductSort value={sort} onChange={handleSort} count={filtered.length} />
           <button
-            onClick={() => setMobileFiltersOpen(true)}
-            className="btn-secondary lg:hidden px-5 py-2.5"
+            onClick={() => setSidebarOpen(true)}
+            className="flex items-center gap-2 border border-neutral-300 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-neutral-900 transition-all hover:border-black"
             aria-label="Open filters"
           >
             <SlidersHorizontal size={16} />
-            Filter
+            Filters
           </button>
         </div>
-
-        {/* Desktop filter row */}
-        <FilterBar
-          facets={facets}
-          filters={filters}
-          onChange={changeFilter}
-          onReset={resetFilters}
-          onApply={() => setMobileFiltersOpen(false)}
-        />
 
         {/* Grid */}
         <div>
@@ -224,18 +215,18 @@ export default function ShopLayout({
         </div>
       </div>
 
-      {/* Mobile filter drawer */}
-      {mobileFiltersOpen && (
-        <div className="fixed inset-0 z-[95] lg:hidden" role="dialog" aria-modal="true" aria-label="Filters">
+      {/* Sidebar filter - desktop and mobile */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-[95]" role="dialog" aria-modal="true" aria-label="Filters">
           <div
             className="absolute inset-0 bg-black/50 animate-fade-in-overlay"
-            onClick={() => setMobileFiltersOpen(false)}
+            onClick={() => setSidebarOpen(false)}
           />
-          <div className="absolute right-0 top-0 flex h-full w-[88%] max-w-sm flex-col bg-white shadow-2xl animate-slide-in-right">
+          <div className="absolute left-0 top-0 flex h-full w-[320px] max-w-[88vw] flex-col bg-white shadow-2xl animate-slide-in-left">
             <div className="flex items-center justify-between border-b border-neutral-200 px-5 py-4">
-              <h2 className="font-display text-sm font-bold uppercase tracking-widest">Filters</h2>
+              <h2 className="text-sm font-bold uppercase tracking-[0.15em]">Filters</h2>
               <button
-                onClick={() => setMobileFiltersOpen(false)}
+                onClick={() => setSidebarOpen(false)}
                 className="p-1 text-neutral-500 hover:text-black"
                 aria-label="Close filters"
               >
