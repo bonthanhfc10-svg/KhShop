@@ -43,19 +43,18 @@ export default function Orders() {
 
   return (
     <AccountLayout>
-      <h2 className="mb-6 font-display text-xl font-bold text-neutral-900">Orders</h2>
-
-      {loading ? (
-        <p className="py-10 text-center text-sm text-neutral-500">Loading orders…</p>
-      ) : orders.length === 0 ? (
-        <EmptyState
-          icon={Package}
-          title="No orders yet"
-          description="When you place an order, it will appear here."
-          actionLabel="Start Shopping"
-          actionTo="/shop"
-        />
-      ) : (
+      <div className="mt-4">
+        {loading ? (
+          <p className="py-10 text-center text-sm text-neutral-500">Loading orders…</p>
+        ) : orders.length === 0 ? (
+          <EmptyState
+            icon={Package}
+            title="No orders yet"
+            description="When you place an order, it will appear here."
+            actionLabel="Start Shopping"
+            actionTo="/shop"
+          />
+        ) : (
         <div className="overflow-x-auto border border-neutral-200 bg-white">
           <table className="w-full min-w-[640px] text-left">
             <thead>
@@ -94,6 +93,7 @@ export default function Orders() {
           </table>
         </div>
       )}
+      </div>
     </AccountLayout>
   );
 }

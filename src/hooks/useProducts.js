@@ -80,6 +80,11 @@ export function useProduct(id) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!id) {
+      setProduct(null);
+      setLoading(false);
+      return;
+    }
     let active = true;
     setLoading(true);
     setError(null);

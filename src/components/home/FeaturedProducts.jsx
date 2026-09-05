@@ -4,7 +4,7 @@ import Loading from '../common/Loading';
 import SectionHeader from '../common/SectionHeader';
 
 export default function FeaturedProducts() {
-  const { products, loading } = useProducts('featured', { count: 8 });
+  const { products, loading } = useProducts('featured', { count: 4 });
 
   return (
     <section className="bg-neutral-50 section-pad">

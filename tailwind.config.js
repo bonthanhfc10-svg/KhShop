@@ -11,7 +11,8 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Anton', 'Poppins', 'Inter', 'system-ui', 'sans-serif'],
+        puma: ['Anton', 'sans-serif'],
       },
       letterSpacing: {
         tightest: '-0.05em',

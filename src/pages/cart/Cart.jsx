@@ -10,7 +10,7 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <main className="container-kh py-20">
+      <main className="container-kh py-4">
         <EmptyState
           icon={ShoppingBag}
           title="Your cart is empty"
@@ -24,13 +24,8 @@ export default function Cart() {
 
   return (
     <main>
-      <div className="container-kh py-12 sm:py-16">
-        <h1 className="heading-display text-4xl sm:text-5xl">Shopping Bag</h1>
-        <p className="mt-2 text-sm text-neutral-500">
-          {cart.length} {cart.length === 1 ? 'item' : 'items'} in your bag
-        </p>
-
-        <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_380px]">
+      <div className="container-kh py-4">
+        <div className="mt-4 grid gap-10 lg:grid-cols-[1fr_380px]">
           {/* Items */}
           <div>
             <CartList

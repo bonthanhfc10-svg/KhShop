@@ -53,9 +53,6 @@ export default function Account() {
       {/* Recent orders */}
       <div className="mt-10 border border-neutral-200 bg-white">
         <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
-          <h2 className="font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
-            Recent Orders
-          </h2>
           <Link to="/account/orders" className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-neutral-900 hover:underline">
             View All <ArrowRight size={14} />
           </Link>

@@ -28,10 +28,8 @@ export default function AccountLayout({ children }) {
 
   return (
     <main className="bg-neutral-50">
-      <div className="container-kh py-12 sm:py-16">
-        <h1 className="heading-display text-4xl sm:text-5xl">My Account</h1>
-
-        <div className="mt-10 grid gap-10 lg:grid-cols-[260px_1fr]">
+      <div className="container-kh py-4">
+        <div className="mt-4 grid gap-10 lg:grid-cols-[260px_1fr]">
           <aside>
             <div className="sticky top-28">
               <div className="mb-6 border border-neutral-200 bg-white p-6 text-center">

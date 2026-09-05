@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 
 export default function CategoryBanner({ image, eyebrow, title, subtitle, ctaLabel, ctaPath }) {
   return (
-    <section className="relative flex min-h-[46vh] items-center overflow-hidden bg-neutral-950 sm:min-h-[52vh]">
+    <section className="relative flex min-h-[60vh] items-center overflow-hidden bg-neutral-950 sm:min-h-[68vh] lg:min-h-[78vh]">
       <img
         src={image}
         alt=""

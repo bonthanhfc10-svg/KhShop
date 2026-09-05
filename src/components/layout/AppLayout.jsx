@@ -11,9 +11,9 @@ export default function AppLayout() {
       <ScrollToTop />
       <AnnouncementBar />
       <Header />
-      <div className="flex-1">
+      <main className="flex-1">
         <Outlet />
-      </div>
+      </main>
       <Footer />
       <MiniCart />
     </div>

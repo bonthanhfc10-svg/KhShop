@@ -72,8 +72,8 @@ function buildHeading(group, category) {
 }
 
 function buildDescription(group, category) {
-  if (!category) return `Explore the ${group.name} collection at KhShop.`;
-  return `Shop ${group.name.toLowerCase()} ${category.name.toLowerCase()} at KhShop. Premium quality, modern style.`;
+  if (!category) return `${group.name} collection at KhShop. Modern style meets unbeatable prices for men and women. Premium quality, modern style, limited time only.`;
+  return `${group.name} ${category.name} at KhShop. Modern style meets unbeatable prices for men and women. Premium quality, modern style, limited time only.`;
 }
 
 function buildBreadcrumb(group, category) {
@@ -163,7 +163,7 @@ export default function MenuCategory() {
           image={groupBanner.image}
           eyebrow={groupBanner.eyebrow}
           title={groupBanner.title}
-          ctaLabel="Explore The Collection"
+          subtitle={buildDescription(group, category)}
           ctaPath={group.path}
         />
       )}

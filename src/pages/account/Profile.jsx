@@ -49,10 +49,6 @@ export default function Profile() {
 
   return (
     <AccountLayout>
-      <h2 className="mb-6 font-display text-xl font-bold text-neutral-900">
-        Profile
-      </h2>
-
       <form onSubmit={handleSubmit} className="border border-neutral-200 bg-white p-6 sm:p-8">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">

@@ -52,14 +52,14 @@ export default function Addresses() {
 
   return (
     <AccountLayout>
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-xl font-bold text-neutral-900">Addresses</h2>
+      <div className="mt-4 flex items-center justify-between">
+        <div />
         <Button onClick={openAdd} size="sm">
           <Plus size={15} /> Add Address
         </Button>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {list.length === 0 && (
           <p className="text-sm text-neutral-500">No addresses yet. Add one to speed up checkout.</p>
         )}

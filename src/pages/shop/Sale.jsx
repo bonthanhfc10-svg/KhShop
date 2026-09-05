@@ -46,7 +46,7 @@ export default function Sale() {
         image={saleBanner}
         eyebrow="KhShop"
         title="Sale"
-        ctaLabel="Shop All Sale"
+        subtitle="Seasonal savings on your favourite styles. Modern style meets unbeatable prices. Limited time while stocks last."
         ctaPath="/shop/sale"
       />
       <ShopLayout
