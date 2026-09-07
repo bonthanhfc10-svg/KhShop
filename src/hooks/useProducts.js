@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  products as allProducts,
   getFeaturedProducts,
   getNewArrivals,
   getBestSellers,
@@ -13,6 +14,7 @@ import { productService } from '../services/productService';
 import { USE_MOCK } from '../services/config';
 
 const DATA_SOURCES = {
+  list: () => allProducts,
   featured: getFeaturedProducts,
   new: getNewArrivals,
   best: getBestSellers,

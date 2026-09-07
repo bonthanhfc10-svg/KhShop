@@ -1,11 +1,11 @@
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import { WishlistProvider } from './context/WishlistContext';
-import { AdminAuthProvider } from './admin/context/AdminAuthContext';
-import AppRoutes from './routes/AppRoutes';
-import AdminRoutes from './admin/routes/AdminRoutes';
+import { AuthProvider } from './store/AuthContext';
+import { CartProvider } from './store/CartContext';
+import { WishlistProvider } from './store/WishlistContext';
+import { AdminAuthProvider } from './store/AdminAuthContext';
+import AppRoutes from './routes/CustomerRoutes';
+import AdminRoutes from './routes/AdminRoutes';
 
 const RouterSwitch = () => {
   const location = useLocation();
