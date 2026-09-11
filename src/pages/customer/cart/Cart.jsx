@@ -16,7 +16,7 @@ export default function Cart() {
           title="Your cart is empty"
           description="Looks like you haven't added anything yet. Let's fix that."
           actionLabel="Continue Shopping"
-          actionTo="/shop"
+          actionTo="/products"
         />
       </main>
     );
@@ -34,7 +34,7 @@ export default function Cart() {
               onUpdateQuantity={updateQuantity}
             />
             <div className="mt-6">
-              <Button to="/shop" variant="secondary">
+              <Button to="/products" variant="secondary">
                 Continue Shopping
               </Button>
             </div>

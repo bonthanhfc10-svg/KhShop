@@ -182,7 +182,7 @@ export default function Orders() {
             actionLabel={
               search || statusFilter !== 'all' ? undefined : 'Start Shopping'
             }
-            actionTo={search || statusFilter !== 'all' ? undefined : '/shop'}
+            actionTo={search || statusFilter !== 'all' ? undefined : '/products'}
           />
         )}
 

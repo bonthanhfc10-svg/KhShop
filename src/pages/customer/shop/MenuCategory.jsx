@@ -14,29 +14,6 @@ function buildDescription(groupName, categoryName) {
   return `${groupName} ${categoryName} at KhShop. Modern style meets unbeatable prices for men and women. Premium quality, modern style, limited time only.`;
 }
 
-function filterProductsByGroup(products, group) {
-  const gender = ['men', 'women'].includes(group.slug) ? group.slug : null;
-  let list = products;
-  if (gender) list = list.filter((p) => p.gender === gender);
-  if (group.name === 'Sport') list = list.filter((p) => p.categorySlug === 'sport');
-  if (list.length === 0) list = products;
-  return list;
-}
-
-function resolveProductTypes(categoryName) {
-  const key = categoryName
-    .toLowerCase()
-    .replace('girl ', '')
-    .replace('boy ', '')
-    .replace('kids ', '');
-  if (key.includes('shoe')) return ['shoes'];
-  if (key.includes('accessor')) return ['accessories'];
-  if (key.includes('sport')) return ['sport'];
-  if (key.includes('cloth') || key.includes('shirt') || key.includes('pant'))
-    return ['clothing'];
-  return ['shoes', 'clothing', 'accessories', 'sport'];
-}
-
 function buildBreadcrumb(group, category) {
   const crumbs = [{ label: 'Home', path: '/' }];
   crumbs.push({ label: group.name, path: group.path });
@@ -45,22 +22,22 @@ function buildBreadcrumb(group, category) {
 }
 
 export default function MenuCategory() {
-  const { group: groupSlug, category: categorySlug } = useParams();
+  const { menuSlug, categorySlug } = useParams();
   const { rawMenus } = useMenus();
 
-  const rawMenu = findMenuBySlug(rawMenus, groupSlug);
+  const rawMenu = findMenuBySlug(rawMenus, menuSlug);
   const rawCategory = categorySlug
-    ? findCategoryBySlug(rawMenus, groupSlug, categorySlug)
+    ? findCategoryBySlug(rawMenus, menuSlug, categorySlug)
     : null;
 
   const group = rawMenu
     ? {
         name: rawMenu.name,
         slug: rawMenu.slug,
-        path: `/shop/${rawMenu.slug}`,
+        path: `/products/${rawMenu.slug}`,
         categories: (rawMenu.children || []).map((child) => ({
           name: child.name,
-          path: `/shop/${rawMenu.slug}/${child.slug}`,
+          path: `/products/${rawMenu.slug}/${child.slug}`,
         })),
       }
     : null;
@@ -68,20 +45,24 @@ export default function MenuCategory() {
   const category = rawCategory
     ? {
         name: rawCategory.name,
-        path: `/shop/${groupSlug}/${rawCategory.slug}`,
+        path: `/products/${menuSlug}/${rawCategory.slug}`,
       }
     : null;
 
-  const { products: allProducts, loading, error } = useProducts('list');
+  const productParams = useMemo(() => {
+    const params = {};
+    if (rawMenu) params.menuSlug = rawMenu.slug;
+    if (rawCategory) params.selectedCategories = [rawCategory.slug];
+    return params;
+  }, [rawMenu, rawCategory]);
+
+  const { products, loading, error } = useProducts('list', productParams);
 
   const filterParams = useMemo(() => {
-    if (rawCategory) {
-      return { categorySlug: rawCategory.slug };
-    }
-    if (rawMenu) {
-      return { menuSlug: rawMenu.slug };
-    }
-    return {};
+    const params = {};
+    if (rawMenu) params.menuSlug = rawMenu.slug;
+    if (rawCategory) params.selectedCategories = [rawCategory.slug];
+    return params;
   }, [rawMenu, rawCategory]);
 
   const { filters: filterData } = useProductFilters(filterParams);
@@ -90,42 +71,6 @@ export default function MenuCategory() {
     () => (group ? buildBreadcrumb(group, category) : []),
     [group, category]
   );
-
-  const categoryMatches = useMemo(() => {
-    if (!group) return () => true;
-    const map = {};
-    group.categories.forEach((cat) => {
-      const types = resolveProductTypes(cat.name);
-      map[cat.name] = new Set(
-        allProducts
-          .filter((p) => {
-            if (group.slug === 'men' && p.gender !== 'men') return false;
-            if (group.slug === 'women' && p.gender !== 'women') return false;
-            if (group.slug === 'sport' && p.categorySlug !== 'sport')
-              return false;
-            if (!types.includes(p.categorySlug)) return false;
-            return true;
-          })
-          .map((p) => p.id)
-      );
-    });
-    return (categoryName) => (product) =>
-      map[categoryName] ? map[categoryName].has(product.id) : true;
-  }, [group, allProducts]);
-
-  const categoryProducts = useMemo(() => {
-    if (!group || !category) return [];
-    const types = resolveProductTypes(category.name);
-    let list = allProducts;
-    if (group.slug === 'men') list = list.filter((p) => p.gender === 'men');
-    if (group.slug === 'women')
-      list = list.filter((p) => p.gender === 'women');
-    if (group.slug === 'sport')
-      list = list.filter((p) => p.categorySlug === 'sport');
-    if (types.length) list = list.filter((p) => types.includes(p.categorySlug));
-    if (list.length === 0) list = filterProductsByGroup(allProducts, group);
-    return list;
-  }, [category, group, allProducts]);
 
   if (!group) return <NotFound />;
 
@@ -217,13 +162,12 @@ export default function MenuCategory() {
         <ShopLayout
           title={`${group.name}'s Products`}
           description=""
-          products={filterProductsByGroup(allProducts, group)}
+          products={products}
           loading={loading}
           error={error}
           itemsPerPage={12}
           hideHeader
           categoryOptions={categoryOptions}
-          categoryFilter={categoryMatches}
           filterData={filterData}
         />
       )}
@@ -232,7 +176,7 @@ export default function MenuCategory() {
         <ShopLayout
           title={`${group.name} ${category.name}`}
           description={buildDescription(group.name, category.name)}
-          products={categoryProducts}
+          products={products}
           loading={loading}
           error={error}
           itemsPerPage={12}

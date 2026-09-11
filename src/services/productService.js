@@ -57,7 +57,7 @@ function mapApiFilterData(filter) {
 
 export const productService = {
   async getProducts(params = {}) {
-    const { data } = await api.get('/v1/product', { data: params });
+    const { data } = await api.post('/v1/product/list', params);
     const products = data?.data?.products || [];
     return products.map(mapApiProductList);
   },
@@ -74,13 +74,13 @@ export const productService = {
   },
 
   async getNewArrivals() {
-    const { data } = await api.get('/v1/product', { data: {} });
+    const { data } = await api.post('/v1/product/list', {});
     const products = data?.data?.products || [];
     return products.slice(0, 8).map(mapApiProductList);
   },
 
   async search(query) {
-    const { data } = await api.get('/v1/product', { data: { search: query } });
+    const { data } = await api.post('/v1/product/list', { search: query });
     const products = data?.data?.products || [];
     return products.map(mapApiProductList);
   },

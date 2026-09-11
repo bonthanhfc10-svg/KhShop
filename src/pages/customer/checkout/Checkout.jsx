@@ -36,7 +36,7 @@ export default function Checkout() {
         <h1 className="heading-display text-3xl">Your bag is empty</h1>
         <p className="mt-3 text-neutral-500">Add some items before checking out.</p>
         <div className="mt-8">
-          <Button to="/shop">Continue Shopping</Button>
+          <Button to="/products">Continue Shopping</Button>
         </div>
       </main>
     );

@@ -35,12 +35,12 @@ export default function HeroSection({ banner = null }) {
           </p>
           <div className="mt-10 flex animate-fade-up flex-wrap gap-4 [animation-delay:450ms]">
             <Link
-              to="/shop?gender=men"
+              to="/products?gender=men"
               className="btn-primary bg-white text-black hover:bg-neutral-200"
             >
               Shop Men
             </Link>
-            <Link to="/shop?gender=women" className="btn-outline-light">
+            <Link to="/products?gender=women" className="btn-outline-light">
               Shop Women
             </Link>
           </div>

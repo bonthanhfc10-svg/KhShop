@@ -45,13 +45,13 @@ export default function AppRoutes() {
           <Route path="/" element={<Home />} />
           
           {/* Shop Routes */}
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/shop/sale" element={<Sale />} />
-          <Route path="/shop/shoes" element={<Category />} />
-          <Route path="/shop/clothing" element={<Category />} />
-          <Route path="/shop/accessories" element={<Category />} />
-          <Route path="/shop/:group" element={<MenuCategory />} />
-          <Route path="/shop/:group/:category" element={<MenuCategory />} />
+          <Route path="/products" element={<Shop />} />
+          <Route path="/products/sale" element={<Sale />} />
+          <Route path="/products/shoes" element={<Category />} />
+          <Route path="/products/clothing" element={<Category />} />
+          <Route path="/products/accessories" element={<Category />} />
+          <Route path="/products/:menuSlug" element={<MenuCategory />} />
+          <Route path="/products/:menuSlug/:categorySlug" element={<MenuCategory />} />
 
           {/* Product & Cart */}
           <Route path="/search" element={<Search />} />

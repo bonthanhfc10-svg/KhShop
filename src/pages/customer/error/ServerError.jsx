@@ -12,7 +12,7 @@ export default function ServerError() {
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-4">
         <Button to="/">Back to Home</Button>
-        <Button to="/shop" variant="secondary">
+        <Button to="/products" variant="secondary">
           Shop Now
         </Button>
       </div>

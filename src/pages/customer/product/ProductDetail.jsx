@@ -55,7 +55,7 @@ export default function ProductDetail() {
         <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-neutral-500" aria-label="Breadcrumb">
           <Link to="/" className="hover:text-black">Home</Link>
           <ChevronRight size={12} />
-          <Link to="/shop" className="hover:text-black">Shop</Link>
+          <Link to="/products" className="hover:text-black">Shop</Link>
           <ChevronRight size={12} />
           <span className="text-neutral-900">{product.name}</span>
         </nav>

@@ -21,7 +21,7 @@ export default function PromoBanner() {
           Up to 50% off select styles
         </p>
         <Link
-          to="/shop/sale"
+          to="/products/sale"
           className="btn-primary mt-8 bg-white text-black hover:bg-neutral-200"
         >
           Shop the Sale

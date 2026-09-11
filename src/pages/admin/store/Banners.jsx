@@ -7,11 +7,11 @@ import AdminButton from '../../../components/admin/common/AdminButton';
 import { formatDate } from '../../../utils/formatDate';
 
 const initial = [
-  { id: 1, image: '/images/banners/Hero.png', title: 'Women Collection', subtitle: 'New season styles', buttonText: 'Shop Women', link: '/shop/men', status: 'Active', start: '2026-08-01', end: '2026-09-30' },
-  { id: 2, image: '/images/banners/men.svg', title: 'Men Essentials', subtitle: 'Everyday comfort', buttonText: 'Shop Men', link: '/shop/women', status: 'Active', start: '2026-08-01', end: '2026-09-15' },
-  { id: 3, image: '/images/banners/promo.svg', title: 'Kids Sale', subtitle: 'Up to 40% off', buttonText: 'Shop Kids', link: '/shop/kids', status: 'Inactive', start: '2026-07-01', end: '2026-07-31' },
-  { id: 4, image: '/images/banners/Hero.png', title: 'Sport Performance', subtitle: 'Gear up for the season', buttonText: 'Shop Sport', link: '/shop/sport', status: 'Active', start: '2026-09-01', end: '2026-12-31' },
-  { id: 5, image: '/images/banners/promo.svg', title: 'Flash Sale', subtitle: 'Limited time only', buttonText: 'View Sale', link: '/shop/sale', status: 'Active', start: '2026-09-05', end: '2026-09-12' },
+  { id: 1, image: '/images/banners/Hero.png', title: 'Women Collection', subtitle: 'New season styles', buttonText: 'Shop Women', link: '/products/men', status: 'Active', start: '2026-08-01', end: '2026-09-30' },
+  { id: 2, image: '/images/banners/men.svg', title: 'Men Essentials', subtitle: 'Everyday comfort', buttonText: 'Shop Men', link: '/products/women', status: 'Active', start: '2026-08-01', end: '2026-09-15' },
+  { id: 3, image: '/images/banners/promo.svg', title: 'Kids Sale', subtitle: 'Up to 40% off', buttonText: 'Shop Kids', link: '/products/kids', status: 'Inactive', start: '2026-07-01', end: '2026-07-31' },
+  { id: 4, image: '/images/banners/Hero.png', title: 'Sport Performance', subtitle: 'Gear up for the season', buttonText: 'Shop Sport', link: '/products/sport', status: 'Active', start: '2026-09-01', end: '2026-12-31' },
+  { id: 5, image: '/images/banners/promo.svg', title: 'Flash Sale', subtitle: 'Limited time only', buttonText: 'View Sale', link: '/products/sale', status: 'Active', start: '2026-09-05', end: '2026-09-12' },
 ];
 
 const emptyForm = {

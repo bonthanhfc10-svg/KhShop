@@ -37,7 +37,7 @@ export default function OrderSuccess() {
         </div>
 
         <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <Button to="/shop">Continue Shopping</Button>
+          <Button to="/products">Continue Shopping</Button>
           <Button to="/account/orders" variant="secondary">
             View My Orders
           </Button>

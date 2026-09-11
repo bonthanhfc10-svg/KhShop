@@ -13,7 +13,7 @@ export default function ProductGrid({ products, loading = false, cols = 4 }) {
         title="No products found"
         description="Try adjusting your filters or search terms."
         actionLabel="Shop All"
-        actionTo="/shop"
+        actionTo="/products"
       />
     );
   }

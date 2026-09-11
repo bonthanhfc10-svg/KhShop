@@ -5,12 +5,12 @@ import { useMenus } from '../../../store/MenuContext';
 import CategoryBanner from '../../../components/customer/shop/CategoryBanner';
 
 const DEFAULT_SALE_CATEGORIES = [
-  { name: 'Women', path: '/shop/sale/women' },
-  { name: 'Men', path: '/shop/sale/men' },
-  { name: 'Boy Kids', path: '/shop/sale/boy-kids' },
-  { name: 'Girl Kids', path: '/shop/sale/girl-kids' },
-  { name: 'Men Sport', path: '/shop/sale/men-sport' },
-  { name: 'Women Sport', path: '/shop/sale/women-sport' },
+  { name: 'Women', path: '/products/sale/women' },
+  { name: 'Men', path: '/products/sale/men' },
+  { name: 'Boy Kids', path: '/products/sale/boy-kids' },
+  { name: 'Girl Kids', path: '/products/sale/girl-kids' },
+  { name: 'Men Sport', path: '/products/sale/men-sport' },
+  { name: 'Women Sport', path: '/products/sale/women-sport' },
 ];
 
 function matchesSaleCategory(categoryName) {
@@ -43,7 +43,7 @@ export default function Sale() {
     if (saleMenu?.children?.length) {
       return saleMenu.children.map((child) => ({
         name: child.name,
-        path: `/shop/sale/${child.slug}`,
+        path: `/products/sale/${child.slug}`,
       }));
     }
     return DEFAULT_SALE_CATEGORIES;
@@ -86,7 +86,7 @@ export default function Sale() {
         eyebrow="KhShop"
         title="Sale"
         subtitle="Seasonal savings on your favourite styles. Modern style meets unbeatable prices. Limited time while stocks last."
-        ctaPath="/shop/sale"
+        ctaPath="/products/sale"
       />
       <ShopLayout
         title="Sale"
