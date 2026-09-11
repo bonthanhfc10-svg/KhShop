@@ -48,13 +48,17 @@ export default function useShopFilters(products, {
   categoryOptions = null,
   categoryFilter = null,
   itemsPerPage = 12,
+  apiFilterData = null,
 } = {}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [sort, setSort] = useState(searchParams.get('sort') || 'featured');
   const [page, setPage] = useState(1);
 
-  const facets = useMemo(() => buildFacets(products || []), [products]);
+  const facets = useMemo(
+    () => apiFilterData || buildFacets(products || []),
+    [products, apiFilterData]
+  );
 
   const changeFilter = (patch) => {
     setFilters((prev) => ({

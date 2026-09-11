@@ -17,6 +17,7 @@ export default function ShopLayout({
   hideHeader = false,
   categoryOptions = null,
   categoryFilter = null,
+  filterData = null,
 }) {
   const {
     facets,
@@ -30,7 +31,7 @@ export default function ShopLayout({
     resetFilters,
     setSort,
     setPage,
-  } = useShopFilters(products, { fixedCategory, categoryOptions, categoryFilter, itemsPerPage });
+  } = useShopFilters(products, { fixedCategory, categoryOptions, categoryFilter, itemsPerPage, apiFilterData: filterData });
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

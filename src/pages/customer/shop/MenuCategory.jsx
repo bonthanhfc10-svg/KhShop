@@ -4,7 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
 import CategoryBanner from '../../../components/customer/shop/CategoryBanner';
 import NotFound from '../error/NotFound';
-import { useProducts } from '../../../hooks/useProducts';
+import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import { useMenus } from '../../../store/MenuContext';
 import { findMenuBySlug, findCategoryBySlug } from '../../../services/menuService';
 
@@ -73,6 +73,18 @@ export default function MenuCategory() {
     : null;
 
   const { products: allProducts, loading, error } = useProducts('list');
+
+  const filterParams = useMemo(() => {
+    if (rawCategory) {
+      return { categorySlug: rawCategory.slug };
+    }
+    if (rawMenu) {
+      return { menuSlug: rawMenu.slug };
+    }
+    return {};
+  }, [rawMenu, rawCategory]);
+
+  const { filters: filterData } = useProductFilters(filterParams);
 
   const breadcrumb = useMemo(
     () => (group ? buildBreadcrumb(group, category) : []),
@@ -212,6 +224,7 @@ export default function MenuCategory() {
           hideHeader
           categoryOptions={categoryOptions}
           categoryFilter={categoryMatches}
+          filterData={filterData}
         />
       )}
 
@@ -224,6 +237,7 @@ export default function MenuCategory() {
           error={error}
           itemsPerPage={12}
           hideHeader={false}
+          filterData={filterData}
         />
       )}
     </main>

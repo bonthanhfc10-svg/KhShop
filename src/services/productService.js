@@ -1,71 +1,92 @@
-import { products, getProductBySlug, searchProducts, getRelatedProducts } from '../data/products';
+import api from './api';
+
+const PLACEHOLDER = '/images/placeholder.svg';
+
+function mapApiProductList(raw) {
+  const firstVariant = raw.variants?.[0];
+  const image = firstVariant?.image?.image_path || PLACEHOLDER;
+
+  const price = Number(raw.price) || 0;
+  const salePrice = raw.sale_price != null ? Number(raw.sale_price) : null;
+  const hasDiscount = salePrice != null && salePrice < price;
+
+  const colorMap = new Map();
+  for (const v of raw.variants || []) {
+    if (v.color) colorMap.set(v.color.id, { name: v.color.name, hex: v.color.hex });
+  }
+
+  const sizeMap = new Map();
+  for (const v of raw.variants || []) {
+    if (v.size) sizeMap.set(v.size.id, { name: v.size.name });
+  }
+
+  return {
+    id: raw.id,
+    name: raw.name,
+    slug: raw.slug,
+    description: raw.description,
+    price: hasDiscount ? salePrice : price,
+    oldPrice: hasDiscount ? price : null,
+    images: [image],
+    colors: [...colorMap.values()],
+    sizes: [...sizeMap.values()],
+    totalColors: raw.total_colors || 0,
+    stock: firstVariant?.stock ?? 0,
+    isNew: false,
+    brand: null,
+    categorySlug: null,
+    categoryName: null,
+    gender: null,
+  };
+}
+
+function mapApiFilterData(filter) {
+  if (!filter) return null;
+  return {
+    sizes: (filter.sizes || []).map((s) => s.name).sort(),
+    colors: (filter.colors || [])
+      .map((c) => ({ name: c.name, hex: c.code }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    brands: (filter.brands || []).map((b) => b.name).sort(),
+    price: {
+      min: Number(filter.minPrice) || 0,
+      max: Number(filter.maxPrice) || 200,
+    },
+  };
+}
 
 export const productService = {
   async getProducts(params = {}) {
-    let list = [...products];
-
-    if (params.categorySlug) {
-      list = list.filter((p) => p.category === params.categorySlug);
-    }
-    if (params.search) {
-      list = searchProducts(params.search);
-    }
-    if (params.sort === 'new_arrival') {
-      list = list.filter((p) => p.isNew);
-    }
-    if (params.min_price) {
-      list = list.filter((p) => p.price >= Number(params.min_price));
-    }
-    if (params.max_price) {
-      list = list.filter((p) => p.price <= Number(params.max_price));
-    }
-
-    return list;
+    const { data } = await api.get('/v1/product', { data: params });
+    const products = data?.data?.products || [];
+    return products.map(mapApiProductList);
   },
 
   async getProduct(slug) {
-    const p = getProductBySlug(slug);
-    return p || null;
+    const { products } = await import('../data/products');
+    return products.find((p) => p.slug === slug) || null;
   },
 
-  async getFilters() {
-    const sizeSet = new Map();
-    const colorSet = new Map();
-    const brandSet = new Map();
-    let minPrice = Infinity;
-    let maxPrice = -Infinity;
-
-    for (const p of products) {
-      for (const s of p.sizes || []) sizeSet.set(s, s);
-      for (const c of p.colors || []) {
-        if (c.name && c.hex) colorSet.set(c.name, { name: c.name, hex: c.hex });
-      }
-      if (p.brand) brandSet.set(p.brand, p.brand);
-      if (p.price < minPrice) minPrice = p.price;
-      if (p.price > maxPrice) maxPrice = p.price;
-    }
-
-    return {
-      sizes: [...sizeSet.values()].sort(),
-      colors: [...colorSet.values()].sort((a, b) => a.name.localeCompare(b.name)),
-      brands: [...brandSet.values()].sort(),
-      minPrice,
-      maxPrice,
-    };
+  async getFilters(params = {}) {
+    const { data } = await api.get('/v1/product/filter', { data: params });
+    const filter = data?.data?.filter || null;
+    return mapApiFilterData(filter);
   },
 
   async getNewArrivals() {
-    return products.filter((p) => p.isNew).slice(0, 8);
+    const { data } = await api.get('/v1/product', { data: {} });
+    const products = data?.data?.products || [];
+    return products.slice(0, 8).map(mapApiProductList);
   },
 
   async search(query) {
-    return searchProducts(query);
+    const { data } = await api.get('/v1/product', { data: { search: query } });
+    const products = data?.data?.products || [];
+    return products.map(mapApiProductList);
   },
 
-  async getRelated(productSlug) {
-    const product = getProductBySlug(productSlug);
-    if (!product) return [];
-    return getRelatedProducts(product, 4);
+  async getRelated() {
+    return [];
   },
 };
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
-import { useProducts } from '../../../hooks/useProducts';
+import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import { useMenus } from '../../../store/MenuContext';
 import CategoryBanner from '../../../components/customer/shop/CategoryBanner';
 
@@ -73,6 +73,12 @@ export default function Sale() {
       map[categoryName] ? map[categoryName].has(product.id) : true;
   }, [sale, categoryOptions]);
 
+  const hasBackendSale = Boolean(saleMenu?.children?.length);
+
+  const { filters: filterData } = useProductFilters(
+    hasBackendSale ? { menuSlug: 'sale' } : {}
+  );
+
   return (
     <main>
       <CategoryBanner
@@ -92,6 +98,7 @@ export default function Sale() {
         hideHeader
         categoryOptions={categoryOptions}
         categoryFilter={categoryFilter}
+        filterData={filterData}
       />
     </main>
   );
