@@ -59,7 +59,7 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Product info */}
       <section className={sectionCls}>
-        <h2 className="mb-4 font-display text-lg font-semibold text-neutral-900">Product Information</h2>
+        <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Product Information</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className={labelCls}>Product Name *</label>
@@ -97,7 +97,7 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
 
       {/* Pricing & stock */}
       <section className={sectionCls}>
-        <h2 className="mb-4 font-display text-lg font-semibold text-neutral-900">Pricing & Stock</h2>
+        <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Pricing & Stock</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className={labelCls}>Price ($) *</label>
@@ -120,7 +120,7 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
 
       {/* Status & flags */}
       <section className={sectionCls}>
-        <h2 className="mb-4 font-display text-lg font-semibold text-neutral-900">Status & Visibility</h2>
+        <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Status & Visibility</h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <div>
             <label className={labelCls}>Status</label>
@@ -148,7 +148,7 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
 
       {/* Main image */}
       <section className={sectionCls}>
-        <h2 className="mb-4 font-display text-lg font-semibold text-neutral-900">Product Images</h2>
+        <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Product Images</h2>
         <ImageUpload
           images={[form.image, ...form.gallery].filter(Boolean)}
           onImagesChange={(imgs) => {
@@ -161,7 +161,7 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
 
       {/* Sizes */}
       <section className={sectionCls}>
-        <h2 className="mb-2 font-display text-lg font-semibold text-neutral-900">Available Sizes</h2>
+        <h2 className="mb-2 font-sans text-lg font-semibold text-neutral-900">Available Sizes</h2>
         <p className="mb-4 text-sm text-neutral-500">Select the sizes available for this product.</p>
         <div className="flex flex-wrap gap-2">
           {SIZE_OPTIONS.map((s) => (
@@ -185,7 +185,7 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
       <section className={sectionCls}>
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="font-display text-lg font-semibold text-neutral-900">Color Variants</h2>
+            <h2 className="font-sans text-lg font-semibold text-neutral-900">Color Variants</h2>
             <p className="text-sm text-neutral-500">KhShop products support image-based color variants.</p>
           </div>
           <button

@@ -36,7 +36,7 @@ export default function AccountLayout({ children }) {
                 <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-black text-2xl font-bold text-white">
                   {(user?.name || 'U').charAt(0).toUpperCase()}
                 </span>
-                <p className="mt-3 font-display font-bold text-neutral-900">
+                <p className="mt-3 font-sans font-bold text-neutral-900">
                   {user?.name || 'Guest'}
                 </p>
                 <p className="text-sm text-neutral-500">{user?.email}</p>

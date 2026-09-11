@@ -1,28 +1,5 @@
-import { useEffect, useState } from 'react';
-import {
-  products as allProducts,
-  getFeaturedProducts,
-  getNewArrivals,
-  getBestSellers,
-  getSaleProducts,
-  getProductsByCategory,
-  searchProducts,
-  getProductById,
-  getRelatedProducts,
-} from '../data/products';
+import { useEffect, useState, useCallback } from 'react';
 import { productService } from '../services/productService';
-import { USE_MOCK } from '../services/config';
-
-const DATA_SOURCES = {
-  list: () => allProducts,
-  featured: getFeaturedProducts,
-  new: getNewArrivals,
-  best: getBestSellers,
-  sale: getSaleProducts,
-  category: getProductsByCategory,
-  search: searchProducts,
-  related: getRelatedProducts,
-};
 
 export function useProducts(source, params = {}) {
   const [products, setProducts] = useState([]);
@@ -36,31 +13,24 @@ export function useProducts(source, params = {}) {
 
     const load = async () => {
       try {
-        if (USE_MOCK) {
-          await new Promise((r) => setTimeout(r, 300));
-          const fn = DATA_SOURCES[source] || (() => []);
-          const result =
-            source === 'category'
-              ? fn(params.category)
-              : source === 'search'
-              ? fn(params.query)
-              : source === 'related'
-              ? fn(params.product)
-              : fn(params.count);
-          if (active) setProducts(result);
+        let result = [];
+        if (source === 'new') {
+          result = await productService.getNewArrivals();
+        } else if (source === 'search') {
+          result = await productService.search(params.query || '');
+        } else if (source === 'related') {
+          result = await productService.getRelated(
+            params.product?.slug,
+            params.categorySlug
+          );
+        } else if (source === 'filtered') {
+          result = await productService.getProducts(params);
         } else {
-          let result = [];
-          if (source === 'featured') result = await productService.getFeatured();
-          else if (source === 'new') result = await productService.getNewArrivals();
-          else if (source === 'related')
-            result = await productService.getRelated(params.product?.id);
-          else if (source === 'search')
-            result = await productService.search(params.query);
-          else result = await productService.getProducts(params);
-          if (active) setProducts(result);
+          result = await productService.getProducts(params);
         }
+        if (active) setProducts(result);
       } catch (err) {
-        if (active) setError(err.message);
+        if (active) setError(err.message || 'Failed to load products.');
       } finally {
         if (active) setLoading(false);
       }
@@ -76,13 +46,13 @@ export function useProducts(source, params = {}) {
   return { products, loading, error };
 }
 
-export function useProduct(id) {
+export function useProduct(slug) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!id) {
+    if (!slug) {
       setProduct(null);
       setLoading(false);
       return;
@@ -90,27 +60,49 @@ export function useProduct(id) {
     let active = true;
     setLoading(true);
     setError(null);
+
     const load = async () => {
       try {
-        if (USE_MOCK) {
-          await new Promise((r) => setTimeout(r, 300));
-          const p = getProductById(id);
-          if (active) setProduct(p || null);
-        } else {
-          const p = await productService.getProduct(id);
-          if (active) setProduct(p);
-        }
+        const p = await productService.getProduct(slug);
+        if (active) setProduct(p);
       } catch (err) {
-        if (active) setError(err.message);
+        if (active) setError(err.message || 'Failed to load product.');
       } finally {
         if (active) setLoading(false);
       }
     };
+
     load();
     return () => {
       active = false;
     };
-  }, [id]);
+  }, [slug]);
 
   return { product, loading, error };
+}
+
+export function useProductFilters(params = {}) {
+  const [filters, setFilters] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const loadFilters = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await productService.getFilters(params);
+      setFilters(data);
+    } catch (err) {
+      setError(err.message || 'Failed to load filters.');
+    } finally {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(params)]);
+
+  useEffect(() => {
+    loadFilters();
+  }, [loadFilters]);
+
+  return { filters, loading, error, reload: loadFilters };
 }

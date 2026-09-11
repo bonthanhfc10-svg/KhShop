@@ -7,7 +7,7 @@ export default function CartItem({ item, onRemove, onUpdateQuantity }) {
 
   return (
     <div className="flex gap-4 border-b border-neutral-200 py-5">
-      <Link to={`/product/${item.id}`} className="block h-28 w-24 shrink-0 overflow-hidden bg-neutral-100">
+      <Link to={`/product/${item.slug || item.id}`} className="block h-28 w-24 shrink-0 overflow-hidden bg-neutral-100">
         <img
           src={item.colorImage || item.image}
           alt={item.name}
@@ -20,8 +20,8 @@ export default function CartItem({ item, onRemove, onUpdateQuantity }) {
         <div className="flex items-start justify-between gap-2">
           <div>
             <Link
-              to={`/product/${item.id}`}
-              className="font-display text-sm font-bold text-neutral-900 hover:underline"
+              to={`/product/${item.slug || item.id}`}
+              className="font-sans text-sm font-bold text-neutral-900 hover:underline"
             >
               {item.name}
             </Link>

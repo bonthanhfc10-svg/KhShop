@@ -11,8 +11,9 @@
     @apply bg-white text-neutral-900 font-sans antialiased;
   }
 
+  /* កែ Heading ទាំងអស់ឱ្យប្រើ font-sans ធម្មតា */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display;
+    @apply font-sans font-bold tracking-normal;
   }
 
   ::selection {
@@ -25,16 +26,19 @@
     @apply mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8;
   }
 
+  /* កែសម្រួល heading-display ដោយដក font-display ចេញ */
   .heading-display {
-    @apply font-display font-extrabold uppercase tracking-tight text-neutral-900;
+    @apply font-sans font-bold uppercase tracking-normal text-neutral-900;
   }
 
+  /* កែ eyebrow ឱ្យប្រែជា font-sans ស្អាត */
   .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500;
+    @apply font-sans text-xs font-semibold uppercase tracking-wider text-neutral-500;
   }
 
+  /* កែប្រែ Button ទាំងអស់ឱ្យប្រើ font-sans និងកាត់បន្ថយ tracking កុំឱ្យចៀតគ្នា */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 text-xs font-bold uppercase tracking-[0.15em] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply font-sans inline-flex items-center justify-center gap-2 px-7 py-3.5 text-xs font-bold uppercase tracking-wider transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primary {
@@ -50,11 +54,11 @@
   }
 
   .input-kh {
-    @apply w-full border border-neutral-300 bg-white px-4 py-3.5 text-sm text-neutral-900 outline-none transition-all duration-200 placeholder:text-neutral-400 focus:border-black;
+    @apply font-sans w-full border border-neutral-300 bg-white px-4 py-3.5 text-sm text-neutral-900 outline-none transition-all duration-200 placeholder:text-neutral-400 focus:border-black;
   }
 
   .label-kh {
-    @apply mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-600;
+    @apply font-sans mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-600;
   }
 
   .section-pad {
@@ -73,7 +77,6 @@
     scrollbar-width: none;
   }
 }
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;

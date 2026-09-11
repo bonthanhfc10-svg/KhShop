@@ -6,10 +6,6 @@ import CategoryBanner from '../../../components/customer/shop/CategoryBanner';
 import NotFound from '../error/NotFound';
 import { useProducts } from '../../../hooks/useProducts';
 import { getNavGroup, getNavCategory } from '../../../data/navigation';
-import menBanner from '../../../assets/images/Menbanner.png';
-import womenBanner from '../../../assets/images/Womenbanner.png';
-import kidsBanner from '../../../assets/images/Kidsbanner.png';
-import sportBanner from '../../../assets/images/Sportbanner.png';
 
 const GROUP_BANNERS = {
   men: { image: menBanner, eyebrow: 'KhShop', title: 'Men' },
@@ -54,7 +50,7 @@ function filterProductsByGroup(products, group) {
   const gender = ['men', 'women'].includes(group.slug) ? group.slug : null;
   let list = products;
   if (gender) list = list.filter((p) => p.gender === gender);
-  if (group.name === 'Sport') list = list.filter((p) => p.category === 'sport');
+  if (group.name === 'Sport') list = list.filter((p) => p.categorySlug === 'sport');
   if (list.length === 0) list = products;
   return list;
 }
@@ -82,7 +78,7 @@ export default function MenuCategory() {
     ? getNavCategory(groupSlug, categorySlug)
     : null;
 
-  const { products: allProducts } = useProducts('list');
+  const { products: allProducts, loading, error } = useProducts('list');
 
   const breadcrumb = useMemo(
     () => (group ? buildBreadcrumb(group, category) : []),
@@ -99,8 +95,8 @@ export default function MenuCategory() {
           .filter((p) => {
             if (group.slug === 'men' && p.gender !== 'men') return false;
             if (group.slug === 'women' && p.gender !== 'women') return false;
-            if (group.slug === 'sport' && p.category !== 'sport') return false;
-            if (!types.includes(p.category)) return false;
+            if (group.slug === 'sport' && p.categorySlug !== 'sport') return false;
+            if (!types.includes(p.categorySlug)) return false;
             return true;
           })
           .map((p) => p.id)
@@ -116,8 +112,8 @@ export default function MenuCategory() {
     let list = allProducts;
     if (group.slug === 'men') list = list.filter((p) => p.gender === 'men');
     if (group.slug === 'women') list = list.filter((p) => p.gender === 'women');
-    if (group.slug === 'sport') list = list.filter((p) => p.category === 'sport');
-    if (types.length) list = list.filter((p) => types.includes(p.category));
+    if (group.slug === 'sport') list = list.filter((p) => p.categorySlug === 'sport');
+    if (types.length) list = list.filter((p) => types.includes(p.categorySlug));
     if (list.length === 0) list = filterProductsByGroup(allProducts, group);
     return list;
   }, [category, group, allProducts]);
@@ -195,6 +191,8 @@ export default function MenuCategory() {
           title={`${group.name}'s Products`}
           description=""
           products={groupProducts}
+          loading={loading}
+          error={error}
           itemsPerPage={12}
           hideHeader
           categoryOptions={categoryOptions}
@@ -207,6 +205,8 @@ export default function MenuCategory() {
           title={`${group.name} ${category.name}`}
           description={buildDescription(group, category)}
           products={categoryProducts}
+          loading={loading}
+          error={error}
           itemsPerPage={12}
           hideHeader={false}
         />

@@ -79,7 +79,7 @@ export default function Checkout() {
 
             {step === 1 && (
               <div>
-                <h2 className="mb-5 font-display text-lg font-bold text-neutral-900">
+                <h2 className="mb-5 font-sans text-lg font-bold text-neutral-900">
                   Shipping Address
                 </h2>
                 <ShippingForm values={values} errors={errors} onChange={setField} />
@@ -88,7 +88,7 @@ export default function Checkout() {
 
             {step === 2 && (
               <div>
-                <h2 className="mb-5 flex items-center gap-2 font-display text-lg font-bold text-neutral-900">
+                <h2 className="mb-5 flex items-center gap-2 font-sans text-lg font-bold text-neutral-900">
                   <Truck size={20} /> Delivery Method
                 </h2>
                 <div className="space-y-3">
@@ -129,7 +129,7 @@ export default function Checkout() {
 
             {step === 3 && (
               <div>
-                <h2 className="mb-5 flex items-center gap-2 font-display text-lg font-bold text-neutral-900">
+                <h2 className="mb-5 flex items-center gap-2 font-sans text-lg font-bold text-neutral-900">
                   <ShieldCheck size={20} /> Payment Method
                 </h2>
                 <PaymentMethod

@@ -21,7 +21,7 @@ export default function StatCard({ label, value, change, icon, color = 'text-neu
           </span>
         </div>
       </div>
-      <p className={`mt-5 font-display text-3xl font-bold ${color}`}>{value}</p>
+      <p className={`mt-5 font-sans text-3xl font-bold ${color}`}>{value}</p>
       <p className="mt-1.5 text-base font-medium text-neutral-700">{label}</p>
       <p className="mt-0.5 text-sm text-neutral-400">{footnote}</p>
     </div>

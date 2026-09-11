@@ -1,8 +1,12 @@
 import WishlistItem from './WishlistItem';
 import { useProducts } from '../../../hooks/useProducts';
+import Loading from '../../common/Loading';
 
 export default function WishlistGrid({ wishlistIds }) {
-  const { products: allProducts } = useProducts('list');
+  const { products: allProducts, loading } = useProducts('list');
+
+  if (loading) return <Loading />;
+
   const items = allProducts.filter((p) => wishlistIds.includes(p.id));
 
   if (items.length === 0) return null;

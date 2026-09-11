@@ -18,7 +18,7 @@ export default function ProductGallery({ images, name }) {
             onClick={() => setActiveIndex(i)}
             onMouseEnter={() => setActiveIndex(i)}
             aria-label={`View image ${i + 1} of ${images.length}`}
-            className={`aspect-[4/5] w-16 shrink-0 overflow-hidden border transition-colors sm:w-20 ${
+            className={`aspect-square w-16 shrink-0 overflow-hidden border transition-colors sm:w-20 ${
               i === activeIndex ? 'border-black' : 'border-neutral-200 hover:border-neutral-400'
             }`}
           >
@@ -39,7 +39,7 @@ export default function ProductGallery({ images, name }) {
             key={activeIndex}
             src={images[activeIndex] || images[0]}
             alt={name}
-            className="aspect-[4/5] w-full animate-fade-in object-cover transition-transform duration-700 group-hover:scale-110"
+            className="aspect-[3/4] w-full animate-fade-in object-cover transition-transform duration-700 group-hover:scale-110"
           />
         </div>
       </div>

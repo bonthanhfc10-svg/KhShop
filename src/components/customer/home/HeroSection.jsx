@@ -1,28 +1,37 @@
 import { Link } from 'react-router-dom';
 
-export default function HeroSection() {
+const FALLBACK_IMAGE = '/images/banners/hero.svg';
+
+export default function HeroSection({ banner = null }) {
+  const image = banner?.image_path || FALLBACK_IMAGE;
+  const title = banner?.title || 'Move\nDifferent.';
+  const description =
+    banner?.description ||
+    'Premium shoes, clothing, accessories and sport gear engineered for those who lead. Built to move. Designed to stand out.';
+
+  const titleLines = title.split('\n');
+
   return (
     <section className="relative flex min-h-[78vh] items-center overflow-hidden bg-neutral-950 sm:min-h-[85vh] lg:min-h-[88vh]">
       <img
-        src="/images/banners/hero.svg"
-        alt="KhShop new season collection"
+        src={image}
+        alt={titleLines[0] || 'KhShop'}
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
 
       <div className="container-kh relative z-10 py-20">
         <div className="max-w-2xl">
-          <p className="eyebrow animate-fade-up text-neutral-300">
-            New Season · New Arrivals
-          </p>
           <h1 className="heading-display mt-5 animate-fade-up text-5xl leading-[0.92] text-white [animation-delay:150ms] sm:text-7xl lg:text-8xl">
-            Move
-            <br />
-            Different.
+            {titleLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < titleLines.length - 1 && <br />}
+              </span>
+            ))}
           </h1>
           <p className="mt-6 max-w-md animate-fade-up text-base text-neutral-300 [animation-delay:300ms] sm:text-lg">
-            Premium shoes, clothing, accessories and sport gear engineered for those who lead.
-            Built to move. Designed to stand out.
+            {description}
           </p>
           <div className="mt-10 flex animate-fade-up flex-wrap gap-4 [animation-delay:450ms]">
             <Link

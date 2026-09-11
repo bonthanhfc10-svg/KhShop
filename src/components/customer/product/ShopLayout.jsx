@@ -11,6 +11,7 @@ export default function ShopLayout({
   description,
   products,
   loading,
+  error,
   fixedCategory = null,
   itemsPerPage = 12,
   hideHeader = false,
@@ -73,7 +74,12 @@ export default function ShopLayout({
         </div>
 
         <div>
-          {loading ? (
+          {error ? (
+            <div className="py-20 text-center">
+              <p className="text-sm text-red-600">{error}</p>
+              <p className="mt-2 text-xs text-neutral-500">Please try again later.</p>
+            </div>
+          ) : loading ? (
             <ProductGrid loading products={[]} />
           ) : (
             <>

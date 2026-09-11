@@ -35,7 +35,7 @@ export default function Reports() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-neutral-900">Reports</h1>
+        <h1 className="font-sans text-2xl font-bold text-neutral-900">Reports</h1>
         <p className="mt-1 text-sm text-neutral-500">Analytics and insights for your store.</p>
       </div>
 
@@ -65,7 +65,7 @@ export default function Reports() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100">
               <s.icon size={18} className="text-neutral-700" />
             </div>
-            <p className="mt-3 font-display text-2xl font-bold text-neutral-900">{s.value}</p>
+            <p className="mt-3 font-sans text-2xl font-bold text-neutral-900">{s.value}</p>
             <p className="mt-1 text-sm text-neutral-500">{s.label}</p>
           </div>
         ))}

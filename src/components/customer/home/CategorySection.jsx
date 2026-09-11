@@ -25,7 +25,7 @@ export default function CategorySection() {
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <h3 className="font-display text-2xl font-extrabold uppercase tracking-tight text-white sm:text-3xl">
+              <h3 className="font-sans text-2xl font-extrabold uppercase tracking-tight text-white sm:text-3xl">
                 {cat.name}
               </h3>
               <p className="mt-1.5 text-sm text-neutral-300">{cat.count} styles</p>

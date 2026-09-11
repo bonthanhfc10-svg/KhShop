@@ -36,7 +36,7 @@ export default function About() {
             key={v.title}
             className="border-t-2 border-neutral-900 pt-4"
           >
-            <h3 className="font-display text-base font-extrabold uppercase tracking-wide text-neutral-900">
+            <h3 className="font-sans text-base font-extrabold uppercase tracking-wide text-neutral-900">
               {v.title}
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-neutral-600">

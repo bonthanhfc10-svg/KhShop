@@ -43,7 +43,7 @@ export default function ProductDetail() {
             <ArrowLeft size={16} /> Back to products
           </Link>
           <div className="flex items-center gap-3">
-            <h1 className="font-display text-2xl font-bold text-neutral-900">{product.name}</h1>
+            <h1 className="font-sans text-2xl font-bold text-neutral-900">{product.name}</h1>
             <StatusBadge status={product.status === 'active' ? 'Active' : 'Draft'} />
           </div>
           <p className="mt-1 text-sm text-neutral-500">{product.sku} · {product.categoryName || product.category}</p>
@@ -57,7 +57,7 @@ export default function ProductDetail() {
             <img src={product.image} alt={product.name} className="h-64 w-full object-cover" />
             <div className="p-5">
               <p className="text-xs uppercase tracking-wider text-neutral-400">Price</p>
-              <p className="font-display text-2xl font-bold text-neutral-900">{formatPrice(product.price)}</p>
+              <p className="font-sans text-2xl font-bold text-neutral-900">{formatPrice(product.price)}</p>
               {product.salePrice && (
                 <p className="text-sm text-neutral-400 line-through">{formatPrice(product.salePrice)}</p>
               )}

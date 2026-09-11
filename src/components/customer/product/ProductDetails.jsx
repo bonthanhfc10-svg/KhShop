@@ -2,29 +2,19 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Minus, Plus, ShoppingBag, Zap, Check } from 'lucide-react';
 import { formatPrice } from '../../../utils/formatPrice';
-import { Rating } from './Rating';
 import { ColorSelector } from './ColorSelector';
 import { useCart } from '../../../store/CartContext';
 import { useWishlist } from '../../../store/WishlistContext';
-import Modal from '../../common/Modal';
-
-const SIZE_GUIDE = [
-  { size: 'S', body: '34–36"', chest: '34–37"', waist: '28–31"' },
-  { size: 'M', body: '37–39"', chest: '38–41"', waist: '32–35"' },
-  { size: 'L', body: '40–42"', chest: '42–45"', waist: '36–39"' },
-  { size: 'XL', body: '43–46"', chest: '46–49"', waist: '40–43"' },
-  { size: 'XXL', body: '47–50"', chest: '50–53"', waist: '44–47"' },
-];
 
 export default function ProductDetails({ product, selectedColor, onColorChange }) {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || null);
+  const sizeOptions = product.sizes?.map((s) => s.name || s) || [];
+  const [selectedSize, setSelectedSize] = useState(sizeOptions[0] || null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
-  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const wished = isInWishlist(product.id);
 
   const discount = product.discount;
@@ -56,15 +46,10 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
 
   return (
     <div>
-      <p className="eyebrow">{product.categoryName}</p>
-      <h1 className="heading-display mt-2 text-3xl sm:text-4xl">{product.name}</h1>
+      <h1 className="heading-display text-3xl sm:text-4xl">{product.name}</h1>
 
-      <div className="mt-3">
-        <Rating rating={product.rating} reviews={product.reviews} />
-      </div>
-
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <span className="font-display text-3xl font-extrabold tracking-tight text-neutral-900">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <span className="font-sans text-3xl font-extrabold tracking-tight text-neutral-900">
           {formatPrice(product.price)}
         </span>
         {product.oldPrice && (
@@ -99,19 +84,13 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
 
         {/* Size */}
         <div className="mb-6">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3">
             <span className="text-xs font-semibold uppercase tracking-widest text-neutral-600">
               Size
             </span>
-            <button
-              onClick={() => setSizeGuideOpen(true)}
-              className="text-xs font-semibold text-neutral-500 underline underline-offset-2 hover:text-black"
-            >
-              Size guide
-            </button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {product.sizes.map((s) => (
+            {sizeOptions.map((s) => (
               <button
                 key={s}
                 onClick={() => setSelectedSize(s)}
@@ -194,45 +173,23 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
         </div>
       </div>
 
+      {/* Description */}
+      {product.description && (
+        <div className="mt-8 border-t border-neutral-200 pt-6">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-neutral-600">
+            Description
+          </h2>
+          <p className="text-[15px] leading-relaxed text-neutral-700">
+            {product.description}
+          </p>
+        </div>
+      )}
+
       <div className="mt-8 space-y-3 border-t border-neutral-200 pt-6 text-sm text-neutral-600">
         <p>✓ Free shipping on orders over $50</p>
         <p>✓ Easy 30-day returns</p>
         <p>✓ Secure checkout</p>
       </div>
-
-      <Modal
-        open={sizeGuideOpen}
-        onClose={() => setSizeGuideOpen(false)}
-        title="Size Guide"
-        size="md"
-      >
-        <div className="overflow-hidden border border-neutral-200">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="bg-neutral-50 text-xs font-bold uppercase tracking-widest text-neutral-600">
-                <th className="px-4 py-3">Size</th>
-                <th className="px-4 py-3">Body</th>
-                <th className="px-4 py-3">Chest</th>
-                <th className="px-4 py-3">Waist</th>
-              </tr>
-            </thead>
-            <tbody>
-              {SIZE_GUIDE.map((r) => (
-                <tr key={r.size} className="border-t border-neutral-100">
-                  <td className="px-4 py-3 font-semibold text-neutral-900">{r.size}</td>
-                  <td className="px-4 py-3 text-neutral-600">{r.body}</td>
-                  <td className="px-4 py-3 text-neutral-600">{r.chest}</td>
-                  <td className="px-4 py-3 text-neutral-600">{r.waist}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-4 text-xs leading-relaxed text-neutral-500">
-          Measurements are body measurements. If your measurements fall between
-          sizes, we recommend sizing up for a more relaxed fit.
-        </p>
-      </Modal>
     </div>
   );
 }

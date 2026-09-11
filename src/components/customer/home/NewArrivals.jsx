@@ -1,18 +1,14 @@
-import { useProducts } from '../../../hooks/useProducts';
 import ProductGrid from '../product/ProductGrid';
-import Loading from '../../common/Loading';
 import SectionHeader from '../../common/SectionHeader';
 
-export default function NewArrivals() {
-  const { products, loading } = useProducts('new', { count: 4 });
-
+export default function NewArrivals({ products }) {
   return (
     <section className="section-pad container-kh">
       <SectionHeader
         eyebrow="Just dropped"
         title="New Arrivals"
       />
-      {loading ? <Loading /> : <ProductGrid products={products} cols={4} />}
+      <ProductGrid products={products} cols={4} />
     </section>
   );
 }

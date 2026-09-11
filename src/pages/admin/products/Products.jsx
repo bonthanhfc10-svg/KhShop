@@ -38,7 +38,7 @@ export default function Products() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-neutral-900">Products</h1>
+          <h1 className="font-sans text-2xl font-bold text-neutral-900">Products</h1>
           <p className="mt-1 text-sm text-neutral-500">
             Manage your product catalog · {filtered.length} products
           </p>

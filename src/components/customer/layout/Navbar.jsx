@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import { navigation } from '../../../data/navigation';
 
-export default function Navbar() {
+export default function Navbar({ navigation = [] }) {
   return (
     <nav aria-label="Primary" className="hidden lg:block">
       <ul className="flex items-center gap-7 xl:gap-9">

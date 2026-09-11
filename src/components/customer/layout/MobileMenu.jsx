@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X, ChevronDown, ChevronRight, Heart, User } from 'lucide-react';
-import { navigation } from '../../../data/navigation';
 import { useAuth } from '../../../store/AuthContext';
 
-export default function MobileMenu({ open, onClose }) {
+export default function MobileMenu({ open, onClose, navigation = [] }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(null);
@@ -86,7 +85,7 @@ export default function MobileMenu({ open, onClose }) {
 
                   {isOpen && (
                     <ul className="ml-3 border-l border-neutral-200 pl-3">
-                      {item.categories.map((cat) => (
+                      {(item.categories || []).map((cat) => (
                         <li key={cat.path}>
                           <Link
                             to={cat.path}

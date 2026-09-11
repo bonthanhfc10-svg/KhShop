@@ -6,7 +6,7 @@ import MobileMenu from './MobileMenu';
 import { useCart } from '../../../store/CartContext';
 import { useAuth } from '../../../store/AuthContext';
 
-export default function Header() {
+export default function Header({ navigation = [] }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,7 +71,7 @@ export default function Header() {
           </div>
 
           {/* Center: nav */}
-          <Navbar />
+          <Navbar navigation={navigation} />
 
           {/* Right: icons */}
           <div className="flex items-center gap-0.5 sm:gap-1">
@@ -149,7 +149,11 @@ export default function Header() {
       )}
 
       {/* Mobile menu */}
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        navigation={navigation}
+      />
     </header>
   );
 }

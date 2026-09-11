@@ -1,17 +1,18 @@
-import api from './api';
+import { categories } from '../data/categories';
 
 export const categoryService = {
   async getCategories() {
-    const { data } = await api.get('/categories');
-    return Array.isArray(data) ? data : (data.data ?? []);
+    return categories;
   },
+
   async getCategory(slug) {
-    const { data } = await api.get(`/categories/${slug}`);
-    return data;
+    return categories.find((c) => c.slug === slug) || null;
   },
+
   async getCategoryProducts(slug, params = {}) {
-    const { data } = await api.get(`/categories/${slug}/products`, { params });
-    return Array.isArray(data) ? data : (data.data ?? []);
+    const { products } = await import('../data/products');
+    let list = products.filter((p) => p.category === slug);
+    return list;
   },
 };
 

@@ -15,8 +15,10 @@ export default function WishlistItem({ product }) {
 
   const handleAdd = (e) => {
     e.preventDefault();
+    const firstSize = product.sizes?.[0];
+    const sizeName = typeof firstSize === 'string' ? firstSize : firstSize?.name;
     addToCart(product, {
-      size: product.sizes[0],
+      size: sizeName,
       color: product.colors[0]?.name,
       quantity: 1,
     });
@@ -24,7 +26,7 @@ export default function WishlistItem({ product }) {
 
   return (
     <div className="group relative block">
-      <Link to={`/product/${product.id}`} className="card-image aspect-[4/5]">
+      <Link to={`/product/${product.slug || product.id}`} className="card-image aspect-[4/5]">
         <img
           src={product.images[0]}
           alt={product.name}
@@ -40,11 +42,8 @@ export default function WishlistItem({ product }) {
         <Heart size={18} fill="currentColor" />
       </button>
       <div className="pt-3">
-        <p className="text-[11px] uppercase tracking-[0.15em] text-neutral-500">
-          {product.categoryName}
-        </p>
-        <Link to={`/product/${product.id}`}>
-          <h3 className="mt-1 font-display text-sm font-bold text-neutral-900 hover:underline">
+        <Link to={`/product/${product.slug || product.id}`}>
+          <h3 className="font-sans text-sm font-bold text-neutral-900 hover:underline">
             {product.name}
           </h3>
         </Link>

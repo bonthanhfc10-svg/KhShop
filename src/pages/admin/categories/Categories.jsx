@@ -58,7 +58,7 @@ export default function Categories() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-neutral-900">Categories</h1>
+          <h1 className="font-sans text-2xl font-bold text-neutral-900">Categories</h1>
           <p className="mt-1 text-sm text-neutral-500">Manage your product categories and hierarchy.</p>
         </div>
         <AdminButton onClick={openCreate}>
@@ -78,7 +78,7 @@ export default function Categories() {
                       <img src={root.image} alt={root.name} className="h-9 w-9 rounded-lg object-cover" />
                     )}
                     <div>
-                      <p className="font-display font-semibold text-neutral-900">{root.name}</p>
+                      <p className="font-sans font-semibold text-neutral-900">{root.name}</p>
                       <p className="text-xs text-neutral-400">{root.products} products</p>
                     </div>
                   </div>

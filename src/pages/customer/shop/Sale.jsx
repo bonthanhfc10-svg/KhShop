@@ -15,13 +15,19 @@ function matchesSaleCategory(categoryName) {
 
   return (p) => {
     if (gender && p.gender !== gender) return false;
-    if (isSport && p.category !== 'sport') return false;
+    if (isSport && p.categorySlug !== 'sport') return false;
     return true;
   };
 }
 
 export default function Sale() {
-  const { products: sale } = useProducts('sale');
+  const { products: allProducts, loading, error } = useProducts('list');
+
+  const sale = useMemo(
+    () => allProducts.filter((p) => p.sale_price != null && p.sale_price < p.originalPrice),
+    [allProducts]
+  );
+
   const saleGroup = getNavGroup('sale');
 
   const categoryOptions = useMemo(
@@ -53,6 +59,8 @@ export default function Sale() {
         title="Sale"
         description="Seasonal savings on your favourite styles. Limited time while stocks last."
         products={sale}
+        loading={loading}
+        error={error}
         itemsPerPage={12}
         hideHeader
         categoryOptions={categoryOptions}

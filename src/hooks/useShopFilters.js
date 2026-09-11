@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { categories } from '../data/categories';
-import { uniqueSizes, uniqueBrands, productColors, priceRange } from '../data/products';
 
 const DEFAULT_FILTERS = {
   category: null,
@@ -13,21 +11,40 @@ const DEFAULT_FILTERS = {
   availability: [],
 };
 
-function buildFacets(fixedCategory = null, categoryOptions = null) {
-  const facade = fixedCategory
-    ? categories.filter((c) => c.slug === fixedCategory)
-    : categories;
+function buildFacets(products) {
+  const sizeSet = new Map();
+  const colorSet = new Map();
+  const brandSet = new Map();
+  let minPrice = Infinity;
+  let maxPrice = -Infinity;
+
+  for (const p of products) {
+    for (const s of p.sizes || []) {
+      if (s.name) sizeSet.set(s.name, s);
+    }
+    for (const c of p.colors || []) {
+      if (c.name) colorSet.set(c.name, c);
+    }
+    if (p.brand) brandSet.set(p.brand, p.brand);
+    const price = Number(p.price) || 0;
+    if (price > 0 && price < minPrice) minPrice = price;
+    if (price > maxPrice) maxPrice = price;
+  }
+
   return {
-    categories: categoryOptions || facade.map((c) => c.name),
-    sizes: uniqueSizes(),
-    colors: productColors(),
-    brands: uniqueBrands(),
-    price: priceRange(),
+    sizes: [...sizeSet.values()].map((s) => s.name).sort(),
+    colors: [...colorSet.values()].map((c) => ({ name: c.name, hex: c.hex })).sort((a, b) => a.name.localeCompare(b.name)),
+    brands: [...brandSet.values()].sort(),
+    price: {
+      min: minPrice === Infinity ? 0 : minPrice,
+      max: maxPrice === -Infinity ? 200 : maxPrice,
+    },
   };
 }
 
 export default function useShopFilters(products, {
   fixedCategory = null,
+  // eslint-disable-next-line no-unused-vars
   categoryOptions = null,
   categoryFilter = null,
   itemsPerPage = 12,
@@ -37,10 +54,7 @@ export default function useShopFilters(products, {
   const [sort, setSort] = useState(searchParams.get('sort') || 'featured');
   const [page, setPage] = useState(1);
 
-  const facets = useMemo(
-    () => buildFacets(fixedCategory, categoryOptions),
-    [fixedCategory, categoryOptions]
-  );
+  const facets = useMemo(() => buildFacets(products || []), [products]);
 
   const changeFilter = (patch) => {
     setFilters((prev) => ({
@@ -57,37 +71,50 @@ export default function useShopFilters(products, {
   };
 
   const filtered = useMemo(() => {
-    let list = products;
+    let list = products || [];
+
     if (fixedCategory) {
-      list = list.filter((p) => p.category === fixedCategory);
+      list = list.filter((p) => p.categorySlug === fixedCategory || p.categoryName?.toLowerCase() === fixedCategory?.toLowerCase());
     }
+
     if (filters.category && !fixedCategory) {
       if (categoryFilter) {
         list = list.filter(categoryFilter(filters.category));
       } else {
-        const cat = categories.find((c) => c.name === filters.category);
-        if (cat) list = list.filter((p) => p.category === cat.slug);
+        list = list.filter(
+          (p) =>
+            p.categorySlug?.toLowerCase() === filters.category?.toLowerCase() ||
+            p.categoryName?.toLowerCase() === filters.category?.toLowerCase()
+        );
       }
     }
+
     if (filters.sizes.length) {
-      list = list.filter((p) => filters.sizes.some((s) => p.sizes.includes(s)));
-    }
-    if (filters.colors.length) {
       list = list.filter((p) =>
-        filters.colors.some((c) => p.colors.some((pc) => pc.name === c))
+        filters.sizes.some((s) => p.sizes?.some((ps) => ps.name === s))
       );
     }
+
+    if (filters.colors.length) {
+      list = list.filter((p) =>
+        filters.colors.some((c) => p.colors?.some((pc) => pc.name === c))
+      );
+    }
+
     if (filters.price) {
       list = list.filter(
         (p) => p.price >= filters.price.min && p.price <= filters.price.max
       );
     }
+
     if (filters.brands.length) {
       list = list.filter((p) => filters.brands.includes(p.brand));
     }
+
     if (filters.rating) {
-      list = list.filter((p) => p.rating >= filters.rating);
+      list = list.filter((p) => (p.rating || 0) >= filters.rating);
     }
+
     if (filters.availability.length) {
       const hasInStock = filters.availability.includes('In Stock');
       const hasOutOfStock = filters.availability.includes('Out of Stock');
@@ -97,19 +124,15 @@ export default function useShopFilters(products, {
         return hasOutOfStock;
       });
     }
+
     return list;
   }, [products, filters, fixedCategory, categoryFilter]);
 
   const sorted = useMemo(() => {
-    const inputGender = searchParams.get('gender');
-    let list = filtered;
-    if (inputGender === 'men' || inputGender === 'women') {
-      list = list.filter((p) => p.gender === inputGender);
-    }
-    const arr = [...list];
+    const arr = [...filtered];
     switch (sort) {
       case 'newest':
-        arr.sort((a, b) => Number(b.isNew) - Number(a.isNew));
+        arr.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
         break;
       case 'price-asc':
         arr.sort((a, b) => a.price - b.price);
@@ -118,14 +141,14 @@ export default function useShopFilters(products, {
         arr.sort((a, b) => b.price - a.price);
         break;
       case 'best-selling':
-        arr.sort((a, b) => b.reviews - a.reviews);
+        arr.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
         break;
       case 'featured':
       default:
-        arr.sort((a, b) => Number(b.isBestSeller) - Number(a.isBestSeller));
+        arr.sort((a, b) => (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0));
     }
     return arr;
-  }, [filtered, sort, searchParams]);
+  }, [filtered, sort]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / itemsPerPage));
   const currentPage = Math.min(page, totalPages);
@@ -136,6 +159,7 @@ export default function useShopFilters(products, {
 
   const handleSort = (value) => {
     setSort(value);
+    setPage(1);
     setSearchParams((params) => {
       const next = new URLSearchParams(params);
       next.set('sort', value);

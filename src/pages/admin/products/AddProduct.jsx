@@ -32,7 +32,7 @@ export default function AddProduct() {
         >
           <ArrowLeft size={16} /> Back to products
         </Link>
-        <h1 className="font-display text-2xl font-bold text-neutral-900">Add Product</h1>
+        <h1 className="font-sans text-2xl font-bold text-neutral-900">Add Product</h1>
         <p className="mt-1 text-sm text-neutral-500">Create a new product in your catalog.</p>
       </div>
 

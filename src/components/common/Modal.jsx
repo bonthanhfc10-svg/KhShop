@@ -46,7 +46,7 @@ export default function Modal({
         className={`relative w-full ${sizes[size]} bg-white shadow-2xl animate-slide-up max-h-[90vh] overflow-y-auto`}
       >
         <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
-          <h2 className="font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+          <h2 className="font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
             {title}
           </h2>
           {showClose && (

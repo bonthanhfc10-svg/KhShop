@@ -69,7 +69,7 @@ export default function Banners() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-neutral-900">Banners</h1>
+          <h1 className="font-sans text-2xl font-bold text-neutral-900">Banners</h1>
           <p className="mt-1 text-sm text-neutral-500">Manage homepage and promotional banners.</p>
         </div>
         <AdminButton onClick={openCreate}><Plus size={16} /> Add Banner</AdminButton>

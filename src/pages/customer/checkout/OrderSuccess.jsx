@@ -26,7 +26,7 @@ export default function OrderSuccess() {
           <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">
             Order Number
           </p>
-          <p className="mt-2 font-display text-3xl font-extrabold text-neutral-900">
+          <p className="mt-2 font-sans text-3xl font-extrabold text-neutral-900">
             {orderNumber}
           </p>
           {order?.total && (

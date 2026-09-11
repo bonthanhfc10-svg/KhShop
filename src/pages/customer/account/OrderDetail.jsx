@@ -33,7 +33,7 @@ export default function OrderDetail() {
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-display text-2xl font-bold text-neutral-900">{order.id}</h2>
+          <h2 className="font-sans text-2xl font-bold text-neutral-900">{order.id}</h2>
           <p className="mt-1 text-sm text-neutral-500">Placed on {formatDateTime(order.date)}</p>
         </div>
         <span
@@ -51,7 +51,7 @@ export default function OrderDetail() {
 
       {/* Timeline */}
       <div className="mt-8 border border-neutral-200 bg-white p-6 sm:p-8">
-        <h3 className="mb-6 font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+        <h3 className="mb-6 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
           Order Timeline
         </h3>
         <ol className="space-y-0">
@@ -92,7 +92,7 @@ export default function OrderDetail() {
         {/* items */}
         <div className="border border-neutral-200 bg-white">
           <div className="border-b border-neutral-200 px-6 py-4">
-            <h3 className="font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+            <h3 className="font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
               Items ({order.items.length})
             </h3>
           </div>
@@ -104,7 +104,7 @@ export default function OrderDetail() {
                 </Link>
                 <div className="flex flex-1 items-center justify-between gap-4">
                   <div>
-                    <Link to={`/product/${item.id}`} className="font-display font-bold text-neutral-900 hover:underline">
+                    <Link to={`/product/${item.id}`} className="font-sans font-bold text-neutral-900 hover:underline">
                       {item.name}
                     </Link>
                     <p className="text-sm text-neutral-500">
@@ -124,7 +124,7 @@ export default function OrderDetail() {
         {/* summary + info */}
         <div className="space-y-6">
           <div className="border border-neutral-200 bg-white p-6">
-            <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+            <h3 className="mb-4 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
               Summary
             </h3>
             <div className="space-y-3 text-sm">
@@ -146,7 +146,7 @@ export default function OrderDetail() {
           </div>
 
           <div className="border border-neutral-200 bg-white p-6">
-            <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+            <h3 className="mb-4 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
               Shipping Address
             </h3>
             <p className="text-sm text-neutral-700">
@@ -163,7 +163,7 @@ export default function OrderDetail() {
           </div>
 
           <div className="border border-neutral-200 bg-white p-6">
-            <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+            <h3 className="mb-4 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
               Payment
             </h3>
             <p className="text-sm text-neutral-700">{order.payment.method}</p>

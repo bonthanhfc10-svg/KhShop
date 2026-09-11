@@ -22,7 +22,7 @@ export default function Careers() {
             key={r}
             className="flex items-center justify-between gap-4 py-5"
           >
-            <span className="font-display text-base font-bold text-neutral-900">
+            <span className="font-sans text-base font-bold text-neutral-900">
               {r}
             </span>
             <span className="text-xs font-semibold uppercase tracking-widest text-neutral-500">

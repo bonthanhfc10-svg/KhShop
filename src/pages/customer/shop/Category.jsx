@@ -10,7 +10,9 @@ export default function Category() {
   const location = useLocation();
   const pathSlug = location.pathname.split('/').filter(Boolean).pop();
   const category = getCategoryBySlug(slug) || getCategoryBySlug(pathSlug);
-  const { products, loading } = useProducts('category', { category: category?.slug });
+  const { products, loading, error } = useProducts('list', {
+    categorySlug: category?.slug,
+  });
 
   if (!category) {
     return <NotFound />;
@@ -22,6 +24,7 @@ export default function Category() {
       description={category.description}
       products={products}
       loading={loading}
+      error={error}
       fixedCategory={category.slug}
       itemsPerPage={9}
     />

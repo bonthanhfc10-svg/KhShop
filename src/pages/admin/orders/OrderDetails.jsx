@@ -51,7 +51,7 @@ export default function OrderDetails() {
         </Link>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-neutral-900">Order {order.id}</h1>
+            <h1 className="font-sans text-2xl font-bold text-neutral-900">Order {order.id}</h1>
             <p className="mt-1 text-sm text-neutral-500">Placed on {formatDateTime(order.date)}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export default function OrderDetails() {
 
       {/* Timeline */}
       <div className="border border-neutral-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-5 font-display text-base font-semibold text-neutral-900">Order Status</h2>
+        <h2 className="mb-5 font-sans text-base font-semibold text-neutral-900">Order Status</h2>
         <ol className="flex items-center">
           {steps.map((step, i) => {
             const done = i <= currentStep;
@@ -107,7 +107,7 @@ export default function OrderDetails() {
         {/* Items */}
         <div className="border border-neutral-200 bg-white shadow-sm lg:col-span-2">
           <div className="border-b border-neutral-100 px-5 py-4">
-            <h2 className="font-display text-base font-semibold text-neutral-900">Items</h2>
+            <h2 className="font-sans text-base font-semibold text-neutral-900">Items</h2>
           </div>
           <div className="divide-y divide-neutral-50">
             {items.map((item, i) => (

@@ -40,7 +40,7 @@ export default function Settings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-neutral-900">Settings</h1>
+          <h1 className="font-sans text-2xl font-bold text-neutral-900">Settings</h1>
           <p className="mt-1 text-sm text-neutral-500">Configure your store.</p>
         </div>
         {savedMsg && (
@@ -72,7 +72,7 @@ export default function Settings() {
         <form onSubmit={handleSave} className="min-w-0 flex-1 space-y-6">
           {active === 'general' && (
             <div className="border border-neutral-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 font-display text-lg font-semibold text-neutral-900">General</h2>
+              <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">General</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
                   <label className={labelCls}>Store Name</label>
@@ -96,7 +96,7 @@ export default function Settings() {
 
           {active === 'store' && (
             <div className="border border-neutral-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 font-display text-lg font-semibold text-neutral-900">Store Settings</h2>
+              <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Store Settings</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
                   <label className={labelCls}>Currency</label>
@@ -124,7 +124,7 @@ export default function Settings() {
 
           {active === 'payment' && (
             <div className="border border-neutral-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 font-display text-lg font-semibold text-neutral-900">Payment Methods</h2>
+              <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Payment Methods</h2>
               <div className="space-y-3">
                 {['Credit Card', 'PayPal', 'Cash on Delivery', 'Bank Transfer'].map((m) => (
                   <label key={m} className="flex items-center justify-between rounded-lg border border-neutral-200 px-4 py-3">
@@ -148,7 +148,7 @@ export default function Settings() {
 
           {active === 'shipping' && (
             <div className="border border-neutral-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 font-display text-lg font-semibold text-neutral-900">Shipping</h2>
+              <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Shipping</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
                   <label className={labelCls}>Shipping Fee ($)</label>

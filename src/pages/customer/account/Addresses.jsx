@@ -70,7 +70,7 @@ export default function Addresses() {
                 <Home size={11} /> Default
               </span>
             )}
-            <p className="font-display font-bold text-neutral-900">
+            <p className="font-sans font-bold text-neutral-900">
               {addr.type}
             </p>
             <p className="mt-2 text-sm text-neutral-600">

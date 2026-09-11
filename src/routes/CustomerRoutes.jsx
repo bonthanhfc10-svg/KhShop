@@ -4,6 +4,7 @@ import AppLayout from '../layouts/CustomerLayout';
 import ProtectedRoute from '../components/common/ProtectedRoute';
 import Loading from '../components/common/Loading';
 
+// Dynamic Imports
 const Home = lazy(() => import('../pages/customer/Home'));
 const Shop = lazy(() => import('../pages/customer/shop/Shop'));
 const Category = lazy(() => import('../pages/customer/shop/Category'));
@@ -36,57 +37,59 @@ const Careers = lazy(() => import('../pages/customer/info/Careers'));
 const Contact = lazy(() => import('../pages/customer/info/Contact'));
 const SizeGuide = lazy(() => import('../pages/customer/info/SizeGuide'));
 
-const Page = ({ children }) => (
-  <Suspense fallback={<Loading full />}>{children}</Suspense>
-);
-
-const AuthPage = ({ children }) => <ProtectedRoute><Page>{children}</Page></ProtectedRoute>;
-
 export default function AppRoutes() {
   return (
-    <Routes>
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<Page><Home /></Page>} />
-        <Route path="/shop" element={<Page><Shop /></Page>} />
-        <Route path="/shop/shoes" element={<Page><Category /></Page>} />
-        <Route path="/shop/clothing" element={<Page><Category /></Page>} />
-        <Route path="/shop/accessories" element={<Page><Category /></Page>} />
+    <Suspense fallback={<Loading full />}>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Home />} />
+          
+          {/* Shop Routes */}
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/sale" element={<Sale />} />
+          <Route path="/shop/shoes" element={<Category />} />
+          <Route path="/shop/clothing" element={<Category />} />
+          <Route path="/shop/accessories" element={<Category />} />
+          <Route path="/shop/:group" element={<MenuCategory />} />
+          <Route path="/shop/:group/:category" element={<MenuCategory />} />
 
-        <Route path="/shop/:group" element={<Page><MenuCategory /></Page>} />
-        <Route path="/shop/:group/:category" element={<Page><MenuCategory /></Page>} />
+          {/* Product & Cart */}
+          <Route path="/search" element={<Search />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
 
-        <Route path="/shop/sale" element={<Page><Sale /></Page>} />
-        <Route path="/search" element={<Page><Search /></Page>} />
-        <Route path="/product/:id" element={<Page><ProductDetail /></Page>} />
-        <Route path="/cart" element={<Page><Cart /></Page>} />
-        <Route path="/wishlist" element={<Page><Wishlist /></Page>} />
-        <Route path="/checkout" element={<Page><Checkout /></Page>} />
-        <Route path="/order-success" element={<Page><OrderSuccess /></Page>} />
-        <Route path="/login" element={<Page><Login /></Page>} />
-        <Route path="/register" element={<Page><Register /></Page>} />
-        <Route path="/forgot-password" element={<Page><ForgotPassword /></Page>} />
-        <Route path="/verify-email" element={<Page><VerifyEmail /></Page>} />
-        <Route path="/verify-reset-otp" element={<Page><VerifyResetOtp /></Page>} />
-        <Route path="/reset-password" element={<Page><ResetPassword /></Page>} />
+          {/* Auth Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/verify-reset-otp" element={<VerifyResetOtp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-        <Route path="/account" element={<AuthPage><Account /></AuthPage>} />
-        <Route path="/account/profile" element={<AuthPage><Profile /></AuthPage>} />
-        <Route path="/account/orders" element={<AuthPage><Orders /></AuthPage>} />
-        <Route path="/account/orders/:id" element={<AuthPage><OrderDetail /></AuthPage>} />
-        <Route path="/account/addresses" element={<AuthPage><Addresses /></AuthPage>} />
+          {/* Protected Account Routes */}
+          <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+          <Route path="/account/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/account/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+          <Route path="/account/orders/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+          <Route path="/account/addresses" element={<ProtectedRoute><Addresses /></ProtectedRoute>} />
 
-        <Route path="/500" element={<Page><ServerError /></Page>} />
+          {/* Info & Error Routes */}
+          <Route path="/500" element={<ServerError />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/shipping" element={<Shipping />} />
+          <Route path="/returns" element={<Returns />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/size-guide" element={<SizeGuide />} />
 
-        <Route path="/about" element={<Page><About /></Page>} />
-        <Route path="/shipping" element={<Page><Shipping /></Page>} />
-        <Route path="/returns" element={<Page><Returns /></Page>} />
-        <Route path="/faq" element={<Page><Faq /></Page>} />
-        <Route path="/careers" element={<Page><Careers /></Page>} />
-        <Route path="/contact" element={<Page><Contact /></Page>} />
-        <Route path="/size-guide" element={<Page><SizeGuide /></Page>} />
-
-        <Route path="*" element={<Page><NotFound /></Page>} />
-      </Route>
-    </Routes>
+          {/* 404 Catch All */}
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }

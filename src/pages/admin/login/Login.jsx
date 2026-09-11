@@ -30,7 +30,7 @@ export default function Login() {
             <Zap size={22} className="text-neutral-900" />
           </span>
           <div>
-            <p className="font-display text-lg font-bold leading-tight text-white">
+            <p className="font-sans text-lg font-bold leading-tight text-white">
               KHShop<span className="text-accent">.</span>
             </p>
             <p className="text-xs uppercase tracking-widest text-neutral-400">Admin Panel</p>
@@ -38,7 +38,7 @@ export default function Login() {
         </Link>
 
         <div>
-          <h1 className="font-display text-4xl font-bold leading-tight text-white">
+          <h1 className="font-sans text-4xl font-bold leading-tight text-white">
             Manage your entire
             <br />
             e-commerce store.
@@ -69,14 +69,14 @@ export default function Login() {
               <Zap size={22} className="text-white" />
             </span>
             <div>
-              <p className="font-display text-lg font-bold leading-tight text-neutral-900">
+              <p className="font-sans text-lg font-bold leading-tight text-neutral-900">
                 KHShop<span className="text-accent">.</span>
               </p>
               <p className="text-xs uppercase tracking-widest text-neutral-400">Admin Panel</p>
             </div>
           </div>
 
-          <h2 className="font-display text-2xl font-bold text-neutral-900">Admin Login</h2>
+          <h2 className="font-sans text-2xl font-bold text-neutral-900">Admin Login</h2>
           <p className="mt-1.5 text-sm text-neutral-500">
             Sign in to access the admin dashboard.
           </p>

@@ -35,7 +35,7 @@ export default function Dashboard() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold text-neutral-900">Dashboard</h1>
+          <h1 className="font-sans text-3xl font-bold text-neutral-900">Dashboard</h1>
           <p className="mt-1.5 text-base text-neutral-500">Welcome back, Admin 👋</p>
         </div>
         <span className="inline-flex items-center rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-base text-neutral-600 shadow-sm">

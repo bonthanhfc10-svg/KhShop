@@ -15,7 +15,7 @@ export function AdminSidebarContent({ onNavigate, onLogout, collapsed = false })
         </span>
         {!collapsed && (
           <div className="ml-3 min-w-0">
-            <p className="truncate font-display text-sm font-bold uppercase leading-tight tracking-widest text-white">
+            <p className="truncate font-sans text-sm font-bold uppercase leading-tight tracking-widest text-white">
               KHShop
             </p>
             <p className="text-[10px] font-medium uppercase tracking-widest text-neutral-400">

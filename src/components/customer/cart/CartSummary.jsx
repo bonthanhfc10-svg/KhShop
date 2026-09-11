@@ -10,7 +10,7 @@ export default function CartSummary({ subtotal, discount = 0 }) {
 
   return (
     <div className="border border-neutral-200 bg-white p-6 sm:p-8">
-      <h2 className="mb-6 font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+      <h2 className="mb-6 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
         Order Summary
       </h2>
 

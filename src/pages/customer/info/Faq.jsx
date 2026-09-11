@@ -44,7 +44,7 @@ export default function Faq() {
                 className="flex w-full items-center justify-between gap-4 py-5 text-left"
                 aria-expanded={isOpen}
               >
-                <span className="font-display text-base font-bold text-neutral-900 sm:text-lg">
+                <span className="font-sans text-base font-bold text-neutral-900 sm:text-lg">
                   {f.q}
                 </span>
                 <ChevronDown

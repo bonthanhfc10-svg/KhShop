@@ -37,7 +37,7 @@ export default function CustomerDetails() {
         >
           <ArrowLeft size={16} /> Back to customers
         </Link>
-        <h1 className="font-display text-2xl font-bold text-neutral-900">Customer Profile</h1>
+        <h1 className="font-sans text-2xl font-bold text-neutral-900">Customer Profile</h1>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -46,7 +46,7 @@ export default function CustomerDetails() {
           <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 text-xl font-bold text-white">
             {initials}
           </span>
-          <h2 className="mt-3 font-display text-lg font-semibold text-neutral-900">{customer.name}</h2>
+          <h2 className="mt-3 font-sans text-lg font-semibold text-neutral-900">{customer.name}</h2>
           <p className="text-sm text-neutral-500">{customer.email}</p>
           <div className="mt-3 flex justify-center">
             <StatusBadge status={customer.status === 'active' ? 'Active' : 'Inactive'} />
@@ -73,20 +73,20 @@ export default function CustomerDetails() {
                 <ShoppingBag size={15} />
                 <span className="text-sm font-medium">Total Orders</span>
               </div>
-              <p className="mt-3 font-display text-2xl font-bold text-neutral-900">{customer.orders}</p>
+              <p className="mt-3 font-sans text-2xl font-bold text-neutral-900">{customer.orders}</p>
             </div>
             <div className="border border-neutral-200 bg-white p-5 shadow-sm">
               <div className="flex items-center gap-2 text-neutral-500">
                 <DollarSign size={15} />
                 <span className="text-sm font-medium">Total Spent</span>
               </div>
-              <p className="mt-3 font-display text-2xl font-bold text-neutral-900">{formatPrice(customer.totalSpent)}</p>
+              <p className="mt-3 font-sans text-2xl font-bold text-neutral-900">{formatPrice(customer.totalSpent)}</p>
             </div>
           </div>
 
           <div className="border border-neutral-200 bg-white shadow-sm">
             <div className="border-b border-neutral-100 px-5 py-4">
-              <h3 className="font-display text-base font-semibold text-neutral-900">Order History</h3>
+              <h3 className="font-sans text-base font-semibold text-neutral-900">Order History</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -125,7 +125,7 @@ export default function CustomerDetails() {
 
           <div className="border border-neutral-200 bg-white shadow-sm">
             <div className="border-b border-neutral-100 px-5 py-4">
-              <h3 className="font-display text-base font-semibold text-neutral-900">Shipping Addresses</h3>
+              <h3 className="font-sans text-base font-semibold text-neutral-900">Shipping Addresses</h3>
             </div>
             <div className="p-5">
               <p className="text-sm text-neutral-700">

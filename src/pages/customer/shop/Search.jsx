@@ -14,7 +14,7 @@ export default function Search() {
   const query = searchParams.get('q') || '';
   const [input, setInput] = useState(query);
   const debouncedInput = useDebounce(input, 400);
-  const { products: results } = useProducts(
+  const { products: results, loading } = useProducts(
     debouncedInput ? 'search' : 'list',
     { query: debouncedInput }
   );
@@ -66,7 +66,9 @@ export default function Search() {
         </div>
 
         <div className="mt-10">
-          {debouncedInput ? (
+          {loading && debouncedInput ? (
+            <p className="text-sm text-neutral-500">Searching...</p>
+          ) : debouncedInput ? (
             <>
               {results.length > 0 ? (
                 <>

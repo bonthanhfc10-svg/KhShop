@@ -24,7 +24,7 @@ export function useProducts() {
   }, [load]);
 
   const removeProduct = useCallback(async (id) => {
-    await productService.remove(id);
+    await productService.delete(id);
     setProducts((prev) => prev.filter((p) => p.id !== id));
   }, []);
 

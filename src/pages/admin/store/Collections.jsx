@@ -34,7 +34,7 @@ export default function Collections() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-neutral-900">Collections</h1>
+          <h1 className="font-sans text-2xl font-bold text-neutral-900">Collections</h1>
           <p className="mt-1 text-sm text-neutral-500">Featured collections shown on the storefront.</p>
         </div>
         <AdminButton><Plus size={16} /> Add Collection</AdminButton>
@@ -50,7 +50,7 @@ export default function Collections() {
             <div className="p-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="font-display text-lg font-semibold text-neutral-900">{c.name}</h3>
+                  <h3 className="font-sans text-lg font-semibold text-neutral-900">{c.name}</h3>
                   <p className="text-xs text-neutral-400">/{c.slug}</p>
                 </div>
                 <div className="flex gap-1">

@@ -34,7 +34,7 @@ export default function Customers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-neutral-900">Customers</h1>
+        <h1 className="font-sans text-2xl font-bold text-neutral-900">Customers</h1>
         <p className="mt-1 text-sm text-neutral-500">Manage your customer base · {filtered.length} customers</p>
       </div>
 

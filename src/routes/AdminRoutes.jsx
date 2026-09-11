@@ -35,11 +35,10 @@ export const AdminRoutes = () => {
       <Route path="/admin/login" element={<Load><AdminLogin /></Load>} />
 
       <Route
-        path="/admin"
-        element={
-          <AdminRoute>
+        path="/admin"element={
+          // <AdminRoute>
             <AdminLayout />
-          </AdminRoute>
+          // </AdminRoute>
         }
       >
         <Route index element={<Navigate to="/admin/dashboard" replace />} />

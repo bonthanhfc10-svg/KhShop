@@ -23,7 +23,7 @@ export const AdminAuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await authService.login({ email, password });
+      const data = await authService.login({ email, password });
       const user = data.data?.user || data.user || null;
 
       if (user?.role !== 'admin' && user?.role !== 'superAdmin') {
@@ -33,7 +33,7 @@ export const AdminAuthProvider = ({ children }) => {
       }
 
       storage.set('user', user);
-      storage.set('token', data.data?.token);
+      storage.set('token', data.data?.token || data.token);
       setAdmin(user);
       updateUser(user);
       return data;

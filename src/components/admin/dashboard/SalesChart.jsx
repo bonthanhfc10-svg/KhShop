@@ -79,7 +79,7 @@ export default function SalesChart() {
     >
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
-          <p className="font-display text-3xl font-bold text-neutral-900">
+          <p className="font-sans text-3xl font-bold text-neutral-900">
             ${total.toLocaleString()}
           </p>
           <p className="mt-1 text-base text-emerald-600">+12.5% vs previous period</p>

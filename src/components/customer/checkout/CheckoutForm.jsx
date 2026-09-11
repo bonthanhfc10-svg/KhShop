@@ -23,7 +23,7 @@ export default function CheckoutForm({ values, errors, onChange }) {
       </div>
 
       <div className="mt-8">
-        <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+        <h3 className="mb-4 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
           Shipping Address
         </h3>
         <ShippingForm values={values} errors={errors} onChange={setField} />

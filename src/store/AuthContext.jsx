@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }) => {
 
       const token = data.data.token || data.token || data.access_token;
       storage.set('token', token);
-
       storage.set('user', user);
       setUser(user);
       return user;

@@ -39,7 +39,7 @@ export default function Account() {
               <c.icon size={22} className="text-neutral-700" />
             </span>
             <div>
-              <p className="font-display text-3xl font-extrabold text-neutral-900">
+              <p className="font-sans text-3xl font-extrabold text-neutral-900">
                 {c.value}
               </p>
               <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">

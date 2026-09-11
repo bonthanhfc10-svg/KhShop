@@ -115,7 +115,7 @@ export default function OtpInput({ onSubmit, onResend, email }) {
               value={digit}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
-              className={`h-14 w-12 text-center text-xl font-display font-bold outline-none transition-all duration-200 border-b-2 ${
+              className={`h-14 w-12 text-center text-xl font-sans font-bold outline-none transition-all duration-200 border-b-2 ${
                 errors.otp
                   ? 'border-red-500 text-red-600 focus:border-red-500'
                   : digit

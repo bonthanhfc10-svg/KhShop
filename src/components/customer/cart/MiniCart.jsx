@@ -38,7 +38,7 @@ export default function MiniCart() {
         aria-label="Shopping bag"
       >
         <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-5">
-          <h2 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-widest text-neutral-900">
+          <h2 className="flex items-center gap-2 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
             <ShoppingBag size={18} />
             Your Bag
             {cart.length > 0 && (
@@ -140,7 +140,7 @@ function MiniCartItem({ item, onClose }) {
       <div className="flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="font-display text-sm font-bold text-neutral-900">
+            <p className="font-sans text-sm font-bold text-neutral-900">
               {item.name}
             </p>
             <p className="mt-0.5 text-xs text-neutral-500">

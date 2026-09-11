@@ -32,7 +32,7 @@ export default function Footer() {
         <div className="border-b border-neutral-800 py-14">
           <div className="grid items-center gap-8 lg:grid-cols-2">
             <div>
-              <h3 className="font-display text-2xl font-extrabold uppercase tracking-tight text-white sm:text-3xl">
+              <h3 className="font-sans text-2xl font-extrabold uppercase tracking-tight text-white sm:text-3xl">
                 Join The Movement
               </h3>
               <p className="mt-2 text-sm text-neutral-400">
