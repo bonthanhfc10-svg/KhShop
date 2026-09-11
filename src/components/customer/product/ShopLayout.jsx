@@ -4,7 +4,6 @@ import ProductGrid from './ProductGrid';
 import ProductSort from './ProductSort';
 import ProductFilter from './ProductFilter';
 import Pagination from '../../common/Pagination';
-import useShopFilters from '../../../hooks/useShopFilters';
 
 export default function ShopLayout({
   title,
@@ -12,42 +11,39 @@ export default function ShopLayout({
   products,
   loading,
   error,
-  fixedCategory = null,
-  itemsPerPage = 12,
-  hideHeader = false,
-  categoryOptions = null,
-  categoryFilter = null,
   filterData = null,
+  draftFilters,
+  draftSort,
+  appliedFilters,
+  page,
+  totalPages,
+  totalCount,
+  onFilterChange,
+  onSortChange,
+  onApplyFilters,
+  onResetFilters,
+  onPageChange,
 }) {
-  const {
-    facets,
-    filters,
-    sort,
-    page,
-    totalPages,
-    filteredCount,
-    paginated,
-    changeFilter,
-    resetFilters,
-    setSort,
-    setPage,
-  } = useShopFilters(products, { fixedCategory, categoryOptions, categoryFilter, itemsPerPage, apiFilterData: filterData });
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleApply = () => {
+    onApplyFilters();
+    setSidebarOpen(false);
+  };
 
   const filterPanel = (
     <ProductFilter
-      facets={facets}
-      filters={filters}
-      onChange={changeFilter}
-      onReset={resetFilters}
-      onApply={() => setSidebarOpen(false)}
+      facets={filterData}
+      filters={draftFilters}
+      onChange={onFilterChange}
+      onReset={onResetFilters}
+      onApply={handleApply}
     />
   );
 
   return (
     <main>
-      {!hideHeader && (
+      {title && (
         <div className="border-b border-neutral-200 bg-neutral-50">
           <div className="container-kh py-12 sm:py-16">
             <p className="eyebrow">KhShop</p>
@@ -63,7 +59,7 @@ export default function ShopLayout({
 
       <div className="container-kh py-8 sm:py-10">
         <div className="mb-5 flex items-center justify-between gap-4">
-          <ProductSort value={sort} onChange={setSort} count={filteredCount} />
+          <ProductSort value={draftSort} options={filterData?.sort} onChange={onSortChange} count={totalCount} />
           <button
             onClick={() => setSidebarOpen(true)}
             className="flex items-center gap-2 border border-neutral-300 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-neutral-900 transition-all hover:border-black"
@@ -84,9 +80,9 @@ export default function ShopLayout({
             <ProductGrid loading products={[]} />
           ) : (
             <>
-              <ProductGrid products={paginated} cols={4} />
-              {filteredCount > 0 && (
-                <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+              <ProductGrid products={products} cols={4} />
+              {totalCount > 0 && (
+                <Pagination page={page} totalPages={totalPages} onChange={onPageChange} />
               )}
             </>
           )}

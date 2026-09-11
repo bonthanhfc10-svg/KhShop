@@ -74,19 +74,23 @@ function Facet({
       ? onToggle()
       : setLocalOpen((o) => !o);
 
-  const isChecked = (opt) =>
-    Array.isArray(value) ? value.includes(opt) : value === opt;
+  const getKey = (opt) => (opt != null && typeof opt === 'object' && opt.id != null ? opt.id : opt);
+  const isChecked = (opt) => {
+    const key = getKey(opt);
+    return Array.isArray(value) ? value.includes(key) : value === key;
+  };
 
   const toggle = (opt) => {
     if (type === 'radio') {
       onChange(value === opt ? null : opt);
       return;
     }
+    const key = getKey(opt);
     const arr = Array.isArray(value) ? [...value] : [];
     onChange(
-      arr.includes(opt)
-        ? arr.filter((v) => v !== opt)
-        : [...arr, opt]
+      arr.includes(key)
+        ? arr.filter((v) => v !== key)
+        : [...arr, key]
     );
   };
 
@@ -127,15 +131,15 @@ function Facet({
           {type === 'color' ? (
             <div className="flex flex-wrap gap-2">
               {options.map((opt) => {
-                const selected = isChecked(opt.name);
+                const selected = isChecked(opt);
                 return (
                   <button
-                    key={opt.name}
+                    key={opt.id ?? opt.name}
                     onClick={() => toggle(opt)}
                     aria-label={opt.name}
                     title={opt.name}
                     className={`h-8 w-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                      selected ? 'border-black' : 'border-neutral-300'
+                      selected ? 'border-black ring-2 ring-black ring-offset-1' : 'border-neutral-300'
                     }`}
                     style={{ backgroundColor: opt.hex }}
                   />
@@ -143,17 +147,21 @@ function Facet({
               })}
             </div>
           ) : (
-            options.map((opt) => (
-              <label key={opt} className="flex cursor-pointer items-center gap-3">
-                <input
-                  type={type === 'radio' ? 'radio' : 'checkbox'}
-                  checked={isChecked(opt)}
-                  onChange={() => toggle(opt)}
-                  className="h-4 w-4 accent-black"
-                />
-                <span className="text-sm text-neutral-700">{opt}</span>
-              </label>
-            ))
+            options.map((opt) => {
+              const label = typeof opt === 'object' ? opt.name : opt;
+              const key = typeof opt === 'object' ? (opt.id ?? opt.name) : opt;
+              return (
+                <label key={key} className="flex cursor-pointer items-center gap-3">
+                  <input
+                    type={type === 'radio' ? 'radio' : 'checkbox'}
+                    checked={isChecked(opt)}
+                    onChange={() => toggle(opt)}
+                    className="h-4 w-4 accent-black"
+                  />
+                  <span className="text-sm text-neutral-700">{label}</span>
+                </label>
+              );
+            })
           )}
         </div>
       )}
@@ -185,10 +193,9 @@ function PriceFacet({
   }, [value, min, max]);
 
   const apply = () => {
-    onChange({
-      min: Math.min(localMin, localMax),
-      max: Math.max(localMin, localMax),
-    });
+    const normalizedMin = Math.min(localMin, localMax);
+    const normalizedMax = Math.max(localMin, localMax);
+    onChange({ min: normalizedMin, max: normalizedMax });
   };
 
   return (
@@ -229,6 +236,7 @@ function PriceFacet({
               type="number"
               value={localMin}
               onChange={(e) => setLocalMin(Number(e.target.value))}
+              onBlur={apply}
               className="input-kh px-3 py-2"
               aria-label="Minimum price"
             />
@@ -237,13 +245,11 @@ function PriceFacet({
               type="number"
               value={localMax}
               onChange={(e) => setLocalMax(Number(e.target.value))}
+              onBlur={apply}
               className="input-kh px-3 py-2"
               aria-label="Maximum price"
             />
           </div>
-          <button onClick={apply} className="btn-secondary w-full px-4 py-2 text-[11px]">
-            Apply
-          </button>
           <p className="text-xs text-neutral-500">
             {formatPrice(value?.min ?? min)} – {formatPrice(value?.max ?? max)}
           </p>

@@ -9,17 +9,17 @@ import { menuService } from '../services/menuService';
 import { MenuProvider } from '../store/MenuContext';
 
 export default function CustomerLayout() {
-  const [menuData, setMenuData] = useState({ navigation: [], rawMenus: [] });
+  const [menuData, setMenuData] = useState({ navigation: [], rawMenus: [], menuLoading: true });
 
   useEffect(() => {
     let active = true;
     menuService
       .getMenu()
       .then((data) => {
-        if (active) setMenuData(data);
+        if (active) setMenuData({ ...data, menuLoading: false });
       })
       .catch(() => {
-        if (active) setMenuData({ navigation: [], rawMenus: [] });
+        if (active) setMenuData({ navigation: [], rawMenus: [], menuLoading: false });
       });
     return () => {
       active = false;

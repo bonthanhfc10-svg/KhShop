@@ -1,4 +1,5 @@
 import api from './api';
+import { colorCodeToHex } from '../utils/colorMap';
 
 const PLACEHOLDER = '/images/placeholder.svg';
 
@@ -12,7 +13,7 @@ function mapApiProductList(raw) {
 
   const colorMap = new Map();
   for (const v of raw.variants || []) {
-    if (v.color) colorMap.set(v.color.id, { name: v.color.name, hex: v.color.hex });
+    if (v.color) colorMap.set(v.color.id, { name: v.color.name, hex: colorCodeToHex(v.color.code) });
   }
 
   const sizeMap = new Map();
@@ -43,23 +44,30 @@ function mapApiProductList(raw) {
 function mapApiFilterData(filter) {
   if (!filter) return null;
   return {
-    sizes: (filter.sizes || []).map((s) => s.name).sort(),
+    sizes: (filter.sizes || []).map((s) => ({ id: s.id, name: s.name })).sort((a, b) => a.name.localeCompare(b.name)),
     colors: (filter.colors || [])
-      .map((c) => ({ name: c.name, hex: c.code }))
+      .map((c) => ({ id: c.id, name: c.name, code: c.code, hex: colorCodeToHex(c.code) }))
       .sort((a, b) => a.name.localeCompare(b.name)),
-    brands: (filter.brands || []).map((b) => b.name).sort(),
+    brands: (filter.brands || []).map((b) => ({ id: b.id, name: b.name, slug: b.slug })).sort((a, b) => a.name.localeCompare(b.name)),
     price: {
       min: Number(filter.minPrice) || 0,
       max: Number(filter.maxPrice) || 200,
     },
+    sort: (filter.sort || []).map((s) => ({ id: s.id, name: s.name, slug: s.slug })),
   };
 }
 
 export const productService = {
   async getProducts(params = {}) {
     const { data } = await api.post('/v1/product/list', params);
-    const products = data?.data?.products || [];
-    return products.map(mapApiProductList);
+    const raw = data?.data || {};
+    const products = (raw.products || []).map(mapApiProductList);
+    return {
+      products,
+      page: raw.currentPage || 1,
+      totalPages: raw.totalPages || 1,
+      totalCount: raw.totalCount || products.length,
+    };
   },
 
   async getProduct(slug) {
@@ -68,7 +76,7 @@ export const productService = {
   },
 
   async getFilters(params = {}) {
-    const { data } = await api.get('/v1/product/filter', { data: params });
+    const { data } = await api.post('/v1/product/filter', params);
     const filter = data?.data?.filter || null;
     return mapApiFilterData(filter);
   },

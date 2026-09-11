@@ -3,10 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
 import CategoryBanner from '../../../components/customer/shop/CategoryBanner';
+import Loading from '../../../components/common/Loading';
 import NotFound from '../error/NotFound';
 import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import { useMenus } from '../../../store/MenuContext';
 import { findMenuBySlug, findCategoryBySlug } from '../../../services/menuService';
+import useShopFilters from '../../../hooks/useShopFilters';
 
 function buildDescription(groupName, categoryName) {
   if (!categoryName)
@@ -23,12 +25,29 @@ function buildBreadcrumb(group, category) {
 
 export default function MenuCategory() {
   const { menuSlug, categorySlug } = useParams();
-  const { rawMenus } = useMenus();
+  const { rawMenus, menuLoading } = useMenus();
 
   const rawMenu = findMenuBySlug(rawMenus, menuSlug);
   const rawCategory = categorySlug
     ? findCategoryBySlug(rawMenus, menuSlug, categorySlug)
     : null;
+
+  const {
+    draftFilters,
+    draftSort,
+    appliedFilters,
+    appliedSort,
+    page,
+    changeDraftFilter,
+    changeDraftSort,
+    applyFilters,
+    resetFilters,
+    setPage,
+    buildRequestParams,
+  } = useShopFilters({
+    menuSlug: rawMenu?.slug || null,
+    categorySlug: rawCategory?.slug || null,
+  });
 
   const group = rawMenu
     ? {
@@ -49,19 +68,14 @@ export default function MenuCategory() {
       }
     : null;
 
-  const productParams = useMemo(() => {
-    const params = {};
-    if (rawMenu) params.menuSlug = rawMenu.slug;
-    if (rawCategory) params.selectedCategories = [rawCategory.slug];
-    return params;
-  }, [rawMenu, rawCategory]);
+  const productParams = useMemo(() => buildRequestParams(), [buildRequestParams]);
 
-  const { products, loading, error } = useProducts('list', productParams);
+  const { products, loading, error, totalPages, totalCount } = useProducts('list', productParams);
 
   const filterParams = useMemo(() => {
     const params = {};
     if (rawMenu) params.menuSlug = rawMenu.slug;
-    if (rawCategory) params.selectedCategories = [rawCategory.slug];
+    if (rawCategory) params.categorySlug = rawCategory.slug;
     return params;
   }, [rawMenu, rawCategory]);
 
@@ -72,6 +86,7 @@ export default function MenuCategory() {
     [group, category]
   );
 
+  if (menuLoading) return <main className="container-kh"><Loading full /></main>;
   if (!group) return <NotFound />;
 
   const bannerImage =
@@ -79,8 +94,6 @@ export default function MenuCategory() {
 
   const showGroupBanner = !category;
   const showSubcategories = showGroupBanner && group.categories.length > 0;
-
-  const categoryOptions = group.categories.map((c) => c.name);
 
   const subcategories = group.categories.map((cat) => {
     const rawChild = (rawMenu?.children || []).find(
@@ -165,10 +178,18 @@ export default function MenuCategory() {
           products={products}
           loading={loading}
           error={error}
-          itemsPerPage={12}
-          hideHeader
-          categoryOptions={categoryOptions}
           filterData={filterData}
+          draftFilters={draftFilters}
+          draftSort={draftSort}
+          appliedFilters={appliedFilters}
+          page={page}
+          totalPages={totalPages}
+          totalCount={totalCount}
+          onFilterChange={changeDraftFilter}
+          onSortChange={changeDraftSort}
+          onApplyFilters={applyFilters}
+          onResetFilters={resetFilters}
+          onPageChange={setPage}
         />
       )}
 
@@ -179,9 +200,18 @@ export default function MenuCategory() {
           products={products}
           loading={loading}
           error={error}
-          itemsPerPage={12}
-          hideHeader={false}
           filterData={filterData}
+          draftFilters={draftFilters}
+          draftSort={draftSort}
+          appliedFilters={appliedFilters}
+          page={page}
+          totalPages={totalPages}
+          totalCount={totalCount}
+          onFilterChange={changeDraftFilter}
+          onSortChange={changeDraftSort}
+          onApplyFilters={applyFilters}
+          onResetFilters={resetFilters}
+          onPageChange={setPage}
         />
       )}
     </main>

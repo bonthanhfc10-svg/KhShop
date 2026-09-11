@@ -5,6 +5,7 @@ import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import { useMenus } from '../../../store/MenuContext';
 import { getCategoryBySlug } from '../../../data/categories';
 import NotFound from '../error/NotFound';
+import useShopFilters from '../../../hooks/useShopFilters';
 
 export default function Category() {
   const { slug } = useParams();
@@ -21,19 +22,31 @@ export default function Category() {
     return menu?.slug || null;
   }, [category, rawMenus]);
 
-  const productParams = useMemo(() => {
-    const params = {};
-    if (menuSlug) params.menuSlug = menuSlug;
-    if (category?.slug) params.selectedCategories = [category.slug];
-    return params;
-  }, [menuSlug, category]);
+  const {
+    draftFilters,
+    draftSort,
+    appliedFilters,
+    appliedSort,
+    page,
+    changeDraftFilter,
+    changeDraftSort,
+    applyFilters,
+    resetFilters,
+    setPage,
+    buildRequestParams,
+  } = useShopFilters({
+    menuSlug,
+    categorySlug: category?.slug || null,
+  });
 
-  const { products, loading, error } = useProducts('list', productParams);
+  const productParams = useMemo(() => buildRequestParams(), [buildRequestParams]);
+
+  const { products, loading, error, totalPages, totalCount } = useProducts('list', productParams);
 
   const filterParams = useMemo(() => {
     const params = {};
     if (menuSlug) params.menuSlug = menuSlug;
-    if (category?.slug) params.selectedCategories = [category.slug];
+    if (category?.slug) params.categorySlug = category.slug;
     return params;
   }, [menuSlug, category]);
 
@@ -50,9 +63,18 @@ export default function Category() {
       products={products}
       loading={loading}
       error={error}
-      fixedCategory={category.slug}
-      itemsPerPage={9}
       filterData={filterData}
+      draftFilters={draftFilters}
+      draftSort={draftSort}
+      appliedFilters={appliedFilters}
+      page={page}
+      totalPages={totalPages}
+      totalCount={totalCount}
+      onFilterChange={changeDraftFilter}
+      onSortChange={changeDraftSort}
+      onApplyFilters={applyFilters}
+      onResetFilters={resetFilters}
+      onPageChange={setPage}
     />
   );
 }

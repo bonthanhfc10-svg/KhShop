@@ -5,6 +5,9 @@ export function useProducts(source, params = {}) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -13,22 +16,27 @@ export function useProducts(source, params = {}) {
 
     const load = async () => {
       try {
-        let result = [];
         if (source === 'new') {
-          result = await productService.getNewArrivals();
+          const result = await productService.getNewArrivals();
+          if (active) setProducts(result);
         } else if (source === 'search') {
-          result = await productService.search(params.query || '');
+          const result = await productService.search(params.query || '');
+          if (active) setProducts(result);
         } else if (source === 'related') {
-          result = await productService.getRelated(
+          const result = await productService.getRelated(
             params.product?.slug,
             params.categorySlug
           );
-        } else if (source === 'filtered') {
-          result = await productService.getProducts(params);
+          if (active) setProducts(result);
         } else {
-          result = await productService.getProducts(params);
+          const result = await productService.getProducts(params);
+          if (active) {
+            setProducts(result.products);
+            setPage(result.page);
+            setTotalPages(result.totalPages);
+            setTotalCount(result.totalCount);
+          }
         }
-        if (active) setProducts(result);
       } catch (err) {
         if (active) setError(err.message || 'Failed to load products.');
       } finally {
@@ -43,7 +51,7 @@ export function useProducts(source, params = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source, JSON.stringify(params)]);
 
-  return { products, loading, error };
+  return { products, loading, error, page, totalPages, totalCount };
 }
 
 export function useProduct(slug) {

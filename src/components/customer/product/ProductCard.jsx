@@ -10,12 +10,12 @@ export default function ProductCard({ product }) {
   const wished = isInWishlist(product.id);
 
   return (
-    <div className="group relative block">
+    <div className="group relative block rounded-lg bg-white p-4 shadow-md">
       <div className="card-image aspect-[4/5]">
         <img
           src={product.images[0]}
           alt={product.name}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 m-auto h-[85%] w-[85%] object-contain"
           loading="lazy"
         />
 
