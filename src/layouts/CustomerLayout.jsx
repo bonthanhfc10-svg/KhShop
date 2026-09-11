@@ -6,19 +6,20 @@ import Header from '../components/customer/layout/Header';
 import Footer from '../components/customer/layout/Footer';
 import MiniCart from '../components/customer/cart/MiniCart';
 import { menuService } from '../services/menuService';
+import { MenuProvider } from '../store/MenuContext';
 
 export default function CustomerLayout() {
-  const [navigation, setNavigation] = useState([]);
+  const [menuData, setMenuData] = useState({ navigation: [], rawMenus: [] });
 
   useEffect(() => {
     let active = true;
     menuService
       .getMenu()
-      .then((nav) => {
-        if (active) setNavigation(nav);
+      .then((data) => {
+        if (active) setMenuData(data);
       })
       .catch(() => {
-        if (active) setNavigation([]);
+        if (active) setMenuData({ navigation: [], rawMenus: [] });
       });
     return () => {
       active = false;
@@ -26,15 +27,15 @@ export default function CustomerLayout() {
   }, []);
 
   return (
-    <>
+    <MenuProvider value={menuData}>
       <ScrollToTop />
       <AnnouncementBar />
-      <Header navigation={navigation} />
+      <Header navigation={menuData.navigation} />
       <main>
         <Outlet />
       </main>
       <Footer />
       <MiniCart />
-    </>
+    </MenuProvider>
   );
 }

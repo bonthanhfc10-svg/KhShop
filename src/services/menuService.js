@@ -25,12 +25,35 @@ function buildCategoryPath(parentSlug, childSlug) {
   return `/shop/${parentSlug}/${mapped}`;
 }
 
+const SALE_FALLBACK_CATEGORIES = [
+  { name: 'Women', path: '/shop/sale/women' },
+  { name: 'Men', path: '/shop/sale/men' },
+  { name: 'Boy Kids', path: '/shop/sale/boy-kids' },
+  { name: 'Girl Kids', path: '/shop/sale/girl-kids' },
+  { name: 'Men Sport', path: '/shop/sale/men-sport' },
+  { name: 'Women Sport', path: '/shop/sale/women-sport' },
+];
+
+export function findMenuBySlug(menus, slug) {
+  return menus.find((m) => m.slug === slug) || null;
+}
+
+export function findCategoryBySlug(menus, groupSlug, categorySlug) {
+  const menu = findMenuBySlug(menus, groupSlug);
+  if (!menu) return null;
+  const child = (menu.children || []).find((c) => c.slug === categorySlug);
+  if (!child) {
+    return { name: categorySlug, slug: categorySlug };
+  }
+  return { name: child.name, slug: child.slug, image_path: child.image_path || null };
+}
+
 export const menuService = {
   async getMenu() {
     const { data } = await api.get('/v1/category/menu');
-    const menus = data?.data?.menus || [];
+    const rawMenus = data?.data?.menus || [];
 
-    const apiNav = menus.map((menu) => ({
+    const apiNav = rawMenus.map((menu) => ({
       name: menu.name,
       slug: menu.slug,
       path: `/shop/${menu.slug}`,
@@ -49,18 +72,17 @@ export const menuService = {
         path: '/shop/sale',
         featureTitle: 'Shop Sale',
         isSale: true,
-        categories: [
-          { name: 'Women', path: '/shop/sale/women' },
-          { name: 'Men', path: '/shop/sale/men' },
-          { name: 'Boy Kids', path: '/shop/sale/boy-kids' },
-          { name: 'Girl Kids', path: '/shop/sale/girl-kids' },
-          { name: 'Men Sport', path: '/shop/sale/men-sport' },
-          { name: 'Women Sport', path: '/shop/sale/women-sport' },
-        ],
+        categories: SALE_FALLBACK_CATEGORIES.map((c) => ({ ...c })),
+      });
+      rawMenus.push({
+        name: 'Sale',
+        slug: 'sale',
+        banner: null,
+        children: [],
       });
     }
 
-    return apiNav;
+    return { navigation: apiNav, rawMenus };
   },
 };
 
