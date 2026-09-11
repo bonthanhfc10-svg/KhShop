@@ -71,8 +71,44 @@ export const productService = {
   },
 
   async getProduct(slug) {
-    const { products } = await import('../data/products');
-    return products.find((p) => p.slug === slug) || null;
+    try {
+      const { data } = await api.get(`/v1/product/${slug}`);
+      const raw = data;
+      if (!raw) return null;
+
+      const colors = (raw.colors || []).map((c) => ({
+        id: c.id,
+        name: c.name,
+        hex: c.hex || null,
+        image: c.images?.[0]?.image_path || PLACEHOLDER,
+        images: (c.images || []).map((img) => img.image_path),
+        sizes: (c.sizes || []).map((s) => ({
+          id: s.id,
+          name: s.name,
+          stock: s.stock ?? 0,
+        })),
+      }));
+
+      const stock = colors.reduce(
+        (sum, c) => sum + c.sizes.reduce((s, sz) => s + sz.stock, 0),
+        0
+      );
+
+      return {
+        id: raw.id,
+        name: raw.name,
+        slug: raw.slug,
+        description: raw.description || null,
+        price: Number(raw.price) || 0,
+        oldPrice: raw.sale_price != null ? Number(raw.sale_price) : null,
+        colors,
+        stock,
+        reviews: 0,
+      };
+    } catch (err) {
+      if (err?.response?.status === 404) return null;
+      throw err;
+    }
   },
 
   async getFilters(params = {}) {

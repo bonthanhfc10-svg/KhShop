@@ -1,18 +1,17 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Heart, Minus, Plus, ShoppingBag, Zap, Check } from 'lucide-react';
+import { Heart, Minus, Plus, ShoppingBag, Check } from 'lucide-react';
 import { formatPrice } from '../../../utils/formatPrice';
 import { ColorSelector } from './ColorSelector';
 import { useCart } from '../../../store/CartContext';
 import { useWishlist } from '../../../store/WishlistContext';
 
 export default function ProductDetails({ product, selectedColor, onColorChange }) {
-  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
   const sizeOptions = product.sizes?.map((s) => s.name || s) || [];
-  const [selectedSize, setSelectedSize] = useState(sizeOptions[0] || null);
+  const hasSizes = sizeOptions.length > 0;
+  const [selectedSize, setSelectedSize] = useState(hasSizes ? sizeOptions[0] : null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const wished = isInWishlist(product.id);
@@ -22,7 +21,7 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
   const selectedColorImage = selectedColor?.image || product.images?.[0];
 
   const handleAddToCart = () => {
-    if (!selectedSize || !selectedColorName) return;
+    if ((hasSizes && !selectedSize) || !selectedColorName) return;
     addToCart(product, {
       size: selectedSize,
       color: selectedColorName,
@@ -31,17 +30,6 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 1400);
-  };
-
-  const handleBuyNow = () => {
-    if (!selectedSize || !selectedColorName) return;
-    addToCart(product, {
-      size: selectedSize,
-      color: selectedColorName,
-      colorImage: selectedColorImage,
-      quantity,
-    });
-    navigate('/checkout');
   };
 
   return (
@@ -89,21 +77,25 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
               Size
             </span>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {sizeOptions.map((s) => (
-              <button
-                key={s}
-                onClick={() => setSelectedSize(s)}
-                className={`min-w-12 border px-4 py-2.5 text-sm font-medium transition-colors ${
-                  selectedSize === s
-                    ? 'border-black bg-black text-white'
-                    : 'border-neutral-300 text-neutral-700 hover:border-black'
-                }`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
+          {hasSizes ? (
+            <div className="flex flex-wrap gap-2">
+              {sizeOptions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSelectedSize(s)}
+                  className={`min-w-12 border px-4 py-2.5 text-sm font-medium transition-colors ${
+                    selectedSize === s
+                      ? 'border-black bg-black text-white'
+                      : 'border-neutral-300 text-neutral-700 hover:border-black'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <span className="text-sm text-neutral-500">No Size</span>
+          )}
         </div>
 
         {/* Quantity */}
@@ -139,7 +131,7 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={handleAddToCart}
-            disabled={!selectedSize || !selectedColorName}
+            disabled={(hasSizes && !selectedSize) || !selectedColorName}
             className="btn-primary flex-1 py-5"
           >
             {added ? (
@@ -151,13 +143,6 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
                 <ShoppingBag size={18} /> Add to Cart
               </>
             )}
-          </button>
-          <button
-            onClick={handleBuyNow}
-            disabled={!selectedSize || !selectedColorName}
-            className="btn-secondary flex-1 py-5"
-          >
-            <Zap size={18} /> Buy Now
           </button>
           <button
             onClick={() => toggleWishlist(product)}

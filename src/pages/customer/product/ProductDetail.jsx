@@ -24,7 +24,15 @@ export default function ProductDetail() {
 
   const selectedColor =
     product?.colors?.find((c) => c.id === selectedColorId) || defaultColor || null;
-  const galleryImages = selectedColor?.images || product?.images || [];
+  const galleryImages = selectedColor?.images || [];
+
+  const productForDetails = product
+    ? {
+        ...product,
+        sizes: selectedColor?.sizes || [],
+        stock: selectedColor?.sizes?.reduce((sum, s) => sum + s.stock, 0) || 0,
+      }
+    : null;
 
   const handleColorChange = (color) => setSelectedColorId(color.id);
 
@@ -63,7 +71,7 @@ export default function ProductDetail() {
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
           <ProductGallery images={galleryImages} name={product.name} />
           <ProductDetails
-            product={product}
+            product={productForDetails}
             selectedColor={selectedColor}
             onColorChange={handleColorChange}
           />

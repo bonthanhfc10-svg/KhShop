@@ -33,13 +33,13 @@ export default function ProductGallery({ images, name }) {
       </div>
 
       {/* main image */}
-      <div className="relative flex-1 overflow-hidden bg-neutral-100">
-        <div className="group cursor-zoom-in overflow-hidden">
+      <div className="relative flex-1 overflow-hidden bg-white">
+        <div className="group cursor-zoom-in flex h-full items-center justify-center p-6">
           <img
             key={activeIndex}
             src={images[activeIndex] || images[0]}
             alt={name}
-            className="aspect-[3/4] w-full animate-fade-in object-cover transition-transform duration-700 group-hover:scale-110"
+            className="max-h-[500px] w-full animate-fade-in object-contain transition-transform duration-700 group-hover:scale-105"
           />
         </div>
       </div>
