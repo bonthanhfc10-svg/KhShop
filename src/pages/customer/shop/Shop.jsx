@@ -42,6 +42,7 @@ export default function Shop() {
       onApplyFilters={applyFilters}
       onResetFilters={resetFilters}
       onPageChange={setPage}
+      breadcrumbContext={[]}
     />
   );
 }

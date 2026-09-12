@@ -1,12 +1,27 @@
-﻿import { ShoppingBag } from 'lucide-react';
+﻿import { useEffect } from 'react';
+import { ShoppingBag } from 'lucide-react';
 import { useCart } from '../../../store/CartContext';
 import CartList from '../../../components/customer/cart/CartList';
 import CartSummary from '../../../components/customer/cart/CartSummary';
 import EmptyState from '../../../components/common/EmptyState';
 import Button from '../../../components/common/Button';
+import Loading from '../../../components/common/Loading';
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { cart, removeFromCart, updateQuantity, cartTotal, fetchAuthCart, loading } = useCart();
+
+  useEffect(() => {
+    fetchAuthCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (loading && cart.length === 0) {
+    return (
+      <main className="container-kh py-4">
+        <Loading full />
+      </main>
+    );
+  }
 
   if (cart.length === 0) {
     return (

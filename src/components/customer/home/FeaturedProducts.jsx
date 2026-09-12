@@ -12,7 +12,7 @@ export default function FeaturedProducts({ products, loading }) {
           eyebrow="Most loved"
           title="Featured Products"
         />
-        {loading ? <Loading /> : <ProductGrid products={featured} cols={4} />}
+        {loading ? <Loading /> : <ProductGrid products={featured} cols={4} breadcrumbContext={[]} />}
       </div>
     </section>
   );

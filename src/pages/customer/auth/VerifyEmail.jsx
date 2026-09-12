@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../store/AuthContext';
 import { authService } from '../../../services/authService';
-import { storage } from '../../../utils/storage';
 import AuthLayout from '../../../components/common/AuthLayout';
 import OtpInput from '../../../components/common/OtpInput';
 import { ShieldCheck, Mail } from 'lucide-react';
 
 export default function VerifyEmail() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, setUserAuth } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') || '';
@@ -18,9 +17,8 @@ export default function VerifyEmail() {
     const response = await authService.verifyEmail({ email, otp });
     const token = response?.data?.token;
     const user = response?.data?.user;
-    if (token) {
-      storage.set('token', token);
-      storage.set('user', user);
+    if (token && user) {
+      setUserAuth(user, token);
     }
     setSuccess(true);
     setTimeout(() => {

@@ -4,7 +4,7 @@ import { formatPrice } from '../../../utils/formatPrice';
 import { colorCountText } from '../../../utils/colorCount';
 import { useWishlist } from '../../../store/WishlistContext';
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, breadcrumbContext }) {
   const navigate = useNavigate();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const wished = isInWishlist(product.id);
@@ -45,7 +45,7 @@ export default function ProductCard({ product }) {
         {/* view button */}
         <div className="pointer-events-none absolute inset-x-3 bottom-3 translate-y-14 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
           <button
-            onClick={() => navigate(`/product/${product.slug}`)}
+            onClick={() => navigate(`/product/${product.slug}`, { state: { breadcrumbContext } })}
             className="flex w-full items-center justify-center gap-2 bg-black py-3 text-[11px] font-bold uppercase tracking-widest text-white transition-colors hover:bg-neutral-800"
           >
             View

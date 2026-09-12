@@ -8,7 +8,7 @@ export default function NewArrivals({ products }) {
         eyebrow="Just dropped"
         title="New Arrivals"
       />
-      <ProductGrid products={products} cols={4} />
+      <ProductGrid products={products} cols={4} breadcrumbContext={[]} />
     </section>
   );
 }

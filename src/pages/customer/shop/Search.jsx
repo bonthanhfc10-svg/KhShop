@@ -77,7 +77,7 @@ export default function Search() {
                     <span className="font-bold text-neutral-900">"{debouncedInput}"</span>{' '}
                     ({results.length} {results.length === 1 ? 'result' : 'results'})
                   </p>
-                  <ProductGrid products={results} cols={4} />
+                  <ProductGrid products={results} cols={4} breadcrumbContext={[]} />
                 </>
               ) : (
                 <EmptyState

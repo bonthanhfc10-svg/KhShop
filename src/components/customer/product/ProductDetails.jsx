@@ -22,7 +22,9 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
 
   const handleAddToCart = () => {
     if ((hasSizes && !selectedSize) || !selectedColorName) return;
+    const selectedSizeObj = selectedColor?.sizes?.find((s) => s.name === selectedSize);
     addToCart(product, {
+      variant_id: selectedSizeObj?.variant_id || null,
       size: selectedSize,
       color: selectedColorName,
       colorImage: selectedColorImage,

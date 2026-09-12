@@ -3,7 +3,7 @@ import Loading from '../../common/Loading';
 import EmptyState from '../../common/EmptyState';
 import { PackageSearch } from 'lucide-react';
 
-export default function ProductGrid({ products, loading = false, cols = 4 }) {
+export default function ProductGrid({ products, loading = false, cols = 4, breadcrumbContext }) {
   if (loading) return <Loading />;
 
   if (!products || products.length === 0) {
@@ -28,7 +28,7 @@ export default function ProductGrid({ products, loading = false, cols = 4 }) {
   return (
     <div className={`grid gap-x-4 gap-y-10 sm:gap-x-6 ${colsMap[cols] || colsMap[4]}`}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} breadcrumbContext={breadcrumbContext} />
       ))}
     </div>
   );

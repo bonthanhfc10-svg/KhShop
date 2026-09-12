@@ -56,6 +56,7 @@ export default function MenuCategory() {
         path: `/products/${rawMenu.slug}`,
         categories: (rawMenu.children || []).map((child) => ({
           name: child.name,
+          slug: child.slug,
           path: `/products/${rawMenu.slug}/${child.slug}`,
         })),
       }
@@ -64,9 +65,22 @@ export default function MenuCategory() {
   const category = rawCategory
     ? {
         name: rawCategory.name,
+        slug: rawCategory.slug,
         path: `/products/${menuSlug}/${rawCategory.slug}`,
       }
     : null;
+
+  // Build breadcrumb context for product cards
+  const breadcrumbContext = useMemo(() => {
+    const context = [];
+    if (group) {
+      context.push({ label: group.name, path: group.path });
+    }
+    if (category) {
+      context.push({ label: category.name, path: category.path });
+    }
+    return context.length > 0 ? context : null;
+  }, [group, category]);
 
   const productParams = useMemo(() => buildRequestParams(), [buildRequestParams]);
 
@@ -190,6 +204,7 @@ export default function MenuCategory() {
           onApplyFilters={applyFilters}
           onResetFilters={resetFilters}
           onPageChange={setPage}
+          breadcrumbContext={breadcrumbContext}
         />
       )}
 
@@ -212,6 +227,7 @@ export default function MenuCategory() {
           onApplyFilters={applyFilters}
           onResetFilters={resetFilters}
           onPageChange={setPage}
+          breadcrumbContext={breadcrumbContext}
         />
       )}
     </main>

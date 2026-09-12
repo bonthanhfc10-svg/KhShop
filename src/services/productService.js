@@ -84,6 +84,7 @@ export const productService = {
         images: (c.images || []).map((img) => img.image_path),
         sizes: (c.sizes || []).map((s) => ({
           id: s.id,
+          variant_id: s.variant_id,
           name: s.name,
           stock: s.stock ?? 0,
         })),

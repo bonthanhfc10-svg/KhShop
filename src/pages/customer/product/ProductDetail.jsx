@@ -1,18 +1,19 @@
 ﻿import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { useParams, useLocation } from 'react-router-dom';
 import { useProduct } from '../../../hooks/useProducts';
 import Loading from '../../../components/common/Loading';
 import NotFound from '../error/NotFound';
+import DetailBreadcrumb from '../../../components/common/DetailBreadcrumb';
 import ProductGallery from '../../../components/customer/product/ProductGallery';
 import ProductDetails from '../../../components/customer/product/ProductDetails';
 import ProductReviews from '../../../components/customer/product/ProductReviews';
 import RelatedProducts from '../../../components/customer/product/RelatedProducts';
-import { Link } from 'react-router-dom';
 
 export default function ProductDetail() {
   const { id: slug } = useParams();
+  const location = useLocation();
   const { product, loading, error } = useProduct(slug);
+  const breadcrumbContext = location.state?.breadcrumbContext || [];
   const [reviews, setReviews] = useState([]);
 
   const defaultColor = product?.colors?.[0];
@@ -60,13 +61,7 @@ export default function ProductDetail() {
   return (
     <main>
       <div className="container-kh pt-8">
-        <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-neutral-500" aria-label="Breadcrumb">
-          <Link to="/" className="hover:text-black">Home</Link>
-          <ChevronRight size={12} />
-          <Link to="/products" className="hover:text-black">Shop</Link>
-          <ChevronRight size={12} />
-          <span className="text-neutral-900">{product.name}</span>
-        </nav>
+        <DetailBreadcrumb context={breadcrumbContext} current={product.name} />
 
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
           <ProductGallery images={galleryImages} name={product.name} />
@@ -83,7 +78,7 @@ export default function ProductDetail() {
         <ProductReviews product={product} reviews={reviews} />
       </section>
 
-      <RelatedProducts product={product} categorySlug={product.categorySlug} />
+      <RelatedProducts product={product} categorySlug={product.categorySlug} breadcrumbContext={breadcrumbContext} />
     </main>
   );
 }

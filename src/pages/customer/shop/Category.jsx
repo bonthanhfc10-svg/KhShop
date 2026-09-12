@@ -22,6 +22,15 @@ export default function Category() {
     return menu?.slug || null;
   }, [category, rawMenus]);
 
+  const breadcrumbContext = useMemo(() => {
+    if (!menuSlug || !category) return [];
+    const menu = rawMenus.find((m) => m.slug === menuSlug);
+    const context = [];
+    if (menu) context.push({ label: menu.name, path: `/products/${menu.slug}` });
+    context.push({ label: category.name, path: `/products/${menuSlug}/${category.slug}` });
+    return context;
+  }, [menuSlug, category, rawMenus]);
+
   const {
     draftFilters,
     draftSort,
@@ -75,6 +84,7 @@ export default function Category() {
       onApplyFilters={applyFilters}
       onResetFilters={resetFilters}
       onPageChange={setPage}
+      breadcrumbContext={breadcrumbContext}
     />
   );
 }

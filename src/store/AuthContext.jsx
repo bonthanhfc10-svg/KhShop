@@ -25,19 +25,19 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const data = await authService.login(credentials);
-      const user = data.data?.user || data.user || null;
+      const userData = data.data?.user || data.user || null;
 
-      if (user?.role === 'admin' || user?.role === 'superAdmin') {
+      if (userData?.role === 'admin' || userData?.role === 'superAdmin') {
         const message = 'Invalid email or password.';
         setError(message);
         throw new Error(message);
       }
 
-      const token = data.data.token || data.token || data.access_token;
+      const token = data.data?.token || data.token || data.access_token;
       storage.set('token', token);
-      storage.set('user', user);
-      setUser(user);
-      return user;
+      storage.set('user', userData);
+      setUser(userData);
+      return userData;
     } catch (err) {
       const message =
         err?.response?.data?.message || err?.message || 'Login failed. Please try again.';
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const data = await authService.register(payload);
-      return data.data.user;
+      return data.data?.user || data.user || data;
     } catch (err) {
       const hasFieldErrors = err?.response?.data?.errors;
       if (!hasFieldErrors) {
@@ -95,6 +95,14 @@ export const AuthProvider = ({ children }) => {
     });
   }, []);
 
+  const setUserAuth = useCallback((userData, token) => {
+    if (token) storage.set('token', token);
+    if (userData) {
+      storage.set('user', userData);
+      setUser(userData);
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -108,8 +116,9 @@ export const AuthProvider = ({ children }) => {
       logout,
       forgotPassword,
       updateUser,
+      setUserAuth,
     }),
-    [user, isInitialized, loading, error, updateUser]
+    [user, isInitialized, loading, error, updateUser, setUserAuth]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

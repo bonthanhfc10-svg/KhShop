@@ -25,6 +25,11 @@ export default function Sale() {
     return [];
   }, [saleMenu]);
 
+  const breadcrumbContext = useMemo(
+    () => (saleMenu ? [{ label: saleMenu.name, path: '/products/sale' }] : []),
+    [saleMenu]
+  );
+
   const hasBackendSale = Boolean(saleMenu?.children?.length);
 
   const {
@@ -75,6 +80,7 @@ export default function Sale() {
         onApplyFilters={applyFilters}
         onResetFilters={resetFilters}
         onPageChange={setPage}
+        breadcrumbContext={breadcrumbContext}
       />
     </main>
   );

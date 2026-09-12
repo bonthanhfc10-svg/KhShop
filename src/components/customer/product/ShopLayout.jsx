@@ -23,6 +23,7 @@ export default function ShopLayout({
   onApplyFilters,
   onResetFilters,
   onPageChange,
+  breadcrumbContext,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -80,7 +81,7 @@ export default function ShopLayout({
             <ProductGrid loading products={[]} />
           ) : (
             <>
-              <ProductGrid products={products} cols={4} />
+              <ProductGrid products={products} cols={4} breadcrumbContext={breadcrumbContext} />
               {totalCount > 0 && (
                 <Pagination page={page} totalPages={totalPages} onChange={onPageChange} />
               )}

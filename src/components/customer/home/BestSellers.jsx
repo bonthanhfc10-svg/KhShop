@@ -9,7 +9,7 @@ export default function BestSellers({ products }) {
           eyebrow="Top rated"
           title="Best Sellers"
         />
-        <ProductGrid products={products} cols={4} />
+        <ProductGrid products={products} cols={4} breadcrumbContext={[]} />
       </div>
     </section>
   );
