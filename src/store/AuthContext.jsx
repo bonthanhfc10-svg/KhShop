@@ -80,11 +80,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    storage.remove('user');
-    storage.remove('token');
-    setUser(null);
-    authService.logout().catch(() => {});
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch {
+      // Token may already be expired/invalid — still clear local state
+    } finally {
+      storage.remove('user');
+      storage.remove('token');
+      setUser(null);
+    }
   };
 
   const updateUser = useCallback((data) => {

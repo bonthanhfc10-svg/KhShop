@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../store/AuthContext';
 import { validateLogin } from '../../../utils/validation';
 import AuthLayout from '../../../components/common/AuthLayout';
@@ -7,15 +7,17 @@ import AuthLayout from '../../../components/common/AuthLayout';
 export default function Login() {
   const { login, error, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = location.state?.from || '/account/profile';
   const [values, setValues] = useState({ email: '', password: '', remember: false });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (user) {
-      navigate('/account/profile', { replace: true });
+      navigate(redirectTo, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, redirectTo]);
 
   const handleChange = (name, value) =>
     setValues((v) => ({ ...v, [name]: value }));
@@ -28,7 +30,7 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login({ email: values.email, password: values.password });
-      navigate('/account/profile');
+      navigate(redirectTo, { replace: true });
     } catch {
       setSubmitting(false);
     }

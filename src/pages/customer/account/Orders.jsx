@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Search, ChevronRight, AlertCircle } from 'lucide-react';
 import AccountLayout from './AccountLayout';
@@ -6,7 +6,7 @@ import EmptyState from '../../../components/common/EmptyState';
 import Pagination from '../../../components/common/Pagination';
 import OrderStatusBadge from '../../../components/customer/account/OrderStatusBadge';
 import OrdersSkeleton from '../../../components/customer/account/OrdersSkeleton';
-import { orderTotal } from '../../../utils/orderUtils';
+import { orderService } from '../../../services/orderService';
 import { formatPrice } from '../../../utils/formatPrice';
 import { formatDate } from '../../../utils/formatDate';
 
@@ -14,11 +14,11 @@ const ORDERS_PER_PAGE = 5;
 
 const STATUS_FILTERS = [
   { key: 'all', label: 'All' },
-  { key: 'Pending', label: 'Pending' },
-  { key: 'Processing', label: 'Processing' },
-  { key: 'Shipped', label: 'Shipped' },
-  { key: 'Delivered', label: 'Delivered' },
-  { key: 'Cancelled', label: 'Cancelled' },
+  { key: 'pending', label: 'Pending' },
+  { key: 'processing', label: 'Processing' },
+  { key: 'shipped', label: 'Shipped' },
+  { key: 'delivered', label: 'Delivered' },
+  { key: 'cancelled', label: 'Cancelled' },
 ];
 
 const ITEMS_LABEL = (count) =>
@@ -27,33 +27,46 @@ const ITEMS_LABEL = (count) =>
 function getStatusCounts(orders) {
   const counts = { all: orders.length };
   orders.forEach((o) => {
-    counts[o.status] = (counts[o.status] || 0) + 1;
+    const s = (o.status || '').toLowerCase();
+    counts[s] = (counts[s] || 0) + 1;
   });
   return counts;
 }
 
-/*
- * ──────────────────────────────────────────────
- * MOCK DATA — replace with real API fetch later.
- *
- * To integrate with the Laravel backend:
- *   1. Remove the MOCK_ORDERS import from data/orders
- *   2. Replace with: const data = await orderService.getOrders();
- *   3. The order shape below matches the mock data structure.
- *
- * Expected future API response shape:
- *   GET /api/v1/orders → { data: [ { id, date, status, items[], shipping, address, payment, timeline } ] }
- * ──────────────────────────────────────────────
- */
-import { orders as MOCK_ORDERS } from '../../../data/orders';
+function normalizeStatus(status) {
+  return (status || '').toLowerCase();
+}
 
 export default function Orders() {
-  const [orders] = useState(MOCK_ORDERS);
-  const [loading] = useState(false);
-  const [error] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    let active = true;
+
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await orderService.getOrders();
+        if (active) {
+          const data = res?.data;
+          setOrders(data?.data || []);
+        }
+      } catch (err) {
+        if (active) setError(err?.response?.data?.message || 'Failed to load orders.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    load();
+    return () => { active = false; };
+  }, []);
 
   const statusCounts = useMemo(() => getStatusCounts(orders), [orders]);
 
@@ -61,12 +74,12 @@ export default function Orders() {
     let list = orders;
 
     if (statusFilter !== 'all') {
-      list = list.filter((o) => o.status === statusFilter);
+      list = list.filter((o) => normalizeStatus(o.status) === statusFilter);
     }
 
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      list = list.filter((o) => o.id.toLowerCase().includes(q));
+      list = list.filter((o) => String(o.id).includes(q));
     }
 
     return list;
@@ -89,10 +102,15 @@ export default function Orders() {
     setPage(1);
   };
 
+  const getItemCount = (order) => {
+    if (order.items && Array.isArray(order.items)) return order.items.length;
+    if (order.order_items && Array.isArray(order.order_items)) return order.order_items.length;
+    return 0;
+  };
+
   return (
     <AccountLayout>
       <div className="mt-2">
-        {/* Header */}
         <div className="mb-6">
           <h1 className="font-sans text-2xl font-bold text-neutral-900">
             My Orders
@@ -102,9 +120,7 @@ export default function Orders() {
           </p>
         </div>
 
-        {/* Search + Filters */}
         <div className="mb-6 space-y-4">
-          {/* Search bar */}
           <div className="relative">
             <Search
               size={16}
@@ -120,7 +136,6 @@ export default function Orders() {
             />
           </div>
 
-          {/* Status filter tabs */}
           <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
             {STATUS_FILTERS.map((f) => {
               const count = statusCounts[f.key] || 0;
@@ -149,7 +164,6 @@ export default function Orders() {
           </div>
         </div>
 
-        {/* Error state */}
         {error && (
           <div className="mb-6 flex items-start gap-3 border border-red-200 bg-red-50 px-5 py-4">
             <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-500" />
@@ -162,10 +176,8 @@ export default function Orders() {
           </div>
         )}
 
-        {/* Loading skeleton */}
         {loading && <OrdersSkeleton rows={4} />}
 
-        {/* Empty state */}
         {!loading && !error && filtered.length === 0 && (
           <EmptyState
             icon={Package}
@@ -177,19 +189,17 @@ export default function Orders() {
             description={
               search || statusFilter !== 'all'
                 ? 'Try adjusting your search or filter to find what you\u2019re looking for.'
-                : 'When you place an order, it will appear here.'
+                : 'Start shopping and your orders will appear here.'
             }
             actionLabel={
-              search || statusFilter !== 'all' ? undefined : 'Start Shopping'
+              search || statusFilter !== 'all' ? undefined : 'Continue Shopping'
             }
-            actionTo={search || statusFilter !== 'all' ? undefined : '/products'}
+            actionTo={search || statusFilter !== 'all' ? undefined : '/products/women'}
           />
         )}
 
-        {/* Orders list */}
         {!loading && !error && filtered.length > 0 && (
           <>
-            {/* Desktop table */}
             <div className="hidden overflow-x-auto border border-neutral-200 bg-white md:block">
               <table className="w-full text-left text-sm">
                 <thead>
@@ -209,19 +219,19 @@ export default function Orders() {
                       className="transition-colors hover:bg-neutral-50"
                     >
                       <td className="px-6 py-4 font-semibold text-neutral-900">
-                        {order.id}
+                        #{order.id}
                       </td>
                       <td className="px-6 py-4 text-sm text-neutral-600">
-                        {formatDate(order.date)}
+                        {formatDate(order.created_at)}
                       </td>
                       <td className="px-6 py-4 text-sm text-neutral-600">
-                        {ITEMS_LABEL(order.items.length)}
+                        {ITEMS_LABEL(getItemCount(order))}
                       </td>
                       <td className="px-6 py-4">
                         <OrderStatusBadge status={order.status} />
                       </td>
                       <td className="px-6 py-4 text-right font-bold text-neutral-900">
-                        {formatPrice(orderTotal(order))}
+                        {formatPrice(order.total_amount)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Link
@@ -238,7 +248,6 @@ export default function Orders() {
               </table>
             </div>
 
-            {/* Mobile cards */}
             <div className="divide-y divide-neutral-100 border border-neutral-200 bg-white md:hidden">
               {paginated.map((order) => (
                 <Link
@@ -250,36 +259,22 @@ export default function Orders() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-neutral-900">
-                          {order.id}
+                          #{order.id}
                         </span>
                         <OrderStatusBadge status={order.status} />
                       </div>
                       <p className="mt-1 text-xs text-neutral-500">
-                        {formatDate(order.date)}
+                        {formatDate(order.created_at)}
                       </p>
                     </div>
                     <span className="shrink-0 text-right font-bold text-neutral-900">
-                      {formatPrice(orderTotal(order))}
+                      {formatPrice(order.total_amount)}
                     </span>
                   </div>
 
                   <div className="mt-3 flex items-center justify-between border-t border-neutral-100 pt-3">
                     <span className="text-xs text-neutral-500">
-                      {ITEMS_LABEL(order.items.length)}
-                      {order.items.length > 0 && (
-                        <span className="ml-2 text-neutral-400">
-                          {order.items
-                            .slice(0, 2)
-                            .map((i) => i.name)
-                            .join(', ')}
-                          {order.items.length > 2 && (
-                            <span>
-                              {' '}
-                              +{order.items.length - 2} more
-                            </span>
-                          )}
-                        </span>
-                      )}
+                      {ITEMS_LABEL(getItemCount(order))}
                     </span>
                     <ChevronRight
                       size={16}
@@ -290,7 +285,6 @@ export default function Orders() {
               ))}
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <Pagination
                 page={safePage}

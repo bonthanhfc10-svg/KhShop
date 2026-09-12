@@ -1,72 +1,63 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../store/CartContext';
-import { validateCheckout } from '../utils/validation';
-import { calculateShipping } from '../utils/shipping';
-
-const emptyForm = {
-  email: '',
-  firstName: '',
-  lastName: '',
-  address: '',
-  city: '',
-  postalCode: '',
-  phone: '',
-  country: 'United States',
-};
-
-const STEPS = ['Contact', 'Shipping', 'Delivery', 'Payment'];
+import { orderService } from '../services/orderService';
 
 export default function useCheckout() {
   const { cart, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
 
   const [values, setValues] = useState({
-    ...emptyForm,
-    email: '',
-    firstName: '',
-    lastName: '',
+    receiverPhone: '',
+    shippingAddress: '',
+    orderType: 'delivery',
+    note: '',
   });
   const [errors, setErrors] = useState({});
-  const [delivery, setDelivery] = useState('standard');
-  const [method, setMethod] = useState('card');
-  const [card, setCard] = useState({ number: '', name: '', expiry: '', cvv: '' });
-  const [step, setStep] = useState(0);
   const [placing, setPlacing] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
   const setField = (name, value) => {
     setValues((v) => ({ ...v, [name]: value }));
+    setErrors((e) => ({ ...e, [name]: undefined }));
+    setApiError(null);
   };
 
-  const shippingCost =
-    cartTotal >= 50 ? 0 : calculateShipping(cartTotal, delivery);
-  const total = cartTotal + shippingCost;
-
-  const next = () => {
-    if (step === 0) {
-      const v = validateCheckout(values);
-      setErrors(v);
-      if (Object.keys(v).length > 0) return;
-    }
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const back = () => {
-    setStep((s) => Math.max(s - 1, 0));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const validate = () => {
+    const errs = {};
+    if (!values.receiverPhone.trim()) errs.receiverPhone = 'Phone number is required.';
+    if (!values.shippingAddress.trim()) errs.shippingAddress = 'Shipping address is required.';
+    return errs;
   };
 
   const placeOrder = async () => {
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
     setPlacing(true);
-    await new Promise((r) => setTimeout(r, 900));
-    const orderNumber = `KH-${Math.floor(100000 + Math.random() * 900000)}`;
-    sessionStorage.setItem(
-      'khshop_last_order',
-      JSON.stringify({ number: orderNumber, total })
-    );
-    clearCart();
-    navigate('/order-success');
+    setApiError(null);
+
+    try {
+      const payload = {
+        shipping_address: values.shippingAddress.trim(),
+        receiver_phone: values.receiverPhone.trim(),
+        order_type: values.orderType,
+        note: values.note.trim() || undefined,
+      };
+
+      const res = await orderService.createOrder(payload);
+      const order = res?.data;
+
+      clearCart();
+      navigate(`/order-success/${order.id}`, { replace: true });
+    } catch (err) {
+      const message =
+        err?.response?.data?.message || 'Failed to place order. Please try again.';
+      setApiError(message);
+    } finally {
+      setPlacing(false);
+    }
   };
 
   return {
@@ -74,20 +65,9 @@ export default function useCheckout() {
     cartTotal,
     values,
     errors,
-    delivery,
-    method,
-    card,
-    step,
     placing,
-    steps: STEPS,
-    shippingCost,
-    total,
+    apiError,
     setField,
-    setDelivery,
-    setMethod,
-    setCard: (k, v) => setCard((c) => ({ ...c, [k]: v })),
-    next,
-    back,
     placeOrder,
   };
 }
