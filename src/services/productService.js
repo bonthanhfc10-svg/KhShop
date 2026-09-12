@@ -3,7 +3,7 @@ import { colorCodeToHex } from '../utils/colorMap';
 
 const PLACEHOLDER = '/images/placeholder.svg';
 
-function mapApiProductList(raw) {
+export function mapApiProductList(raw) {
   const firstVariant = raw.variants?.[0];
   const image = firstVariant?.image?.image_path || PLACEHOLDER;
 

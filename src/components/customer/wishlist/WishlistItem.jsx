@@ -4,13 +4,13 @@ import { formatPrice } from '../../../utils/formatPrice';
 import { useWishlist } from '../../../store/WishlistContext';
 import { useCart } from '../../../store/CartContext';
 
-export default function WishlistItem({ product }) {
+export default function WishlistItem({ wishlistItem, product }) {
   const { removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
 
   const handleRemove = (e) => {
     e.preventDefault();
-    removeFromWishlist(product.id);
+    removeFromWishlist(wishlistItem.id);
   };
 
   const handleAdd = (e) => {
@@ -19,7 +19,7 @@ export default function WishlistItem({ product }) {
     const sizeName = typeof firstSize === 'string' ? firstSize : firstSize?.name;
     addToCart(product, {
       size: sizeName,
-      color: product.colors[0]?.name,
+      color: product.colors?.[0]?.name,
       quantity: 1,
     });
   };
@@ -28,7 +28,7 @@ export default function WishlistItem({ product }) {
     <div className="group relative block">
       <Link to={`/product/${product.slug || product.id}`} className="card-image aspect-[4/5]">
         <img
-          src={product.images[0]}
+          src={product.images?.[0]}
           alt={product.name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"

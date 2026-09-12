@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { Heart, Trash2 } from 'lucide-react';
 import { formatPrice } from '../../../utils/formatPrice';
 import { colorCountText } from '../../../utils/colorCount';
 import { useWishlist } from '../../../store/WishlistContext';
 
-export default function ProductCard({ product, breadcrumbContext }) {
+export default function ProductCard({ product, breadcrumbContext, onRemove }) {
   const navigate = useNavigate();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const wished = isInWishlist(product.id);
@@ -41,6 +41,20 @@ export default function ProductCard({ product, breadcrumbContext }) {
         >
           <Heart size={17} fill={wished ? 'currentColor' : 'none'} />
         </button>
+
+        {/* remove button — only shown on Wishlist page */}
+        {onRemove && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              onRemove(product);
+            }}
+            aria-label={`Remove ${product.name}`}
+            className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white/90 backdrop-blur-sm text-neutral-600 transition-all duration-200 hover:scale-110 hover:border-accent hover:text-accent hover:shadow-md"
+          >
+            <Trash2 size={15} />
+          </button>
+        )}
 
         {/* view button */}
         <div className="pointer-events-none absolute inset-x-3 bottom-3 translate-y-14 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">

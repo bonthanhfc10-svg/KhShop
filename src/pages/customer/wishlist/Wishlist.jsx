@@ -19,7 +19,7 @@ export default function Wishlist() {
               actionTo="/products"
             />
           ) : (
-            <WishlistGrid wishlistIds={wishlist.map((w) => w.id)} />
+            <WishlistGrid wishlist={wishlist} />
           )}
         </div>
       </div>
