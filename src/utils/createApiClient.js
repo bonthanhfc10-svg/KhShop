@@ -3,7 +3,7 @@ import { storage } from './storage';
 
 export function createApiClient(baseURL) {
   const client = axios.create({
-    baseURL: baseURL || import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
+    baseURL: baseURL || import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
     timeout: 15000,
     headers: {
       'Content-Type': 'application/json',

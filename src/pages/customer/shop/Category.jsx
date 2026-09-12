@@ -1,5 +1,5 @@
 ﻿import { useMemo } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useSearchParams } from 'react-router-dom';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
 import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import { useMenus } from '../../../store/MenuContext';
@@ -10,9 +10,11 @@ import useShopFilters from '../../../hooks/useShopFilters';
 export default function Category() {
   const { slug } = useParams();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { rawMenus } = useMenus();
   const pathSlug = location.pathname.split('/').filter(Boolean).pop();
   const category = getCategoryBySlug(slug) || getCategoryBySlug(pathSlug);
+  const searchQuery = searchParams.get('search') || null;
 
   const menuSlug = useMemo(() => {
     if (!category || !rawMenus.length) return null;
@@ -46,6 +48,7 @@ export default function Category() {
   } = useShopFilters({
     menuSlug,
     categorySlug: category?.slug || null,
+    search: searchQuery,
   });
 
   const productParams = useMemo(() => buildRequestParams(), [buildRequestParams]);

@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-import { Heart, Trash2 } from 'lucide-react';
+import { Heart, Trash2, Loader2 } from 'lucide-react';
 import { formatPrice } from '../../../utils/formatPrice';
 import { colorCountText } from '../../../utils/colorCount';
 import { useWishlist } from '../../../store/WishlistContext';
 
 export default function ProductCard({ product, breadcrumbContext, onRemove }) {
   const navigate = useNavigate();
-  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { isInWishlist, toggleWishlist, togglingWishlistId } = useWishlist();
   const wished = isInWishlist(product.id);
+  const isLoading = togglingWishlistId === product.id;
 
   return (
     <div className="group relative block rounded-lg bg-white p-4 shadow-md">
@@ -32,14 +33,19 @@ export default function ProductCard({ product, breadcrumbContext, onRemove }) {
         <button
           onClick={(e) => {
             e.preventDefault();
-            toggleWishlist(product);
+            if (!isLoading) toggleWishlist(product);
           }}
+          disabled={isLoading}
           aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
-          className={`absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border bg-white/90 backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:shadow-md ${
+          className={`absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border bg-white/90 backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:shadow-md disabled:pointer-events-none disabled:opacity-50 ${
             wished ? 'border-accent text-accent' : 'border-neutral-200 text-neutral-600'
           }`}
         >
-          <Heart size={17} fill={wished ? 'currentColor' : 'none'} />
+          {isLoading ? (
+            <Loader2 size={17} className="animate-spin" />
+          ) : (
+            <Heart size={17} fill={wished ? 'currentColor' : 'none'} />
+          )}
         </button>
 
         {/* remove button — only shown on Wishlist page */}

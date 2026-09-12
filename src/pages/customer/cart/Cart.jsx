@@ -8,10 +8,12 @@ import Button from '../../../components/common/Button';
 import Loading from '../../../components/common/Loading';
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity, cartTotal, fetchAuthCart, loading } = useCart();
+  const { cart, removeFromCart, updateQuantity, cartTotal, fetchAuthCart, loading, cartLoaded } = useCart();
 
   useEffect(() => {
-    fetchAuthCart();
+    if (!cartLoaded) {
+      fetchAuthCart();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

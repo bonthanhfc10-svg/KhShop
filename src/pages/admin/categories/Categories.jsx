@@ -45,7 +45,7 @@ export default function Categories() {
   };
 
   const handleDelete = async () => {
-    await categoryService.remove(deleteTarget.id);
+    await categoryService.delete(deleteTarget.id);
     setDeleteTarget(null);
     load();
   };

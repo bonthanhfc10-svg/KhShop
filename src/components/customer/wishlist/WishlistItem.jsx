@@ -1,23 +1,28 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, ShoppingBag } from 'lucide-react';
+import { Heart, ShoppingBag, Loader2 } from 'lucide-react';
 import { formatPrice } from '../../../utils/formatPrice';
 import { useWishlist } from '../../../store/WishlistContext';
 import { useCart } from '../../../store/CartContext';
 
 export default function WishlistItem({ wishlistItem, product }) {
   const { removeFromWishlist } = useWishlist();
-  const { addToCart } = useCart();
+  const { addToCart, addingToCart } = useCart();
+  const [removing, setRemoving] = useState(false);
 
-  const handleRemove = (e) => {
+  const handleRemove = async (e) => {
     e.preventDefault();
-    removeFromWishlist(wishlistItem.id);
+    if (removing) return;
+    setRemoving(true);
+    await removeFromWishlist(wishlistItem.id);
   };
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
+    if (addingToCart) return;
     const firstSize = product.sizes?.[0];
     const sizeName = typeof firstSize === 'string' ? firstSize : firstSize?.name;
-    addToCart(product, {
+    await addToCart(product, {
       size: sizeName,
       color: product.colors?.[0]?.name,
       quantity: 1,
@@ -36,10 +41,15 @@ export default function WishlistItem({ wishlistItem, product }) {
       </Link>
       <button
         onClick={handleRemove}
+        disabled={removing}
         aria-label={`Remove ${product.name} from wishlist`}
-        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-accent transition-transform hover:scale-110"
+        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-accent transition-transform hover:scale-110 disabled:pointer-events-none disabled:opacity-50"
       >
-        <Heart size={18} fill="currentColor" />
+        {removing ? (
+          <Loader2 size={18} className="animate-spin" />
+        ) : (
+          <Heart size={18} fill="currentColor" />
+        )}
       </button>
       <div className="pt-3">
         <Link to={`/product/${product.slug || product.id}`}>
@@ -55,9 +65,17 @@ export default function WishlistItem({ wishlistItem, product }) {
             </span>
           )}
         </p>
-        <button onClick={handleAdd} className="btn-secondary mt-3 w-full py-2.5 text-[11px]">
-          <ShoppingBag size={14} />
-          Add to Cart
+        <button
+          onClick={handleAdd}
+          disabled={addingToCart}
+          className="btn-secondary mt-3 w-full py-2.5 text-[11px]"
+        >
+          {addingToCart ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <ShoppingBag size={14} />
+          )}
+          {addingToCart ? 'Adding…' : 'Add to Cart'}
         </button>
       </div>
     </div>

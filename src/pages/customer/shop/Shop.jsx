@@ -1,9 +1,13 @@
 import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
 import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import useShopFilters from '../../../hooks/useShopFilters';
 
 export default function Shop() {
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || null;
+
   const {
     draftFilters,
     draftSort,
@@ -16,7 +20,7 @@ export default function Shop() {
     resetFilters,
     setPage,
     buildRequestParams,
-  } = useShopFilters({});
+  } = useShopFilters({ search: searchQuery });
 
   const params = useMemo(() => buildRequestParams(), [buildRequestParams]);
 

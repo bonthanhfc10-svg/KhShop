@@ -19,13 +19,22 @@ const periods = ['Today', '7 Days', '30 Days', '3 Months', '1 Year', 'Custom'];
 
 export default function SalesReport() {
   const [sales, setSales] = useState(null);
+  const [trend, setTrend] = useState([]);
   const [period, setPeriod] = useState('30 Days');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    reportService.getSales(period).then((res) => {
-      if (mounted) setSales(res.data);
+    const periodKey = { 'Today': 'today', '7 Days': '7days', '30 Days': '30days', '3 Months': '30days', '1 Year': 'year', 'Custom': '30days' };
+    const chartKey = { 'Today': '7D', '7 Days': '7D', '30 Days': '30D', '3 Months': '3M', '1 Year': '1Y', 'Custom': '30D' };
+    Promise.all([
+      reportService.getSalesData(periodKey[period] || '30days'),
+      reportService.getSalesChart(chartKey[period] || '30D'),
+    ]).then(([data, chart]) => {
+      if (mounted) {
+        setSales(data);
+        setTrend(chart);
+      }
     }).finally(() => mounted && setLoading(false));
     return () => { mounted = false; };
   }, [period]);
@@ -35,7 +44,7 @@ export default function SalesReport() {
   const kpis = [
     { label: 'Revenue', value: formatPrice(sales.revenue), icon: DollarSign },
     { label: 'Orders', value: sales.orders.toLocaleString(), icon: ShoppingCart },
-    { label: 'Avg. Order Value', value: formatPrice(sales.avgOrderValue), icon: Receipt },
+    { label: 'Avg. Order Value', value: formatPrice(sales.avgOrder), icon: Receipt },
     { label: 'Customers', value: sales.customers.toLocaleString(), icon: Users },
   ];
 
@@ -75,10 +84,10 @@ export default function SalesReport() {
       <Card title="Revenue vs Orders" subtitle={`For ${period.toLowerCase()}`} bodyClassName="p-5">
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={sales.trend} margin={{ top: 5, right: 8, left: -12, bottom: 0 }}>
+            <BarChart data={trend} margin={{ top: 5, right: 8, left: -12, bottom: 0 }}>
               <CartesianGrid stroke="#f0f0f0" strokeDasharray="3 3" vertical={false} />
               <XAxis
-                dataKey="label"
+                dataKey="date"
                 tick={{ fontSize: 12, fill: '#9ca3af' }}
                 axisLine={false}
                 tickLine={false}
@@ -91,11 +100,11 @@ export default function SalesReport() {
                 width={60}
               />
               <Tooltip
-                formatter={(value, name) => (name === 'Revenue' ? [`$${Number(value).toLocaleString()}`, name] : [value, name])}
+                formatter={(value, name) => (name === 'sales' ? [`$${Number(value).toLocaleString()}`, 'Revenue'] : [value, name === 'orders' ? 'Orders' : name])}
                 contentStyle={{ borderRadius: 8, border: '1px solid #e5e5e5', fontSize: 13 }}
               />
               <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} iconType="circle" iconSize={8} />
-              <Bar dataKey="revenue" fill="#171717" radius={[4, 4, 0, 0]} maxBarSize={40} />
+              <Bar dataKey="sales" fill="#171717" radius={[4, 4, 0, 0]} maxBarSize={40} />
               <Bar dataKey="orders" fill="#d4d4d8" radius={[4, 4, 0, 0]} maxBarSize={40} />
             </BarChart>
           </ResponsiveContainer>

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
 import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import { useMenus } from '../../../store/MenuContext';
@@ -7,6 +8,8 @@ import useShopFilters from '../../../hooks/useShopFilters';
 
 export default function Sale() {
   const { rawMenus } = useMenus();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || null;
 
   const saleMenu = useMemo(
     () => rawMenus.find((m) => m.slug === 'sale') || null,
@@ -46,6 +49,7 @@ export default function Sale() {
     buildRequestParams,
   } = useShopFilters({
     menuSlug: hasBackendSale ? 'sale' : null,
+    search: searchQuery,
   });
 
   const params = useMemo(() => buildRequestParams(), [buildRequestParams]);

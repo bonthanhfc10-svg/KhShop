@@ -29,7 +29,8 @@ export default function Inventory() {
   });
 
   const handleAdjust = async () => {
-    await inventoryService.adjust(adjustTarget.id, adjustQty, adjustReason);
+    const newStock = adjustTarget.stock + adjustQty;
+    await inventoryService.updateStock(adjustTarget.id, Math.max(0, newStock));
     setAdjustQty(0);
     setAdjustReason('');
     setAdjustTarget(null);

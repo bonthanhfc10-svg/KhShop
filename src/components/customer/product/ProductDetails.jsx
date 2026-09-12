@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Heart, Minus, Plus, ShoppingBag, Check } from 'lucide-react';
+import { Heart, Minus, Plus, ShoppingBag, Check, Loader2 } from 'lucide-react';
 import { formatPrice } from '../../../utils/formatPrice';
 import { ColorSelector } from './ColorSelector';
 import { useCart } from '../../../store/CartContext';
 import { useWishlist } from '../../../store/WishlistContext';
 
 export default function ProductDetails({ product, selectedColor, onColorChange }) {
-  const { addToCart } = useCart();
-  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToCart, addingToCart } = useCart();
+  const { isInWishlist, toggleWishlist, togglingWishlistId } = useWishlist();
 
   const sizeOptions = product.sizes?.map((s) => s.name || s) || [];
   const hasSizes = sizeOptions.length > 0;
@@ -15,15 +15,16 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const wished = isInWishlist(product.id);
+  const isWishlistLoading = togglingWishlistId === product.id;
 
   const discount = product.discount;
   const selectedColorName = selectedColor?.name || null;
   const selectedColorImage = selectedColor?.image || product.images?.[0];
 
-  const handleAddToCart = () => {
-    if ((hasSizes && !selectedSize) || !selectedColorName) return;
+  const handleAddToCart = async () => {
+    if ((hasSizes && !selectedSize) || !selectedColorName || addingToCart) return;
     const selectedSizeObj = selectedColor?.sizes?.find((s) => s.name === selectedSize);
-    addToCart(product, {
+    await addToCart(product, {
       variant_id: selectedSizeObj?.variant_id || null,
       size: selectedSize,
       color: selectedColorName,
@@ -133,10 +134,14 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={handleAddToCart}
-            disabled={(hasSizes && !selectedSize) || !selectedColorName}
+            disabled={(hasSizes && !selectedSize) || !selectedColorName || addingToCart}
             className="btn-primary flex-1 py-5"
           >
-            {added ? (
+            {addingToCart ? (
+              <>
+                <Loader2 size={18} className="animate-spin" /> Adding…
+              </>
+            ) : added ? (
               <>
                 <Check size={18} /> Added to Bag
               </>
@@ -147,15 +152,20 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
             )}
           </button>
           <button
-            onClick={() => toggleWishlist(product)}
+            onClick={() => !isWishlistLoading && toggleWishlist(product)}
+            disabled={isWishlistLoading}
             aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
-            className={`flex h-14 w-14 items-center justify-center border transition-colors ${
+            className={`flex h-14 w-14 items-center justify-center border transition-colors disabled:pointer-events-none disabled:opacity-50 ${
               wished
                 ? 'border-accent bg-accent text-white'
                 : 'border-neutral-300 text-neutral-600 hover:border-black hover:text-black'
             }`}
           >
-            <Heart size={20} fill={wished ? 'currentColor' : 'none'} />
+            {isWishlistLoading ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              <Heart size={20} fill={wished ? 'currentColor' : 'none'} />
+            )}
           </button>
         </div>
       </div>

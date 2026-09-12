@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { X, ShoppingBag, Minus, Plus } from 'lucide-react';
 import { useCart } from '../../../store/CartContext';
+import { useAuth } from '../../../store/AuthContext';
 import { formatPrice } from '../../../utils/formatPrice';
 import Button from '../../common/Button';
 import EmptyState from '../../common/EmptyState';
@@ -14,7 +16,16 @@ export default function MiniCart() {
     isOpen,
     closeCart,
     cartTotal,
+    fetchAuthCart,
+    cartLoaded,
   } = useCart();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (isOpen && user && !cartLoaded) {
+      fetchAuthCart();
+    }
+  }, [isOpen, user, cartLoaded, fetchAuthCart]);
 
   const shipping = cartTotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = cartTotal + shipping;

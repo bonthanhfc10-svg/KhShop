@@ -1,24 +1,95 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, User, Heart, ShoppingBag, Menu, X } from 'lucide-react';
+
+import { useEffect, useState, useRef } from 'react';
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from 'react-router-dom';
+import {
+  Search,
+  User,
+  Heart,
+  ShoppingBag,
+  Menu,
+  X,
+} from 'lucide-react';
+
 import Navbar from './Navbar';
 import MobileMenu from './MobileMenu';
 import { useCart } from '../../../store/CartContext';
 import { useAuth } from '../../../store/AuthContext';
+
+function getMenuSlugFromPath(pathname) {
+  if (!pathname.startsWith('/products/')) return null;
+
+  const segments = pathname.split('/').filter(Boolean);
+
+  return segments[1] || null;
+}
 
 export default function Header({ navigation = [] }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+
   const { cartCount, openCart } = useCart();
   const { user } = useAuth();
+
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  const currentMenuSlug = getMenuSlugFromPath(location.pathname);
+  const prevPathname = useRef(location.pathname);
+
+  /*
+   * Close the search bar and clear the input when the user
+   * navigates to a different page (different pathname).
+   *
+   * This does NOT fire when only the search query changes
+   * on the same pathname (e.g. ?search=nike → ?search=shoe).
+   */
+  useEffect(() => {
+    if (prevPathname.current !== location.pathname) {
+      setShowSearch(false);
+      setSearchQuery('');
+      prevPathname.current = location.pathname;
+    }
+  }, [location.pathname]);
+
+  /*
+   * Search can exist as:
+   * /products/women?search=nike
+   * /search?q=nike
+   */
+  const searchFromUrl =
+    searchParams.get('search') ||
+    searchParams.get('q') ||
+    '';
+
+  /*
+   * Keep search input synchronized with the URL.
+   *
+   * When the URL has a search value, sync it into the input.
+   * When the URL loses the search param (e.g. navigating to
+   * another menu), clear the input to match.
+   */
+  useEffect(() => {
+    setSearchQuery(searchFromUrl);
+  }, [searchFromUrl]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
     window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -28,18 +99,96 @@ export default function Header({ navigation = [] }) {
         setMenuOpen(false);
       }
     };
+
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+
+    return () => {
+      window.removeEventListener('keydown', onKey);
+    };
   }, []);
 
+  /*
+   * Scroll to the product section.
+   */
+  const scrollToProducts = () => {
+    setTimeout(() => {
+      const section = document.getElementById('products');
+
+      if (section) {
+        section.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    }, 150);
+  };
+
+  /*
+   * Submit search.
+   *
+   * IMPORTANT:
+   * - Keep the search bar open.
+   * - Keep searchQuery.
+   * - Let Product List react to the URL and fetch.
+   */
   const submitSearch = (e) => {
     e.preventDefault();
+
     const q = searchQuery.trim();
-    if (q) {
-      navigate(`/search?q=${encodeURIComponent(q)}`);
-      setShowSearch(false);
+
+    if (!q) {
+      const params = new URLSearchParams(location.search);
+
+      params.delete('search');
+      params.delete('q');
+
+      const queryString = params.toString();
+
+      navigate(
+        queryString
+          ? `${location.pathname}?${queryString}`
+          : location.pathname
+      );
+
       setSearchQuery('');
+      scrollToProducts();
+      return;
     }
+
+    if (currentMenuSlug) {
+      navigate(
+        `/products/${currentMenuSlug}?search=${encodeURIComponent(q)}`
+      );
+    } else {
+      navigate(`/search?q=${encodeURIComponent(q)}`);
+    }
+
+    // Keep search bar OPEN.
+    // Do not clear searchQuery.
+
+    scrollToProducts();
+  };
+
+  const toggleSearch = () => {
+    setShowSearch((current) => !current);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+
+    const params = new URLSearchParams(location.search);
+    params.delete('search');
+    params.delete('q');
+
+    const queryString = params.toString();
+
+    navigate(
+      queryString
+        ? `${location.pathname}?${queryString}`
+        : location.pathname
+    );
+
+    scrollToProducts();
   };
 
   return (
@@ -50,6 +199,7 @@ export default function Header({ navigation = [] }) {
     >
       <div className="container-kh">
         <div className="flex h-16 items-center justify-between gap-4 sm:h-20">
+
           {/* Left: logo + mobile menu */}
           <div className="flex items-center gap-3">
             <button
@@ -59,7 +209,12 @@ export default function Header({ navigation = [] }) {
             >
               <Menu size={24} />
             </button>
-            <Link to="/" className="flex items-center" aria-label="KhShop home">
+
+            <Link
+              to="/"
+              className="flex items-center"
+              aria-label="KhShop home"
+            >
               <img
                 src="/logo.svg"
                 alt="KhShop"
@@ -75,17 +230,22 @@ export default function Header({ navigation = [] }) {
 
           {/* Right: icons */}
           <div className="flex items-center gap-0.5 sm:gap-1">
+
+            {/* Search toggle */}
             <button
-              onClick={() => {
-                setShowSearch((s) => !s);
-              }}
+              onClick={toggleSearch}
               className="relative flex h-11 w-11 items-center justify-center text-black transition-colors hover:text-neutral-500"
               aria-label={showSearch ? 'Close search' : 'Open search'}
               aria-expanded={showSearch}
             >
-              {showSearch ? <X size={21} /> : <Search size={21} />}
+              {showSearch ? (
+                <X size={21} />
+              ) : (
+                <Search size={21} />
+              )}
             </button>
 
+            {/* Account */}
             <Link
               to={user ? '/account' : '/login'}
               className="hidden h-11 w-11 items-center justify-center text-black transition-colors hover:text-neutral-500 sm:flex"
@@ -94,6 +254,7 @@ export default function Header({ navigation = [] }) {
               <User size={21} />
             </Link>
 
+            {/* Wishlist */}
             <Link
               to="/wishlist"
               className="hidden h-11 w-11 items-center justify-center text-black transition-colors hover:text-neutral-500 sm:flex"
@@ -102,12 +263,14 @@ export default function Header({ navigation = [] }) {
               <Heart size={21} />
             </Link>
 
+            {/* Cart */}
             <button
               onClick={openCart}
               className="relative flex h-11 w-11 items-center justify-center text-black transition-colors hover:text-neutral-500"
               aria-label="Shopping bag"
             >
               <ShoppingBag size={21} />
+
               {cartCount > 0 && (
                 <span
                   key={cartCount}
@@ -128,20 +291,40 @@ export default function Header({ navigation = [] }) {
             onSubmit={submitSearch}
             className="container-kh flex items-center gap-3 py-4"
           >
-            <Search size={20} className="shrink-0 text-neutral-400" />
+            <Search
+              size={20}
+              className="shrink-0 text-neutral-400"
+            />
+
             <input
               autoFocus
-              type="search"
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search shoes, clothing, accessories, sport…"
               className="w-full bg-transparent text-base outline-none placeholder:text-neutral-400"
               aria-label="Search products"
             />
+
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={clearSearch}
+                aria-label="Clear search"
+                className="shrink-0 text-neutral-500 transition-colors hover:text-black"
+              >
+                <X size={18} />
+              </button>
+            )}
+
             <kbd className="hidden shrink-0 rounded border border-neutral-200 px-1.5 py-0.5 text-[10px] text-neutral-400 sm:block">
               Esc
             </kbd>
-            <button type="submit" className="btn-primary shrink-0 px-6 py-2.5">
+
+            <button
+              type="submit"
+              className="btn-primary shrink-0 px-6 py-2.5"
+            >
               Search
             </button>
           </form>
@@ -157,3 +340,4 @@ export default function Header({ navigation = [] }) {
     </header>
   );
 }
+

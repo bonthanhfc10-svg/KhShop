@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
 import CategoryBanner from '../../../components/customer/shop/CategoryBanner';
@@ -25,7 +25,9 @@ function buildBreadcrumb(group, category) {
 
 export default function MenuCategory() {
   const { menuSlug, categorySlug } = useParams();
+  const [searchParams] = useSearchParams();
   const { rawMenus, menuLoading } = useMenus();
+  const searchQuery = searchParams.get('search') || null;
 
   const rawMenu = findMenuBySlug(rawMenus, menuSlug);
   const rawCategory = categorySlug
@@ -47,6 +49,7 @@ export default function MenuCategory() {
   } = useShopFilters({
     menuSlug: rawMenu?.slug || null,
     categorySlug: rawCategory?.slug || null,
+    search: searchQuery,
   });
 
   const group = rawMenu

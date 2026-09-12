@@ -39,7 +39,7 @@ src/
 The frontend talks to a Laravel API through `src/services`. Set your backend base URL in `.env`:
 
 ```
-VITE_API_URL=http://localhost:8000/api
+VITE_API_URL=http://127.0.0.1:8000/api
 VITE_USE_MOCK=true
 ```
 

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import ProductGrid from './ProductGrid';
 import ProductSort from './ProductSort';
@@ -26,6 +27,17 @@ export default function ShopLayout({
   breadcrumbContext,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search');
+
+  useEffect(() => {
+    if (searchQuery) {
+      const el = document.getElementById('products');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [searchQuery]);
 
   const handleApply = () => {
     onApplyFilters();
@@ -71,7 +83,7 @@ export default function ShopLayout({
           </button>
         </div>
 
-        <div>
+        <div id="products">
           {error ? (
             <div className="py-20 text-center">
               <p className="text-sm text-red-600">{error}</p>

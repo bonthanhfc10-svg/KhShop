@@ -1,10 +1,20 @@
-﻿import { Heart } from 'lucide-react';
+﻿import { useEffect } from 'react';
+import { Heart } from 'lucide-react';
 import { useWishlist } from '../../../store/WishlistContext';
+import { useAuth } from '../../../store/AuthContext';
 import WishlistGrid from '../../../components/customer/wishlist/WishlistGrid';
 import EmptyState from '../../../components/common/EmptyState';
 
 export default function Wishlist() {
-  const { wishlist } = useWishlist();
+  const { wishlist, wishlistLoaded, loadAuthWishlist } = useWishlist();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user && !wishlistLoaded) {
+      loadAuthWishlist();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main>

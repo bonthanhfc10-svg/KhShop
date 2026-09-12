@@ -35,6 +35,8 @@ export const CartProvider = ({ children }) => {
   const [authCart, setAuthCart] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [cartLoaded, setCartLoaded] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   const cart = isAuth ? authCart : guestCart;
 
@@ -45,61 +47,52 @@ export const CartProvider = ({ children }) => {
     }
   }, [guestCart, isAuth]);
 
-  // On login: merge guest cart into backend
+  // On login: merge guest cart into backend; On logout: clear auth cart
   useEffect(() => {
     const wasAuth = prevAuthRef.current;
     prevAuthRef.current = isAuth;
 
-    if (isAuth) {
-      if (!wasAuth) {
-        // Transition: guest → authenticated — merge guest cart
-        const guestItems = storage.get('cart', []);
-        if (guestItems.length > 0) {
-          const payload = guestItems
-            .filter((i) => i.variant_id)
-            .map((i) => ({ variant_id: i.variant_id, qty: i.quantity }));
+    if (isAuth && !wasAuth) {
+      // Transition: guest → authenticated — merge guest cart
+      const guestItems = storage.get('cart', []);
+      if (guestItems.length > 0) {
+        const payload = guestItems
+          .filter((i) => i.variant_id)
+          .map((i) => ({ variant_id: i.variant_id, qty: i.quantity }));
 
-          if (payload.length > 0) {
-            cartService
-              .merge(payload)
-              .then((res) => {
-                const items = res?.data?.cart_items || [];
-                setAuthCart(items.map(mapBackendCartItem));
-                storage.remove('cart');
-                setGuestCart([]);
-              })
-              .catch(() => {
-                // Merge failed — keep guest cart intact in localStorage
-              });
-          } else {
-            storage.remove('cart');
-            setGuestCart([]);
-          }
+        if (payload.length > 0) {
+          cartService
+            .merge(payload)
+            .then((res) => {
+              const items = res?.data?.cart_items || [];
+              setAuthCart(items.map(mapBackendCartItem));
+              setCartLoaded(true);
+              storage.remove('cart');
+              setGuestCart([]);
+            })
+            .catch(() => {
+              // Merge failed — keep guest cart intact in localStorage
+            });
         } else {
-          loadAuthCart();
+          storage.remove('cart');
+          setGuestCart([]);
         }
-      } else {
-        // Already authenticated on mount — load cart
-        loadAuthCart();
       }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuth]);
-
-  // On logout: clear auth cart
-  useEffect(() => {
-    const wasAuth = prevAuthRef.current;
-    if (!isAuth && wasAuth) {
+    } else if (!isAuth && wasAuth) {
+      // Transition: authenticated → guest — clear auth cart
       setAuthCart([]);
+      setCartLoaded(false);
     }
   }, [isAuth]);
 
   const loadAuthCart = async () => {
+    if (!isAuth) return;
     setLoading(true);
     try {
       const res = await cartService.getCart();
       const items = res?.data?.cart_items || [];
       setAuthCart(items.map(mapBackendCartItem));
+      setCartLoaded(true);
     } catch {
       // ignore
     } finally {
@@ -113,6 +106,7 @@ export const CartProvider = ({ children }) => {
       const res = await cartService.getCart();
       const items = res?.data?.cart_items || [];
       setAuthCart(items.map(mapBackendCartItem));
+      setCartLoaded(true);
     } catch {
       // ignore
     }
@@ -120,16 +114,17 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product, { variant_id, size, color, colorImage, quantity = 1 }) => {
     if (isAuth) {
+      setAddingToCart(true);
       const payload = {
         product_id: product.id,
         color_id: product.colors?.find((c) => c.name === color)?.id,
         size_id: product.sizes?.find((s) => s.name === size)?.id || null,
         qty: quantity,
       };
-      cartService
+      return cartService
         .addItem(payload)
         .then(() => fetchAuthCart())
-        .catch(() => {});
+        .finally(() => setAddingToCart(false));
     } else {
       setGuestCart((prev) => {
         const key = variant_id || `${product.id}-${size}-${color}`;
@@ -156,8 +151,9 @@ export const CartProvider = ({ children }) => {
           },
         ];
       });
+      openCart();
+      return Promise.resolve();
     }
-    openCart();
   };
 
   const removeFromCart = (itemId, size, color) => {
@@ -240,6 +236,8 @@ export const CartProvider = ({ children }) => {
       cart,
       isOpen,
       loading,
+      cartLoaded,
+      addingToCart,
       openCart,
       closeCart,
       addToCart,
@@ -250,9 +248,10 @@ export const CartProvider = ({ children }) => {
       cartTotalFormatted,
       cartCount,
       fetchAuthCart,
+      loadAuthCart,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [cart, isOpen, loading, cartTotal, cartCount]
+    [cart, isOpen, loading, cartLoaded, addingToCart, cartTotal, cartCount]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
