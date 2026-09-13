@@ -9,6 +9,7 @@ export const WishlistProvider = ({ children }) => {
   const { user } = useAuth();
   const isAuth = Boolean(user);
   const prevAuthRef = useRef(isAuth);
+  const hasSyncedRef = useRef(false);
 
   const [guestWishlist, setGuestWishlist] = useState(() => storage.get('wishlist', []));
   const [authWishlist, setAuthWishlist] = useState([]);
@@ -24,38 +25,6 @@ export const WishlistProvider = ({ children }) => {
     }
   }, [guestWishlist, isAuth]);
 
-  // On login: merge guest wishlist into backend; On logout: clear auth wishlist
-  useEffect(() => {
-    const wasAuth = prevAuthRef.current;
-    prevAuthRef.current = isAuth;
-
-    if (isAuth && !wasAuth) {
-      // Transition: guest → authenticated — merge guest wishlist
-      const guestItems = storage.get('wishlist', []);
-      const guestProductIds = guestItems.map((item) => item.product_id || item.id);
-
-      if (guestProductIds.length > 0) {
-        wishlistService
-          .merge(guestProductIds)
-          .then(() => {
-            storage.remove('wishlist');
-            setGuestWishlist([]);
-            return loadAuthWishlist();
-          })
-          .catch(() => {
-            // Merge failed — keep guest wishlist intact in localStorage
-          });
-      } else {
-        loadAuthWishlist();
-      }
-    } else if (!isAuth && wasAuth) {
-      // Transition: authenticated → guest — clear auth wishlist
-      setAuthWishlist([]);
-      setWishlistLoaded(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuth]);
-
   const loadAuthWishlist = async () => {
     if (!isAuth) return;
     try {
@@ -67,6 +36,50 @@ export const WishlistProvider = ({ children }) => {
       // ignore
     }
   };
+
+  /**
+   * Synchronize guest localStorage wishlist with the authenticated backend wishlist.
+   * Safe to call multiple times — the hasSyncedRef guard prevents duplicate merges.
+   * Returns a promise so callers (e.g. Login) can await completion.
+   */
+  const syncAfterAuth = async () => {
+    if (!isAuth) return;
+
+    if (!hasSyncedRef.current) {
+      hasSyncedRef.current = true;
+
+      const guestItems = storage.get('wishlist', []);
+      const guestProductIds = guestItems.map((item) => item.product_id || item.id);
+
+      if (guestProductIds.length > 0) {
+        try {
+          await wishlistService.merge(guestProductIds);
+          storage.remove('wishlist');
+          setGuestWishlist([]);
+        } catch {
+          // Merge failed — keep guest wishlist intact in localStorage
+        }
+      }
+    }
+
+    // Always fetch latest auth wishlist to ensure UI is up to date
+    await loadAuthWishlist();
+  };
+
+  // On login: merge guest wishlist into backend; On logout: clear auth wishlist
+  useEffect(() => {
+    const wasAuth = prevAuthRef.current;
+    prevAuthRef.current = isAuth;
+
+    if (isAuth && !wasAuth) {
+      syncAfterAuth();
+    } else if (!isAuth && wasAuth) {
+      hasSyncedRef.current = false;
+      setAuthWishlist([]);
+      setWishlistLoaded(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuth]);
 
   const addToWishlist = (product) => {
     if (isAuth) {
@@ -131,6 +144,7 @@ export const WishlistProvider = ({ children }) => {
       toggleWishlist,
       isInWishlist,
       loadAuthWishlist,
+      syncAfterAuth,
       wishlistCount: wishlist.length,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps

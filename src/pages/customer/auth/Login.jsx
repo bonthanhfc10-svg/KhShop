@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../store/AuthContext';
+import { useCart } from '../../../store/CartContext';
+import { useWishlist } from '../../../store/WishlistContext';
 import { validateLogin } from '../../../utils/validation';
 import AuthLayout from '../../../components/common/AuthLayout';
 
 export default function Login() {
   const { login, error, user } = useAuth();
+  const { syncAfterAuth: syncCart } = useCart();
+  const { syncAfterAuth: syncWishlist } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
   const redirectTo = location.state?.from || '/account/profile';
@@ -30,6 +34,8 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login({ email: values.email, password: values.password });
+      // Ensure cart and wishlist are synced before navigating away
+      await Promise.all([syncCart(), syncWishlist()]);
       navigate(redirectTo, { replace: true });
     } catch {
       setSubmitting(false);

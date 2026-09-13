@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../store/CartContext';
+import { useWishlist } from '../store/WishlistContext';
 import { orderService } from '../services/orderService';
 
 export default function useCheckout() {
-  const { cart, cartTotal, clearCart } = useCart();
+  const { cart, cartTotal, clearCart, fetchAuthCart } = useCart();
+  const { loadAuthWishlist } = useWishlist();
   const navigate = useNavigate();
 
   const [values, setValues] = useState({
@@ -49,7 +51,12 @@ export default function useCheckout() {
       const res = await orderService.createOrder(payload);
       const order = res?.data;
 
+      // Clear cart after successful order
       clearCart();
+
+      // Refresh cart and wishlist to reflect post-order server state
+      await Promise.all([fetchAuthCart(), loadAuthWishlist()]);
+
       navigate(`/order-success/${order.id}`, { replace: true });
     } catch (err) {
       const message =

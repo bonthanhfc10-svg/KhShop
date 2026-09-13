@@ -30,6 +30,7 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const isAuth = Boolean(user);
   const prevAuthRef = useRef(isAuth);
+  const hasSyncedRef = useRef(false);
 
   const [guestCart, setGuestCart] = useState(() => storage.get('cart', []));
   const [authCart, setAuthCart] = useState([]);
@@ -47,13 +48,29 @@ export const CartProvider = ({ children }) => {
     }
   }, [guestCart, isAuth]);
 
-  // On login: merge guest cart into backend; On logout: clear auth cart
-  useEffect(() => {
-    const wasAuth = prevAuthRef.current;
-    prevAuthRef.current = isAuth;
+  const fetchAuthCart = async () => {
+    if (!isAuth) return;
+    try {
+      const res = await cartService.getCart();
+      const items = res?.data?.cart_items || [];
+      setAuthCart(items.map(mapBackendCartItem));
+      setCartLoaded(true);
+    } catch {
+      // ignore
+    }
+  };
 
-    if (isAuth && !wasAuth) {
-      // Transition: guest → authenticated — merge guest cart
+  /**
+   * Synchronize guest localStorage cart with the authenticated backend cart.
+   * Safe to call multiple times — the hasSyncedRef guard prevents duplicate merges.
+   * Returns a promise so callers (e.g. Login) can await completion.
+   */
+  const syncAfterAuth = async () => {
+    if (!isAuth) return;
+
+    if (!hasSyncedRef.current) {
+      hasSyncedRef.current = true;
+
       const guestItems = storage.get('cart', []);
       if (guestItems.length > 0) {
         const payload = guestItems
@@ -61,28 +78,40 @@ export const CartProvider = ({ children }) => {
           .map((i) => ({ variant_id: i.variant_id, qty: i.quantity }));
 
         if (payload.length > 0) {
-          cartService
-            .merge(payload)
-            .then((res) => {
-              const items = res?.data?.cart_items || [];
-              setAuthCart(items.map(mapBackendCartItem));
-              setCartLoaded(true);
-              storage.remove('cart');
-              setGuestCart([]);
-            })
-            .catch(() => {
-              // Merge failed — keep guest cart intact in localStorage
-            });
+          try {
+            const res = await cartService.merge(payload);
+            const items = res?.data?.cart_items || [];
+            setAuthCart(items.map(mapBackendCartItem));
+            setCartLoaded(true);
+            storage.remove('cart');
+            setGuestCart([]);
+          } catch {
+            // Merge failed — keep guest cart intact in localStorage
+          }
         } else {
           storage.remove('cart');
           setGuestCart([]);
         }
       }
+    }
+
+    // Always fetch latest auth cart to ensure UI is up to date
+    await fetchAuthCart();
+  };
+
+  // On login: merge guest cart into backend; On logout: clear auth cart
+  useEffect(() => {
+    const wasAuth = prevAuthRef.current;
+    prevAuthRef.current = isAuth;
+
+    if (isAuth && !wasAuth) {
+      syncAfterAuth();
     } else if (!isAuth && wasAuth) {
-      // Transition: authenticated → guest — clear auth cart
+      hasSyncedRef.current = false;
       setAuthCart([]);
       setCartLoaded(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuth]);
 
   const loadAuthCart = async () => {
@@ -97,18 +126,6 @@ export const CartProvider = ({ children }) => {
       // ignore
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchAuthCart = async () => {
-    if (!isAuth) return;
-    try {
-      const res = await cartService.getCart();
-      const items = res?.data?.cart_items || [];
-      setAuthCart(items.map(mapBackendCartItem));
-      setCartLoaded(true);
-    } catch {
-      // ignore
     }
   };
 
@@ -249,6 +266,7 @@ export const CartProvider = ({ children }) => {
       cartCount,
       fetchAuthCart,
       loadAuthCart,
+      syncAfterAuth,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [cart, isOpen, loading, cartLoaded, addingToCart, cartTotal, cartCount]
