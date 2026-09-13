@@ -13,7 +13,8 @@ export const WishlistProvider = ({ children }) => {
 
   const [guestWishlist, setGuestWishlist] = useState(() => storage.get('wishlist', []));
   const [authWishlist, setAuthWishlist] = useState([]);
-  const [wishlistLoaded, setWishlistLoaded] = useState(false);
+  const [wishlistLoaded, setWishlistLoaded] = useState(() => !isAuth);
+  const [loading, setLoading] = useState(false);
   const [togglingWishlistId, setTogglingWishlistId] = useState(null);
 
   const wishlist = isAuth ? authWishlist : guestWishlist;
@@ -27,13 +28,16 @@ export const WishlistProvider = ({ children }) => {
 
   const loadAuthWishlist = async () => {
     if (!isAuth) return;
+    setLoading(true);
     try {
       const res = await wishlistService.getAll();
       const items = res?.data?.wishlists || [];
       setAuthWishlist(items);
       setWishlistLoaded(true);
     } catch {
-      // ignore
+      setWishlistLoaded(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,7 +80,7 @@ export const WishlistProvider = ({ children }) => {
     } else if (!isAuth && wasAuth) {
       hasSyncedRef.current = false;
       setAuthWishlist([]);
-      setWishlistLoaded(false);
+      setWishlistLoaded(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuth]);
@@ -138,6 +142,7 @@ export const WishlistProvider = ({ children }) => {
     () => ({
       wishlist,
       wishlistLoaded,
+      loading,
       togglingWishlistId,
       addToWishlist,
       removeFromWishlist,
@@ -148,7 +153,7 @@ export const WishlistProvider = ({ children }) => {
       wishlistCount: wishlist.length,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [wishlist, wishlistLoaded, togglingWishlistId]
+    [wishlist, wishlistLoaded, loading, togglingWishlistId]
   );
 
   return (

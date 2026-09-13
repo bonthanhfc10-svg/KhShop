@@ -4,6 +4,7 @@ import { useWishlist } from '../../../store/WishlistContext';
 import { useAuth } from '../../../store/AuthContext';
 import WishlistGrid from '../../../components/customer/wishlist/WishlistGrid';
 import EmptyState from '../../../components/common/EmptyState';
+import Loading from '../../../components/common/Loading';
 
 export default function Wishlist() {
   const { wishlist, wishlistLoaded, loadAuthWishlist } = useWishlist();
@@ -15,6 +16,14 @@ export default function Wishlist() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!wishlistLoaded) {
+    return (
+      <main className="container-kh py-4">
+        <Loading full />
+      </main>
+    );
+  }
 
   return (
     <main>

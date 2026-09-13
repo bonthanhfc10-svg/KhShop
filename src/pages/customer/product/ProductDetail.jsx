@@ -60,7 +60,7 @@ export default function ProductDetail() {
 
   return (
     <main>
-      <div className="container-kh pt-8">
+      <div className="container-kh pt-4">
         <DetailBreadcrumb context={breadcrumbContext} current={product.name} />
 
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">

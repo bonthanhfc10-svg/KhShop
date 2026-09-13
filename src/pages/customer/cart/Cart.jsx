@@ -8,7 +8,7 @@ import Button from '../../../components/common/Button';
 import Loading from '../../../components/common/Loading';
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity, cartTotal, fetchAuthCart, loading, cartLoaded } = useCart();
+  const { cart, removeFromCart, updateQuantity, cartTotal, fetchAuthCart, cartLoaded } = useCart();
 
   useEffect(() => {
     if (!cartLoaded) {
@@ -17,7 +17,7 @@ export default function Cart() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (loading && cart.length === 0) {
+  if (!cartLoaded) {
     return (
       <main className="container-kh py-4">
         <Loading full />

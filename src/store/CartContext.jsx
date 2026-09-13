@@ -36,7 +36,7 @@ export const CartProvider = ({ children }) => {
   const [authCart, setAuthCart] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [cartLoaded, setCartLoaded] = useState(false);
+  const [cartLoaded, setCartLoaded] = useState(() => !isAuth);
   const [addingToCart, setAddingToCart] = useState(false);
 
   const cart = isAuth ? authCart : guestCart;
@@ -50,13 +50,16 @@ export const CartProvider = ({ children }) => {
 
   const fetchAuthCart = async () => {
     if (!isAuth) return;
+    setLoading(true);
     try {
       const res = await cartService.getCart();
       const items = res?.data?.cart_items || [];
       setAuthCart(items.map(mapBackendCartItem));
       setCartLoaded(true);
     } catch {
-      // ignore
+      setCartLoaded(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,7 +112,7 @@ export const CartProvider = ({ children }) => {
     } else if (!isAuth && wasAuth) {
       hasSyncedRef.current = false;
       setAuthCart([]);
-      setCartLoaded(false);
+      setCartLoaded(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuth]);
