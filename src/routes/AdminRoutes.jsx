@@ -11,6 +11,7 @@ const AddProduct = lazy(() => import('../pages/admin/products/AddProduct'));
 const EditProduct = lazy(() => import('../pages/admin/products/EditProduct'));
 const ProductDetail = lazy(() => import('../pages/admin/products/ProductDetail'));
 const Categories = lazy(() => import('../pages/admin/categories/Categories'));
+const CreateCategory = lazy(() => import('../pages/admin/categories/CreateCategory'));
 const Orders = lazy(() => import('../pages/admin/orders/Orders'));
 const OrderDetails = lazy(() => import('../pages/admin/orders/OrderDetails'));
 const Customers = lazy(() => import('../pages/admin/customers/Customers'));
@@ -21,9 +22,11 @@ const SalesReport = lazy(() => import('../pages/admin/reports/SalesReport'));
 const ProductReport = lazy(() => import('../pages/admin/reports/ProductReport'));
 const CustomerReport = lazy(() => import('../pages/admin/reports/CustomerReport'));
 const Banners = lazy(() => import('../pages/admin/store/Banners'));
+const CreateBanner = lazy(() => import('../pages/admin/store/CreateBanner'));
 const Collections = lazy(() => import('../pages/admin/store/Collections'));
 const Settings = lazy(() => import('../pages/admin/settings/Settings'));
 const AdminUsers = lazy(() => import('../pages/admin/settings/AdminUsers'));
+const CreateAdminUser = lazy(() => import('../pages/admin/settings/CreateAdminUser'));
 
 const Load = ({ children }) => (
   <Suspense fallback={<LoginLoading />}>{children}</Suspense>
@@ -35,10 +38,11 @@ export const AdminRoutes = () => {
       <Route path="/admin/login" element={<Load><AdminLogin /></Load>} />
 
       <Route
-        path="/admin"element={
-          // <AdminRoute>
+        path="/admin"
+        element={
+          <AdminRoute>
             <AdminLayout />
-          // </AdminRoute>
+          </AdminRoute>
         }
       >
         <Route index element={<Navigate to="/admin/dashboard" replace />} />
@@ -48,6 +52,7 @@ export const AdminRoutes = () => {
         <Route path="products/:id" element={<Load><ProductDetail /></Load>} />
         <Route path="products/:id/edit" element={<Load><EditProduct /></Load>} />
         <Route path="categories" element={<Load><Categories /></Load>} />
+        <Route path="categories/create" element={<Load><CreateCategory /></Load>} />
         <Route path="orders" element={<Load><Orders /></Load>} />
         <Route path="orders/:id" element={<Load><OrderDetails /></Load>} />
         <Route path="customers" element={<Load><Customers /></Load>} />
@@ -60,9 +65,11 @@ export const AdminRoutes = () => {
         <Route path="reports/customers" element={<Load><CustomerReport /></Load>} />
         <Route path="store" element={<Navigate to="/admin/store/banners" replace />} />
         <Route path="store/banners" element={<Load><Banners /></Load>} />
+        <Route path="store/banners/create" element={<Load><CreateBanner /></Load>} />
         <Route path="store/collections" element={<Load><Collections /></Load>} />
         <Route path="settings" element={<Load><Settings /></Load>} />
         <Route path="settings/admin-users" element={<Load><AdminUsers /></Load>} />
+        <Route path="settings/admin-users/create" element={<Load><CreateAdminUser /></Load>} />
       </Route>
     </Routes>
   );

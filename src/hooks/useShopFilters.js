@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 const DEFAULT_FILTERS = {
   sizes: [],
@@ -18,6 +18,20 @@ export default function useShopFilters({
   const [appliedFilters, setAppliedFilters] = useState(DEFAULT_FILTERS);
   const [appliedSort, setAppliedSort] = useState(null);
   const [page, setPage] = useState(1);
+
+  const slugContextRef = useRef(`${menuSlug ?? ''}|${categorySlug ?? ''}`);
+
+  useEffect(() => {
+    const key = `${menuSlug ?? ''}|${categorySlug ?? ''}`;
+    if (slugContextRef.current !== key) {
+      slugContextRef.current = key;
+      setDraftFilters(DEFAULT_FILTERS);
+      setDraftSort(null);
+      setAppliedFilters(DEFAULT_FILTERS);
+      setAppliedSort(null);
+      setPage(1);
+    }
+  }, [menuSlug, categorySlug]);
 
   const changeDraftFilter = useCallback((patch) => {
     setDraftFilters((prev) => ({ ...prev, ...patch }));

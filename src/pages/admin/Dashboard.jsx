@@ -32,25 +32,28 @@ export default function Dashboard() {
   if (loading) return <AdminLoading />;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Page header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-sans text-3xl font-bold text-neutral-900">Dashboard</h1>
-          <p className="mt-1.5 text-base text-neutral-500">Welcome back, Admin 👋</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
+          <p className="mt-1 text-sm text-slate-500">Welcome back, Admin</p>
         </div>
-        <span className="inline-flex items-center rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-base text-neutral-600 shadow-sm">
+        <span className="inline-flex items-center rounded-lg border border-admin-border bg-admin-card px-3.5 py-2 text-sm font-medium text-slate-600">
           Sep 01, 2026 - Sep 07, 2026
         </span>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Total Sales" value={formatPrice(24580)} change={12.5} icon={DollarSign} />
-        <StatCard label="Total Orders" value="1,248" change={8.2} icon={ShoppingCart} />
-        <StatCard label="Total Customers" value="5,432" change={14.3} icon={Users} />
-        <StatCard label="Total Products" value="328" change={5.4} icon={Package} />
+      {/* Stat cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Total Sales" value={formatPrice(24580)} change={12.5} icon={DollarSign} theme="green" />
+        <StatCard label="Total Orders" value="1,248" change={8.2} icon={ShoppingCart} theme="blue" />
+        <StatCard label="Total Customers" value="5,432" change={14.3} icon={Users} theme="violet" />
+        <StatCard label="Total Products" value="328" change={5.4} icon={Package} theme="amber" />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      {/* Charts row */}
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <SalesChart />
         </div>
@@ -59,7 +62,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      {/* Orders row */}
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <RecentOrders orders={orders} />
         </div>

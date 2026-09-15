@@ -3,11 +3,14 @@ import { AlertCircle, Loader2, ShoppingBag } from 'lucide-react';
 import useCheckout from '../../../hooks/useCheckout';
 import OrderSummary from '../../../components/customer/checkout/OrderSummary';
 import Button from '../../../components/common/Button';
+import Loading from '../../../components/common/Loading';
 
 export default function Checkout() {
   const {
     cart,
     cartTotal,
+    cartLoaded,
+    loading,
     values,
     errors,
     placing,
@@ -15,6 +18,14 @@ export default function Checkout() {
     setField,
     placeOrder,
   } = useCheckout();
+
+  if (loading) {
+    return (
+      <main className="container-kh py-4">
+        <Loading full />
+      </main>
+    );
+  }
 
   if (cart.length === 0 && !placing) {
     return (

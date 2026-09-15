@@ -4,7 +4,7 @@ import { Plus, Trash2 } from 'lucide-react';
 
 export const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45'];
 
-export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Save Product', submitting = false }) {
+export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Save Product', submitting = false, buttonVariant = 'primary' }) {
   const [form, setForm] = useState({
     name: initial.name || '',
     sku: initial.sku || '',
@@ -51,9 +51,9 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
   };
 
   const inputCls =
-    'w-full rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-neutral-400';
+    'w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15';
   const labelCls = 'mb-1.5 block text-sm font-medium text-neutral-700';
-  const sectionCls = 'border-b border-neutral-200 pb-8';
+  const sectionCls = 'border-b border-admin-border pb-8';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -171,8 +171,8 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
               onClick={() => toggleSize(s)}
               className={`rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors ${
                 form.sizes.includes(s)
-                  ? 'border-neutral-900 bg-neutral-900 text-white'
-                  : 'border-neutral-200 text-neutral-600 hover:border-neutral-400'
+                  ? 'border-[#25A9EB] bg-[#25A9EB] text-white'
+                  : 'border-admin-border text-neutral-600 hover:border-neutral-400'
               }`}
             >
               {s}
@@ -191,20 +191,20 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
           <button
             type="button"
             onClick={addColor}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:border-neutral-400"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-admin-border px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:border-neutral-400"
           >
             <Plus size={16} /> Add Color
           </button>
         </div>
 
         {form.colors.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-neutral-300 py-6 text-center text-sm text-neutral-500">
+          <p className="rounded-lg border border-dashed border-admin-border-subtle py-6 text-center text-sm text-neutral-500">
             No color variants yet. Add one to support different product colors.
           </p>
         ) : (
           <div className="space-y-4">
             {form.colors.map((color, i) => (
-              <div key={color.id} className="rounded-lg border border-neutral-200 p-4">
+              <div key={color.id} className="rounded-lg border border-admin-border p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-sm font-semibold text-neutral-700">Variant {i + 1}</span>
                   <button
@@ -252,7 +252,11 @@ export default function ProductForm({ initial = {}, onSubmit, submitLabel = 'Sav
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-lg bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className={`inline-flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.97] ${
+            buttonVariant === 'success'
+              ? 'bg-[#25A9EB] text-white hover:bg-[#2098D3] shadow-sm shadow-[#25A9EB]/20 focus-visible:ring-[#25A9EB]'
+              : 'bg-neutral-900 text-white hover:bg-neutral-700 shadow-sm focus-visible:ring-neutral-900'
+          }`}
         >
           {submitting ? 'Saving...' : submitLabel}
         </button>

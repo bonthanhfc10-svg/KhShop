@@ -3,13 +3,13 @@ import ImageUpload from '../common/ImageUpload';
 
 export default function ProductVariantForm({ index, variant, onChange, onRemove }) {
   const inputCls =
-    'w-full rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-neutral-400';
+    'w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15';
   const labelCls = 'mb-1.5 block text-sm font-medium text-neutral-700';
 
   const update = (key, value) => onChange(index, { ...variant, [key]: value });
 
   return (
-    <div className="rounded-lg border border-neutral-200 p-4">
+    <div className="rounded-lg border border-admin-border p-4">
       <div className="mb-3 flex items-center justify-between">
         <span className="text-sm font-semibold text-neutral-700">Variant {index + 1}</span>
         <button

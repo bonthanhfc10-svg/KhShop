@@ -45,7 +45,7 @@ export default function Reports() {
             key={p}
             onClick={() => setPeriod(p)}
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              period === p ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-500 hover:bg-neutral-100'
+              period === p ? 'bg-[#25A9EB] text-white' : 'bg-admin-card text-neutral-500 hover:bg-neutral-100'
             }`}
           >
             {p}
@@ -61,7 +61,7 @@ export default function Reports() {
           { label: 'Avg. Order Value', value: formatPrice(sales.avgOrderValue * 100), icon: Receipt },
           { label: 'Customers', value: (sales.customers * 2).toLocaleString(), icon: Users },
         ].map((s) => (
-          <div key={s.label} className="border border-neutral-200 bg-white p-5 shadow-sm">
+          <div key={s.label} className="border border-admin-border bg-admin-card p-5 shadow-sm">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100">
               <s.icon size={18} className="text-neutral-700" />
             </div>
@@ -96,7 +96,7 @@ export default function Reports() {
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-sm font-bold text-neutral-600">
                 {i + 1}
               </span>
-              <img src={p.image} alt={p.name} className="h-10 w-10 shrink-0 rounded-lg border border-neutral-100 object-cover" />
+              <img src={p.image} alt={p.name} className="h-10 w-10 shrink-0 rounded-lg border border-admin-border-subtle object-cover" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-neutral-900">{p.name}</p>
                 <p className="text-xs text-neutral-400">{p.categoryName}</p>

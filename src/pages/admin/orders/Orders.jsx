@@ -37,7 +37,7 @@ export default function Orders() {
         <p className="mt-1 text-sm text-neutral-500">Manage and track all customer orders · {filtered.length} orders</p>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-lg border border-admin-border bg-admin-card p-3 shadow-sm sm:flex-row sm:items-center">
         <SearchInput value={search} onChange={setSearch} placeholder="Search by order or customer..." />
         <div className="flex flex-wrap gap-1.5">
           {statuses.map((s) => (
@@ -45,7 +45,7 @@ export default function Orders() {
               key={s}
               onClick={() => setStatus(s)}
               className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                status === s ? 'bg-neutral-900 text-white' : 'text-neutral-500 hover:bg-neutral-100'
+                status === s ? 'bg-[#25A9EB] text-white' : 'text-neutral-500 hover:bg-neutral-100'
               }`}
             >
               {s}
@@ -54,11 +54,11 @@ export default function Orders() {
         </div>
       </div>
 
-      <div className="overflow-hidden border border-neutral-200 bg-white shadow-sm">
+      <div className="overflow-hidden border border-admin-border bg-admin-card shadow-sm">
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-neutral-100 bg-neutral-50/60 text-xs uppercase tracking-wider text-neutral-500">
+              <tr className="border-b border-admin-border-subtle bg-admin-table-header text-xs uppercase tracking-wider text-neutral-500">
                 <th className="px-5 py-3 font-semibold">Order</th>
                 <th className="px-5 py-3 font-semibold">Customer</th>
                 <th className="px-5 py-3 font-semibold">Date</th>
@@ -92,7 +92,7 @@ export default function Orders() {
           </table>
         </div>
 
-        <div className="divide-y divide-neutral-100 md:hidden">
+        <div className="divide-y divide-admin-border-subtle md:hidden">
           {filtered.map((o) => (
             <div key={o.id} className="cursor-pointer p-4" onClick={() => navigate(`/admin/orders/${o.id}`)}>
               <div className="flex items-center justify-between">

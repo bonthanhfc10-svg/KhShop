@@ -61,7 +61,7 @@ export default function SalesReport() {
             key={p}
             onClick={() => setPeriod(p)}
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              period === p ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-500 hover:bg-neutral-100'
+              period === p ? 'bg-[#25A9EB] text-white' : 'bg-admin-card text-neutral-500 hover:bg-neutral-100'
             }`}
           >
             {p}
@@ -71,7 +71,7 @@ export default function SalesReport() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map((k) => (
-          <div key={k.label} className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+          <div key={k.label} className="rounded-lg border border-admin-border bg-admin-card p-5 shadow-sm">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100">
               <k.icon size={18} className="text-neutral-700" />
             </div>

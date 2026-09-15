@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, Bell, Search, ChevronDown, LogOut, Settings, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, Bell, ChevronDown, LogOut, Settings, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAdminAuth } from '../../../hooks/useAdminAuth';
 import Breadcrumbs from './Breadcrumbs';
 
@@ -9,7 +9,6 @@ export default function AdminHeader({
   onToggleMobile,
   collapsed,
   onToggleCollapse,
-  onSearch,
 }) {
   const { admin, logout } = useAdminAuth();
   const navigate = useNavigate();
@@ -38,19 +37,19 @@ export default function AdminHeader({
   };
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral-200 bg-white px-4 lg:px-6">
+    <header className="sticky top-0 z-50 flex h-16 w-full shrink-0 items-center justify-between bg-slate-100 px-4 [box-shadow:0_3px_8px_rgba(0,0,0,0.12)] lg:px-6">
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleMobile}
           aria-label="Toggle mobile menu"
-          className="rounded-lg p-2 text-neutral-600 hover:bg-neutral-100 lg:hidden"
+          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-admin-border/40 hover:text-slate-900 lg:hidden"
         >
           <Menu size={20} />
         </button>
         <button
           onClick={onToggleCollapse}
           aria-label="Toggle sidebar"
-          className="hidden rounded-lg p-2 text-neutral-600 hover:bg-neutral-100 lg:block"
+          className="hidden rounded-lg p-2 text-slate-500 transition-colors hover:bg-admin-border/40 hover:text-slate-900 lg:block"
         >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
@@ -59,77 +58,70 @@ export default function AdminHeader({
         </div>
       </div>
 
-      <div className="hidden lg:block">
-        <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <input
-            type="text"
-            placeholder="Search..."
-            aria-label="Global search"
-            onChange={(e) => onSearch?.(e.target.value)}
-            className="w-64 rounded-lg border border-neutral-200 bg-neutral-50 py-2 pl-9 pr-4 text-sm outline-none transition-all focus:w-72 focus:border-neutral-300 focus:bg-white"
-          />
-        </div>
-      </div>
-
       <div className="flex items-center gap-2">
+        {/* Notification bell */}
         <button
           aria-label="Notifications"
-          className="relative rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+          className="relative rounded-lg p-2 text-slate-500 transition-colors hover:bg-admin-border/40 hover:text-slate-900"
         >
           <Bell size={19} />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-accent" />
+          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-admin-danger ring-2 ring-white" />
         </button>
 
+        {/* Profile dropdown */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2.5 rounded-lg p-1.5 pl-2 transition-colors hover:bg-neutral-100"
+            className="flex items-center gap-2.5 rounded-lg py-1.5 pl-1.5 pr-2 transition-colors hover:bg-admin-border/40"
             aria-haspopup="menu"
             aria-expanded={menuOpen}
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500 text-xs font-bold text-white shadow-sm shadow-sky-500/25">
               {initials || 'A'}
             </span>
             <span className="hidden text-left sm:block">
-              <span className="block text-sm font-semibold leading-tight text-neutral-900">
+              <span className="block text-sm font-semibold leading-tight text-slate-800">
                 {admin?.name || 'Admin'}
               </span>
-              <span className="block text-xs leading-tight text-neutral-400">Administrator</span>
+              <span className="block text-xs leading-tight text-slate-500">Administrator</span>
             </span>
-            <ChevronDown size={16} className="hidden text-neutral-400 sm:block" />
+            <ChevronDown size={14} className={`hidden text-slate-400 sm:block transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {menuOpen && (
             <div
               role="menu"
-              className="absolute right-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-lg"
+              className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-admin-border bg-admin-card-elevated shadow-xl shadow-black/10"
             >
-              <div className="border-b border-neutral-100 bg-neutral-50 px-4 py-3">
-                <p className="text-sm font-semibold text-neutral-900">{admin?.name}</p>
-                <p className="truncate text-xs text-neutral-500">{admin?.email}</p>
+              <div className="border-b border-admin-border-subtle bg-admin-surface-subtle px-4 py-3">
+                <p className="text-sm font-semibold text-slate-900">{admin?.name}</p>
+                <p className="truncate text-xs text-slate-500">{admin?.email}</p>
               </div>
-              <button
-                role="menuitem"
-                onClick={() => { setMenuOpen(false); navigate('/admin/customers'); }}
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 transition-colors hover:bg-neutral-50"
-              >
-                <User size={16} /> Profile
-              </button>
-              <button
-                role="menuitem"
-                onClick={() => { setMenuOpen(false); navigate('/admin/settings'); }}
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 transition-colors hover:bg-neutral-50"
-              >
-                <Settings size={16} /> Settings
-              </button>
-              <button
-                role="menuitem"
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 border-t border-neutral-100 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
-              >
-                <LogOut size={16} /> Logout
-              </button>
+              <div className="py-1.5">
+                <button
+                  role="menuitem"
+                  onClick={() => { setMenuOpen(false); navigate('/admin/customers'); }}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-admin-surface-subtle"
+                >
+                  <User size={15} className="text-slate-400" /> Profile
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={() => { setMenuOpen(false); navigate('/admin/settings'); }}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-admin-surface-subtle"
+                >
+                  <Settings size={15} className="text-slate-400" /> Settings
+                </button>
+              </div>
+              <div className="border-t border-admin-border-subtle py-1.5">
+                <button
+                  role="menuitem"
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                >
+                  <LogOut size={15} /> Logout
+                </button>
+              </div>
             </div>
           )}
         </div>

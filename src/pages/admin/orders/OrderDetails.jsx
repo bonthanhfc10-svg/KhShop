@@ -60,7 +60,7 @@ export default function OrderDetails() {
               value={order.status}
               onChange={(e) => handleStatus(e.target.value)}
               disabled={updating}
-              className="rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none focus:border-neutral-400 disabled:opacity-60"
+              className="rounded-lg border border-gray-300 bg-admin-card-elevated px-3 py-2 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15 disabled:opacity-60"
               aria-label="Update order status"
             >
               {steps.map((s) => (
@@ -74,7 +74,7 @@ export default function OrderDetails() {
       </div>
 
       {/* Timeline */}
-      <div className="border border-neutral-200 bg-white p-6 shadow-sm">
+      <div className="border border-admin-border bg-admin-card p-6 shadow-sm">
         <h2 className="mb-5 font-sans text-base font-semibold text-neutral-900">Order Status</h2>
         <ol className="flex items-center">
           {steps.map((step, i) => {
@@ -85,7 +85,7 @@ export default function OrderDetails() {
                 <div className="flex flex-col items-center">
                   <span
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                      done ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-400'
+                      done ? 'bg-[#25A9EB] text-white' : 'bg-neutral-100 text-neutral-400'
                     }`}
                   >
                     {i + 1}
@@ -95,7 +95,7 @@ export default function OrderDetails() {
                   </span>
                 </div>
                 {i < steps.length - 1 && (
-                  <span className={`mx-2 mb-6 h-0.5 flex-1 ${i < currentStep ? 'bg-neutral-900' : 'bg-neutral-100'}`} />
+                  <span className={`mx-2 mb-6 h-0.5 flex-1 ${i < currentStep ? 'bg-[#25A9EB]' : 'bg-neutral-100'}`} />
                 )}
               </li>
             );
@@ -105,8 +105,8 @@ export default function OrderDetails() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Items */}
-        <div className="border border-neutral-200 bg-white shadow-sm lg:col-span-2">
-          <div className="border-b border-neutral-100 px-5 py-4">
+        <div className="border border-admin-border bg-admin-card shadow-sm lg:col-span-2">
+          <div className="border-b border-admin-border-subtle px-5 py-4">
             <h2 className="font-sans text-base font-semibold text-neutral-900">Items</h2>
           </div>
           <div className="divide-y divide-neutral-50">
@@ -125,7 +125,7 @@ export default function OrderDetails() {
               </div>
             ))}
           </div>
-          <div className="space-y-2 border-t border-neutral-100 bg-neutral-50/60 px-5 py-4">
+          <div className="space-y-2 border-t border-admin-border-subtle bg-admin-surface-subtle px-5 py-4">
             <div className="flex justify-between text-sm text-neutral-500">
               <span>Subtotal</span><span>{formatPrice(order.total * 0.85)}</span>
             </div>
@@ -135,7 +135,7 @@ export default function OrderDetails() {
             <div className="flex justify-between text-sm text-neutral-500">
               <span>Tax</span><span>{formatPrice(order.total * 0.1)}</span>
             </div>
-            <div className="flex justify-between border-t border-neutral-200 pt-2 text-sm font-semibold text-neutral-900">
+            <div className="flex justify-between border-t border-admin-border pt-2 text-sm font-semibold text-neutral-900">
               <span>Total</span><span>{formatPrice(order.total)}</span>
             </div>
           </div>
@@ -143,7 +143,7 @@ export default function OrderDetails() {
 
         {/* Customer / shipping / payment */}
         <div className="space-y-6">
-          <div className="border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="border border-admin-border bg-admin-card p-5 shadow-sm">
             <div className="flex items-center gap-2 text-neutral-500">
               <User size={15} />
               <h3 className="text-sm font-semibold">Customer</h3>
@@ -153,7 +153,7 @@ export default function OrderDetails() {
             <p className="mt-1 text-sm text-neutral-500">Email</p>
           </div>
 
-          <div className="border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="border border-admin-border bg-admin-card p-5 shadow-sm">
             <div className="flex items-center gap-2 text-neutral-500">
               <MapPin size={15} />
               <h3 className="text-sm font-semibold">Shipping Address</h3>
@@ -166,7 +166,7 @@ export default function OrderDetails() {
             <p className="mt-2 text-sm text-neutral-500">Standard shipping</p>
           </div>
 
-          <div className="border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="border border-admin-border bg-admin-card p-5 shadow-sm">
             <div className="flex items-center gap-2 text-neutral-500">
               <CreditCard size={15} />
               <h3 className="text-sm font-semibold">Payment</h3>

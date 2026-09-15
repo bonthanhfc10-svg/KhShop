@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Power, Pencil, Trash2, Plus } from 'lucide-react';
 import Card from '../../../components/admin/common/Card';
 import Modal from '../../../components/common/Modal';
+import ConfirmModal from '../../../components/admin/common/ConfirmModal';
 import StatusBadge from '../../../components/admin/common/StatusBadge';
 import AdminButton from '../../../components/admin/common/AdminButton';
+import Toast from '../../../components/admin/common/Toast';
+import useToast from '../../../hooks/useToast';
 import { formatDate } from '../../../utils/formatDate';
 
 const initial = [
@@ -14,27 +18,22 @@ const initial = [
   { id: 5, image: '/images/banners/promo.svg', title: 'Flash Sale', subtitle: 'Limited time only', buttonText: 'View Sale', link: '/products/sale', status: 'Active', start: '2026-09-05', end: '2026-09-12' },
 ];
 
-const emptyForm = {
-  title: '',
-  subtitle: '',
-  buttonText: '',
-  link: '',
-  status: 'Active',
-  start: '',
-  end: '',
-};
-
 export default function Banners() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [banners, setBanners] = useState(initial);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState({ title: '', subtitle: '', buttonText: '', link: '', status: 'Active', start: '', end: '' });
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const { toasts, show, remove } = useToast();
 
-  const openCreate = () => {
-    setEditing(null);
-    setForm(emptyForm);
-    setOpen(true);
-  };
+  useEffect(() => {
+    if (location.state?.toast) {
+      show(location.state.toast);
+      window.history.replaceState({}, '');
+    }
+  }, []);
 
   const openEdit = (b) => {
     setEditing(b);
@@ -50,16 +49,16 @@ export default function Banners() {
     );
   };
 
-  const remove = (id) => setBanners((prev) => prev.filter((x) => x.id !== id));
+  const handleDelete = (id) => {
+    setBanners((prev) => prev.filter((x) => x.id !== id));
+    setDeleteTarget(null);
+    show('Deleted successfully');
+  };
 
   const save = () => {
-    if (editing) {
-      setBanners((prev) =>
-        prev.map((x) => (x.id === editing.id ? { ...x, ...form, image: x.image } : x))
-      );
-    } else {
-      setBanners((prev) => [...prev, { id: Date.now(), image: '/images/banners/Hero.png', ...form }]);
-    }
+    setBanners((prev) =>
+      prev.map((x) => (x.id === editing.id ? { ...x, ...form, image: x.image } : x))
+    );
     setOpen(false);
   };
 
@@ -72,7 +71,7 @@ export default function Banners() {
           <h1 className="font-sans text-2xl font-bold text-neutral-900">Banners</h1>
           <p className="mt-1 text-sm text-neutral-500">Manage homepage and promotional banners.</p>
         </div>
-        <AdminButton onClick={openCreate}><Plus size={16} /> Add Banner</AdminButton>
+        <AdminButton to="/admin/store/banners/create" variant="success"><Plus size={16} /> Add Banner</AdminButton>
       </div>
 
       <Card bodyClassName="overflow-x-auto">
@@ -112,7 +111,7 @@ export default function Banners() {
                     <button onClick={() => openEdit(b)} aria-label="Edit banner" className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900">
                       <Pencil size={16} />
                     </button>
-                    <button onClick={() => remove(b.id)} aria-label="Delete banner" className="rounded-lg p-2 text-red-500 hover:bg-red-50">
+                    <button onClick={() => setDeleteTarget(b)} aria-label="Delete banner" className="rounded-lg p-2 text-red-500 hover:bg-red-50">
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -123,49 +122,59 @@ export default function Banners() {
         </table>
       </Card>
 
-      <Modal open={open} onClose={() => setOpen(false)} title={editing ? 'Edit Banner' : 'Add Banner'} size="lg">
+      <Modal open={open} onClose={() => setOpen(false)} title="Edit Banner" size="lg">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-sm font-medium text-neutral-700">Banner Image</label>
-            <img src={editing ? initial.find((x) => x.id === editing.id)?.image : '/images/banners/Hero.png'} alt="Preview" className="h-24 w-full rounded-lg border border-dashed border-neutral-300 object-cover" />
+            <img src={editing?.image || '/images/banners/Hero.png'} alt="Preview" className="h-24 w-full rounded-lg border border-dashed border-neutral-300 object-cover" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-neutral-700">Title</label>
-            <input value={form.title} onChange={set('title')} className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400" />
+            <input value={form.title} onChange={set('title')} className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-neutral-700">Subtitle</label>
-            <input value={form.subtitle} onChange={set('subtitle')} className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400" />
+            <input value={form.subtitle} onChange={set('subtitle')} className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-neutral-700">Button Text</label>
-            <input value={form.buttonText} onChange={set('buttonText')} className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400" />
+            <input value={form.buttonText} onChange={set('buttonText')} className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-neutral-700">Link</label>
-            <input value={form.link} onChange={set('link')} className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400" />
+            <input value={form.link} onChange={set('link')} className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-neutral-700">Status</label>
-            <select value={form.status} onChange={set('status')} className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400">
+            <select value={form.status} onChange={set('status')} className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15">
               <option>Active</option>
               <option>Inactive</option>
             </select>
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-neutral-700">Start Date</label>
-            <input type="date" value={form.start} onChange={set('start')} className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400" />
+            <input type="date" value={form.start} onChange={set('start')} className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-neutral-700">End Date</label>
-            <input type="date" value={form.end} onChange={set('end')} className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400" />
+            <input type="date" value={form.end} onChange={set('end')} className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15" />
           </div>
           <div className="flex justify-end gap-2 sm:col-span-2">
             <AdminButton variant="secondary" onClick={() => setOpen(false)}>Cancel</AdminButton>
-            <AdminButton onClick={save}>{editing ? 'Save Changes' : 'Create Banner'}</AdminButton>
+            <AdminButton onClick={save}>Save Changes</AdminButton>
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => handleDelete(deleteTarget?.id)}
+        title="Delete Banner?"
+        message={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+      />
+
+      <Toast toasts={toasts} onRemove={remove} />
     </div>
   );
 }

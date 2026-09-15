@@ -18,6 +18,7 @@ export default function MiniCart() {
     cartTotal,
     fetchAuthCart,
     cartLoaded,
+    loading,
   } = useCart();
   const { user } = useAuth();
 
@@ -30,6 +31,10 @@ export default function MiniCart() {
   const shipping = cartTotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = cartTotal + shipping;
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - cartTotal);
+
+  const showLoading = loading && cart.length === 0;
+  const showEmpty = !showLoading && cart.length === 0;
+  const showItems = !showLoading && cart.length > 0;
 
   return (
     <>
@@ -75,7 +80,17 @@ export default function MiniCart() {
         )}
 
         <div className="flex-1 overflow-y-auto px-6">
-          {cart.length === 0 ? (
+          {showLoading ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="relative h-8 w-8">
+                <div className="absolute inset-0 rounded-full border-2 border-neutral-200" />
+                <div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-black border-b-black" />
+              </div>
+              <span className="mt-3 text-xs font-medium uppercase tracking-widest text-neutral-500">
+                Loading…
+              </span>
+            </div>
+          ) : showEmpty ? (
             <EmptyState
               icon={ShoppingBag}
               title="Your bag is empty"

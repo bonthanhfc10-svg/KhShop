@@ -12,40 +12,40 @@ export default function TopProducts({ products = [] }) {
       action={
         <Link
           to="/admin/reports/products"
-          className="rounded-lg px-3 py-1.5 text-sm font-semibold text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+          className="rounded-md px-2.5 py-1.5 text-sm font-semibold text-admin-primary transition-colors hover:bg-admin-primary-light"
         >
-          View all →
+          View all
         </Link>
       }
       bodyClassName="overflow-x-auto"
     >
       <table className="w-full text-left">
         <thead>
-          <tr className="border-b border-neutral-100 text-xs uppercase tracking-wider text-neutral-500">
-            <th className="px-5 py-4 font-semibold">Product</th>
-            <th className="px-5 py-4 text-right font-semibold">Sold</th>
-            <th className="px-5 py-4 text-right font-semibold">Revenue</th>
+          <tr className="border-b-2 border-admin-border bg-admin-table-header">
+            <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Product</th>
+            <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Sold</th>
+            <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Revenue</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-admin-border-subtle">
           {top.map((p, i) => (
-            <tr key={p.id} className="border-b border-neutral-50 transition-colors last:border-0 hover:bg-neutral-50/60">
-              <td className="px-5 py-4">
-                <div className="flex items-center gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-base font-bold text-neutral-600">
+            <tr key={p.id} className="transition-colors hover:bg-admin-primary-light/20">
+              <td className="px-5 py-3.5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-admin-primary/10 text-xs font-bold text-admin-primary">
                     {i + 1}
                   </span>
-                  <img src={p.image} alt={p.name} className="h-12 w-12 shrink-0 rounded-lg border border-neutral-100 bg-neutral-100 object-cover" />
+                  <img src={p.image} alt={p.name} className="h-10 w-10 shrink-0 rounded-lg border border-admin-border-subtle bg-admin-surface-subtle object-cover" />
                   <div className="min-w-0">
-                    <p className="truncate text-base font-medium text-neutral-900">{p.name}</p>
-                    <p className="text-sm text-neutral-400">{p.categoryName || 'Product'}</p>
+                    <p className="truncate text-sm font-semibold text-slate-900">{p.name}</p>
+                    <p className="text-xs text-slate-500">{p.categoryName || 'Product'}</p>
                   </div>
                 </div>
               </td>
-              <td className="px-5 py-4 text-right text-base font-semibold text-neutral-900">
+              <td className="px-5 py-3.5 text-right text-sm font-semibold text-slate-900">
                 {p.sold ?? 0}
               </td>
-              <td className="px-5 py-4 text-right text-base text-neutral-700">
+              <td className="px-5 py-3.5 text-right text-sm text-slate-700">
                 {formatPrice(p.revenue ?? 0)}
               </td>
             </tr>

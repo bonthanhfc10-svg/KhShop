@@ -8,7 +8,7 @@ import Button from '../../../components/common/Button';
 import Loading from '../../../components/common/Loading';
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity, cartTotal, fetchAuthCart, cartLoaded } = useCart();
+  const { cart, removeFromCart, updateQuantity, cartTotal, fetchAuthCart, cartLoaded, loading, cartError } = useCart();
 
   useEffect(() => {
     if (!cartLoaded) {
@@ -17,10 +17,24 @@ export default function Cart() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!cartLoaded) {
+  if (loading) {
     return (
       <main className="container-kh py-4">
         <Loading full />
+      </main>
+    );
+  }
+
+  if (cartError) {
+    return (
+      <main className="container-kh py-4">
+        <EmptyState
+          icon={ShoppingBag}
+          title="Something went wrong"
+          description={cartError}
+          actionLabel="Try Again"
+          actionTo="/cart"
+        />
       </main>
     );
   }

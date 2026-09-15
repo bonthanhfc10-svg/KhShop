@@ -6,7 +6,7 @@ export default function MobileSidebar({ open, onClose, onLogout }) {
     <>
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
           onClick={onClose}
         />
       )}
@@ -19,7 +19,7 @@ export default function MobileSidebar({ open, onClose, onLogout }) {
         <button
           onClick={onClose}
           aria-label="Close menu"
-          className="absolute right-3 top-2 z-10 rounded-lg p-1.5 text-neutral-400 hover:bg-white/10"
+          className="absolute right-3 top-2 z-10 rounded-lg p-1.5 text-slate-400 hover:bg-white/10"
         >
           <X size={18} />
         </button>

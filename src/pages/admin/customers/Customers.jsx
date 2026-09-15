@@ -38,7 +38,7 @@ export default function Customers() {
         <p className="mt-1 text-sm text-neutral-500">Manage your customer base · {filtered.length} customers</p>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-lg border border-admin-border bg-admin-card p-3 shadow-sm sm:flex-row sm:items-center">
         <SearchInput value={search} onChange={setSearch} placeholder="Search by name or email..." />
         <div className="flex gap-1.5">
           {['All', 'active', 'inactive'].map((s) => (
@@ -46,7 +46,7 @@ export default function Customers() {
               key={s}
               onClick={() => setStatus(s === 'All' ? 'All' : s)}
               className={`rounded-md px-2.5 py-1.5 text-xs font-medium capitalize transition-colors ${
-                status === s ? 'bg-neutral-900 text-white' : 'text-neutral-500 hover:bg-neutral-100'
+                status === s ? 'bg-[#25A9EB] text-white' : 'text-neutral-500 hover:bg-neutral-100'
               }`}
             >
               {s}
@@ -55,11 +55,11 @@ export default function Customers() {
         </div>
       </div>
 
-      <div className="overflow-hidden border border-neutral-200 bg-white shadow-sm">
+      <div className="overflow-hidden border border-admin-border bg-admin-card shadow-sm">
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-neutral-100 bg-neutral-50/60 text-xs uppercase tracking-wider text-neutral-500">
+              <tr className="border-b border-admin-border-subtle bg-admin-table-header text-xs uppercase tracking-wider text-neutral-500">
                 <th className="px-5 py-3 font-semibold">Customer</th>
                 <th className="px-5 py-3 font-semibold">Phone</th>
                 <th className="px-5 py-3 font-semibold">Orders</th>
@@ -99,7 +99,7 @@ export default function Customers() {
           </table>
         </div>
 
-        <div className="divide-y divide-neutral-100 md:hidden">
+          <div className="divide-y divide-admin-border-subtle md:hidden">
           {filtered.map((c) => (
             <div key={c.id} className="cursor-pointer p-4" onClick={() => navigate(`/admin/customers/${c.id}`)}>
               <div className="flex items-center gap-3">

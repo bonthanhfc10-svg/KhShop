@@ -46,7 +46,7 @@ export default function Inventory() {
         <p className="mt-1 text-sm text-neutral-500">Track stock levels across all products.</p>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-lg border border-admin-border bg-admin-card p-3 shadow-sm sm:flex-row sm:items-center">
         <SearchInput value={search} onChange={setSearch} placeholder="Search products..." />
         <div className="flex gap-1.5">
           {[
@@ -59,7 +59,7 @@ export default function Inventory() {
               key={s.key}
               onClick={() => setStatus(s.key)}
               className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                status === s.key ? 'bg-neutral-900 text-white' : 'text-neutral-500 hover:bg-neutral-100'
+                status === s.key ? 'bg-[#25A9EB] text-white' : 'text-neutral-500 hover:bg-neutral-100'
               }`}
             >
               {s.label}
@@ -68,11 +68,11 @@ export default function Inventory() {
         </div>
       </div>
 
-      <div className="overflow-hidden border border-neutral-200 bg-white shadow-sm">
+      <div className="overflow-hidden border border-admin-border bg-admin-card shadow-sm">
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-neutral-100 bg-neutral-50/60 text-xs uppercase tracking-wider text-neutral-500">
+              <tr className="border-b border-admin-border-subtle bg-admin-table-header text-xs uppercase tracking-wider text-neutral-500">
                 <th className="px-5 py-3 font-semibold">Product</th>
                 <th className="px-5 py-3 font-semibold">SKU</th>
                 <th className="px-5 py-3 font-semibold">Category</th>
@@ -108,7 +108,7 @@ export default function Inventory() {
           </table>
         </div>
 
-        <div className="divide-y divide-neutral-100 md:hidden">
+        <div className="divide-y divide-admin-border-subtle md:hidden">
           {filtered.map((i) => (
             <div key={i.id} className="p-4">
               <div className="flex items-center justify-between">
@@ -143,7 +143,7 @@ export default function Inventory() {
               type="number"
               value={adjustQty}
               onChange={(e) => setAdjustQty(Number(e.target.value))}
-              className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400"
+              className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15"
               placeholder="Use negative to reduce stock"
             />
           </div>
@@ -152,7 +152,7 @@ export default function Inventory() {
             <select
               value={adjustReason}
               onChange={(e) => setAdjustReason(e.target.value)}
-              className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400"
+              className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15"
             >
               <option value="">Select reason</option>
               <option value="restock">Restock</option>

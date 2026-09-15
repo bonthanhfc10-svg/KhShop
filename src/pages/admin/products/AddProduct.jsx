@@ -17,27 +17,29 @@ export default function AddProduct() {
         stock: Number(form.stock) || 0,
         salePrice: form.salePrice ? Number(form.salePrice) : null,
       });
-      navigate('/admin/products');
+      navigate('/admin/products', { state: { toast: 'Created successfully' } });
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <div>
-        <Link
-          to="/admin/products"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900"
-        >
-          <ArrowLeft size={16} /> Back to products
-        </Link>
-        <h1 className="font-sans text-2xl font-bold text-neutral-900">Add Product</h1>
-        <p className="mt-1 text-sm text-neutral-500">Create a new product in your catalog.</p>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <Link
+            to="/admin/products"
+            className="mb-2 inline-flex items-center gap-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900"
+          >
+            <ArrowLeft size={16} /> Back to products
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Add Product</h1>
+          <p className="mt-1 text-sm text-slate-500">Create a new product in your catalog.</p>
+        </div>
       </div>
 
-      <div className="border border-neutral-200 bg-white p-6 shadow-sm">
-        <ProductForm onSubmit={handleSubmit} submitLabel="Create Product" submitting={submitting} />
+      <div className="rounded-xl border border-admin-border bg-admin-card p-6 shadow-sm">
+        <ProductForm onSubmit={handleSubmit} submitLabel="Create Product" submitting={submitting} buttonVariant="success" />
       </div>
     </div>
   );

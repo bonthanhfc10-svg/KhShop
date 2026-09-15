@@ -17,7 +17,7 @@ export default function AdminLayout({ crumbs = [] }) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50">
+    <div className="flex h-screen overflow-hidden bg-white">
       <AdminSidebar
         collapsed={collapsed}
         onNavigate={() => {}}
@@ -29,15 +29,15 @@ export default function AdminLayout({ crumbs = [] }) {
         onLogout={handleLogout}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
         <AdminHeader
           crumbs={crumbs}
           collapsed={collapsed}
           onToggleCollapse={() => setCollapsed((c) => !c)}
           onToggleMobile={() => setMobileOpen((o) => !o)}
         />
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          <div className="mx-auto max-w-7xl">
+        <main className="flex-1">
+          <div className="mx-auto max-w-7xl p-3 pt-3 lg:p-4 lg:pt-4">
             <Outlet />
           </div>
         </main>

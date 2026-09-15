@@ -1,9 +1,12 @@
-import { useState } from 'react';
-import { Plus, Pencil, Trash2, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Pencil, Trash2, Shield } from 'lucide-react';
 import Card from '../../../components/admin/common/Card';
+import ConfirmModal from '../../../components/admin/common/ConfirmModal';
 import StatusBadge from '../../../components/admin/common/StatusBadge';
-import Modal from '../../../components/common/Modal';
 import AdminButton from '../../../components/admin/common/AdminButton';
+import Toast from '../../../components/admin/common/Toast';
+import useToast from '../../../hooks/useToast';
 
 const initial = [
   { id: 1, name: 'Bonthanh', email: 'bonthanhfc10@gmail.com', role: 'admin', status: 'Active', lastLogin: 'Sep 03, 2026' },
@@ -13,15 +16,28 @@ const initial = [
 ];
 
 export default function AdminUsers() {
+  const location = useLocation();
   const [users, setUsers] = useState(initial);
-  const [open, setOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const { toasts, show, remove } = useToast();
+
+  useEffect(() => {
+    if (location.state?.toast) {
+      show(location.state.toast);
+      window.history.replaceState({}, '');
+    }
+  }, []);
 
   const roleStyle = (role) =>
     role === 'admin'
       ? 'inline-flex items-center gap-1.5 rounded-full bg-neutral-900 px-2.5 py-0.5 text-xs font-medium text-white'
       : 'inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-neutral-600';
 
-  const remove = (id) => setUsers((prev) => prev.filter((x) => x.id !== id));
+  const handleDelete = (id) => {
+    setUsers((prev) => prev.filter((x) => x.id !== id));
+    setDeleteTarget(null);
+    show('Deleted successfully');
+  };
 
   return (
     <div className="space-y-6">
@@ -30,7 +46,7 @@ export default function AdminUsers() {
           <h1 className="font-sans text-2xl font-bold text-neutral-900">Admin Users</h1>
           <p className="mt-1 text-sm text-neutral-500">Manage administrator and staff accounts.</p>
         </div>
-        <AdminButton onClick={() => setOpen(true)}><Plus size={16} /> Add User</AdminButton>
+        <AdminButton to="/admin/settings/admin-users/create" variant="success"><span className="inline-flex items-center gap-2">Add User</span></AdminButton>
       </div>
 
       <Card bodyClassName="overflow-x-auto">
@@ -70,7 +86,7 @@ export default function AdminUsers() {
                     <button aria-label="Edit user" className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900">
                       <Pencil size={16} />
                     </button>
-                    <button onClick={() => remove(u.id)} aria-label="Delete user" className="rounded-lg p-2 text-red-500 hover:bg-red-50">
+                    <button onClick={() => setDeleteTarget(u)} aria-label="Delete user" className="rounded-lg p-2 text-red-500 hover:bg-red-50">
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -81,29 +97,15 @@ export default function AdminUsers() {
         </table>
       </Card>
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Add Admin User">
-        <div className="space-y-4">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-neutral-700">Name</label>
-            <input className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400" />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-neutral-700">Email</label>
-            <input type="email" className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400" />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-neutral-700">Role</label>
-            <select className="w-full rounded-lg border border-neutral-200 px-3.5 py-2.5 text-sm outline-none focus:border-neutral-400">
-              <option value="admin">Admin</option>
-              <option value="staff">Staff</option>
-            </select>
-          </div>
-          <div className="flex justify-end gap-2">
-            <AdminButton variant="secondary" onClick={() => setOpen(false)}>Cancel</AdminButton>
-            <AdminButton onClick={() => setOpen(false)}>Create User</AdminButton>
-          </div>
-        </div>
-      </Modal>
+      <ConfirmModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => handleDelete(deleteTarget?.id)}
+        title="Delete User?"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
+      />
+
+      <Toast toasts={toasts} onRemove={remove} />
     </div>
   );
 }

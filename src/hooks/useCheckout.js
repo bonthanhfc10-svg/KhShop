@@ -5,7 +5,7 @@ import { useWishlist } from '../store/WishlistContext';
 import { orderService } from '../services/orderService';
 
 export default function useCheckout() {
-  const { cart, cartTotal, clearCart, fetchAuthCart } = useCart();
+  const { cart, cartTotal, cartLoaded, loading, fetchAuthCart } = useCart();
   const { loadAuthWishlist } = useWishlist();
   const navigate = useNavigate();
 
@@ -51,10 +51,6 @@ export default function useCheckout() {
       const res = await orderService.createOrder(payload);
       const order = res?.data;
 
-      // Clear cart after successful order
-      clearCart();
-
-      // Refresh cart and wishlist to reflect post-order server state
       await Promise.all([fetchAuthCart(), loadAuthWishlist()]);
 
       navigate(`/order-success/${order.id}`, { replace: true });
@@ -70,6 +66,8 @@ export default function useCheckout() {
   return {
     cart,
     cartTotal,
+    cartLoaded,
+    loading,
     values,
     errors,
     placing,

@@ -35,8 +35,9 @@ export const CartProvider = ({ children }) => {
   const [guestCart, setGuestCart] = useState(() => storage.get('cart', []));
   const [authCart, setAuthCart] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(() => isAuth);
   const [cartLoaded, setCartLoaded] = useState(() => !isAuth);
+  const [cartError, setCartError] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
 
   const cart = isAuth ? authCart : guestCart;
@@ -51,13 +52,15 @@ export const CartProvider = ({ children }) => {
   const fetchAuthCart = async () => {
     if (!isAuth) return;
     setLoading(true);
+    setCartError(null);
     try {
       const res = await cartService.getCart();
       const items = res?.data?.cart_items || [];
       setAuthCart(items.map(mapBackendCartItem));
       setCartLoaded(true);
-    } catch {
+    } catch (err) {
       setCartLoaded(true);
+      setCartError(err?.message || 'Failed to load cart');
     } finally {
       setLoading(false);
     }
@@ -88,8 +91,10 @@ export const CartProvider = ({ children }) => {
             setCartLoaded(true);
             storage.remove('cart');
             setGuestCart([]);
+            setLoading(false);
+            return;
           } catch {
-            // Merge failed — keep guest cart intact in localStorage
+            // Merge failed — fall through to fetchAuthCart
           }
         } else {
           storage.remove('cart');
@@ -98,7 +103,6 @@ export const CartProvider = ({ children }) => {
       }
     }
 
-    // Always fetch latest auth cart to ensure UI is up to date
     await fetchAuthCart();
   };
 
@@ -108,6 +112,8 @@ export const CartProvider = ({ children }) => {
     prevAuthRef.current = isAuth;
 
     if (isAuth && !wasAuth) {
+      setCartLoaded(false);
+      setLoading(true);
       syncAfterAuth();
     } else if (!isAuth && wasAuth) {
       hasSyncedRef.current = false;
@@ -257,6 +263,7 @@ export const CartProvider = ({ children }) => {
       isOpen,
       loading,
       cartLoaded,
+      cartError,
       addingToCart,
       openCart,
       closeCart,
@@ -272,7 +279,7 @@ export const CartProvider = ({ children }) => {
       syncAfterAuth,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [cart, isOpen, loading, cartLoaded, addingToCart, cartTotal, cartCount]
+    [cart, isOpen, loading, cartLoaded, cartError, addingToCart, cartTotal, cartCount]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

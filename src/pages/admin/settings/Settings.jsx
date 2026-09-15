@@ -8,7 +8,7 @@ const sectionList = [
 ];
 
 const inputCls =
-  'w-full rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-neutral-400';
+  'w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15';
 const labelCls = 'mb-1.5 block text-sm font-medium text-neutral-700';
 
 export default function Settings() {
@@ -53,13 +53,13 @@ export default function Settings() {
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Nav */}
         <nav className="lg:w-56 lg:shrink-0" aria-label="Settings sections">
-          <div className="flex gap-2 overflow-x-auto rounded-lg border border-neutral-200 bg-white p-2 lg:flex-col">
+          <div className="flex gap-2 overflow-x-auto rounded-lg border border-admin-border bg-admin-card p-2 lg:flex-col">
             {sectionList.map((s) => (
               <button
                 key={s.key}
                 onClick={() => setActive(s.key)}
                 className={`rounded-lg px-3.5 py-2 text-left text-sm font-medium transition-colors ${
-                  active === s.key ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100'
+                  active === s.key ? 'bg-[#25A9EB] text-white' : 'text-neutral-600 hover:bg-neutral-100'
                 }`}
               >
                 {s.label}
@@ -71,7 +71,7 @@ export default function Settings() {
         {/* Content */}
         <form onSubmit={handleSave} className="min-w-0 flex-1 space-y-6">
           {active === 'general' && (
-            <div className="border border-neutral-200 bg-white p-6 shadow-sm">
+            <div className="border border-admin-border bg-admin-card p-6 shadow-sm">
               <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">General</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
@@ -95,7 +95,7 @@ export default function Settings() {
           )}
 
           {active === 'store' && (
-            <div className="border border-neutral-200 bg-white p-6 shadow-sm">
+            <div className="border border-admin-border bg-admin-card p-6 shadow-sm">
               <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Store Settings</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
@@ -123,11 +123,11 @@ export default function Settings() {
           )}
 
           {active === 'payment' && (
-            <div className="border border-neutral-200 bg-white p-6 shadow-sm">
+            <div className="border border-admin-border bg-admin-card p-6 shadow-sm">
               <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Payment Methods</h2>
               <div className="space-y-3">
                 {['Credit Card', 'PayPal', 'Cash on Delivery', 'Bank Transfer'].map((m) => (
-                  <label key={m} className="flex items-center justify-between rounded-lg border border-neutral-200 px-4 py-3">
+                  <label key={m} className="flex items-center justify-between rounded-lg border border-admin-border px-4 py-3">
                     <span className="text-sm font-medium text-neutral-700">{m}</span>
                     <input
                       type="checkbox"
@@ -147,7 +147,7 @@ export default function Settings() {
           )}
 
           {active === 'shipping' && (
-            <div className="border border-neutral-200 bg-white p-6 shadow-sm">
+            <div className="border border-admin-border bg-admin-card p-6 shadow-sm">
               <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Shipping</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
@@ -161,7 +161,7 @@ export default function Settings() {
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {['Standard', 'Express'].map((m) => (
-                  <span key={m} className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-600">{m}</span>
+                  <span key={m} className="rounded-full bg-admin-surface-subtle px-3 py-1 text-sm text-neutral-600">{m}</span>
                 ))}
               </div>
             </div>

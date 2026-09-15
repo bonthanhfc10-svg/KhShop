@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import Card from '../../../components/admin/common/Card';
+import ConfirmModal from '../../../components/admin/common/ConfirmModal';
 import StatusBadge from '../../../components/admin/common/StatusBadge';
 import AdminButton from '../../../components/admin/common/AdminButton';
+import Toast from '../../../components/admin/common/Toast';
+import useToast from '../../../hooks/useToast';
 
 const initial = [
   { id: 1, name: 'Men', slug: 'men', image: '/images/categories/shoes.svg', products: 45, status: 'Active', featured: true },
@@ -15,6 +18,8 @@ const initial = [
 
 export default function Collections() {
   const [collections, setCollections] = useState(initial);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const { toasts, show, remove } = useToast();
 
   const use = (b) => {
     switch (b) {
@@ -28,7 +33,11 @@ export default function Collections() {
     }
   };
 
-  const remove = (id) => setCollections((prev) => prev.filter((x) => x.id !== id));
+  const handleDelete = (id) => {
+    setCollections((prev) => prev.filter((x) => x.id !== id));
+    setDeleteTarget(null);
+    show('Deleted successfully');
+  };
 
   return (
     <div className="space-y-6">
@@ -37,12 +46,12 @@ export default function Collections() {
           <h1 className="font-sans text-2xl font-bold text-neutral-900">Collections</h1>
           <p className="mt-1 text-sm text-neutral-500">Featured collections shown on the storefront.</p>
         </div>
-        <AdminButton><Plus size={16} /> Add Collection</AdminButton>
+        <AdminButton variant="success"><Plus size={16} /> Add Collection</AdminButton>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {collections.map((c) => (
-          <div key={c.id} className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm">
+          <div key={c.id} className="overflow-hidden rounded-lg border border-admin-border bg-admin-card shadow-sm">
             <div className="relative h-36 w-full">
               <img src={c.image} alt={c.name} className="h-full w-full object-cover" />
               <span className="absolute left-3 top-3"><StatusBadge status={c.status} /></span>
@@ -57,7 +66,7 @@ export default function Collections() {
                   <button aria-label="Edit collection" className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900">
                     <Pencil size={16} />
                   </button>
-                  <button onClick={() => remove(c.id)} aria-label="Delete collection" className="rounded-lg p-2 text-red-500 hover:bg-red-50">
+                  <button onClick={() => setDeleteTarget(c)} aria-label="Delete collection" className="rounded-lg p-2 text-red-500 hover:bg-red-50">
                     <Trash2 size={16} />
                   </button>
                 </div>
@@ -69,7 +78,7 @@ export default function Collections() {
                   </span>
                 ))}
               </div>
-              <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3 text-sm">
+              <div className="mt-4 flex items-center justify-between border-t border-admin-border-subtle pt-3 text-sm">
                 <span className="text-neutral-500">{c.products} products</span>
                 {c.featured && (
                   <span className="inline-flex items-center gap-1 text-xs font-semibold text-neutral-900">
@@ -81,6 +90,16 @@ export default function Collections() {
           </div>
         ))}
       </div>
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => handleDelete(deleteTarget?.id)}
+        title="Delete Collection?"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
+      />
+
+      <Toast toasts={toasts} onRemove={remove} />
     </div>
   );
 }

@@ -39,27 +39,27 @@ export default function Modal({
       aria-label={title}
     >
       <div
-        className="absolute inset-0 bg-black/60 animate-fade-in-overlay"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in-overlay"
         onClick={onClose}
       />
       <div
-        className={`relative w-full ${sizes[size]} bg-white shadow-2xl animate-slide-up max-h-[90vh] overflow-y-auto`}
+        className={`relative w-full ${sizes[size]} rounded-xl bg-admin-card-elevated shadow-2xl animate-slide-up max-h-[90vh] overflow-y-auto`}
       >
-        <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
-          <h2 className="font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
+        <div className="flex items-center justify-between border-b border-admin-border px-5 py-4">
+          <h2 className="text-[15px] font-bold text-slate-900">
             {title}
           </h2>
           {showClose && (
             <button
               onClick={onClose}
               aria-label="Close modal"
-              className="p-1 text-neutral-500 transition-colors hover:text-black"
+              className="rounded-md p-1 text-slate-400 transition-colors hover:bg-admin-border/40 hover:text-slate-600"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           )}
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-5">{children}</div>
       </div>
     </div>
   );

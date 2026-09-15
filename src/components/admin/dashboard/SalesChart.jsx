@@ -61,13 +61,13 @@ export default function SalesChart() {
       title="Sales Overview"
       subtitle="Revenue and orders over time"
       action={
-        <div className="flex gap-1">
+        <div className="flex gap-1 rounded-lg bg-admin-surface-subtle p-1">
           {periods.map((p) => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                period === p ? 'bg-neutral-900 text-white' : 'text-neutral-500 hover:bg-neutral-100'
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-all duration-150 ${
+                period === p ? 'bg-admin-card-elevated text-admin-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               {p}
@@ -75,38 +75,38 @@ export default function SalesChart() {
           ))}
         </div>
       }
-      bodyClassName="p-6"
+      bodyClassName="p-5"
     >
-      <div className="mb-6 flex items-end justify-between gap-4">
+      <div className="mb-5 flex items-end justify-between gap-4">
         <div>
-          <p className="font-sans text-3xl font-bold text-neutral-900">
+          <p className="text-2xl font-bold tracking-tight text-slate-900">
             ${total.toLocaleString()}
           </p>
-          <p className="mt-1 text-base text-emerald-600">+12.5% vs previous period</p>
+          <p className="mt-1 text-sm font-medium text-emerald-700">+12.5% vs previous period</p>
         </div>
-        <div className="flex gap-5 text-sm text-neutral-500">
+        <div className="flex gap-4 text-sm text-slate-500">
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-neutral-900" /> Sales
+            <span className="h-2.5 w-2.5 rounded-full bg-admin-primary" /> Sales
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-neutral-400" /> Orders
+            <span className="h-2.5 w-2.5 rounded-full bg-slate-300" /> Orders
           </span>
         </div>
       </div>
 
-      <div className="h-96 w-full">
+      <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 8, left: -12, bottom: 0 }}>
-            <CartesianGrid stroke="#f0f0f0" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid stroke="#D6DBE5" strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="d"
-              tick={{ fontSize: 13, fill: '#9ca3af' }}
+              tick={{ fontSize: 12, fill: '#64748b' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
               tickFormatter={currencyTick}
-              tick={{ fontSize: 13, fill: '#9ca3af' }}
+              tick={{ fontSize: 12, fill: '#64748b' }}
               axisLine={false}
               tickLine={false}
               width={60}
@@ -117,31 +117,31 @@ export default function SalesChart() {
               }
               contentStyle={{
                 borderRadius: 8,
-                border: '1px solid #e5e5e5',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                fontSize: 13,
+                border: '1px solid #C8CED9',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                fontSize: 12,
               }}
             />
             <Legend
-              wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
+              wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
               iconType="circle"
               iconSize={8}
             />
             <Line
               type="monotone"
               dataKey="sales"
-              stroke="#171717"
+              stroke="#4338CA"
               strokeWidth={2.5}
-              dot={{ r: 3, fill: '#171717' }}
+              dot={{ r: 3, fill: '#4338CA' }}
               activeDot={{ r: 5 }}
             />
             <Line
               type="monotone"
               dataKey="orders"
-              stroke="#a1a1aa"
+              stroke="#94a3b8"
               strokeWidth={1.5}
               strokeDasharray="4 4"
-              dot={{ r: 2, fill: '#a1a1aa' }}
+              dot={{ r: 2, fill: '#94a3b8' }}
               activeDot={{ r: 4 }}
             />
           </LineChart>

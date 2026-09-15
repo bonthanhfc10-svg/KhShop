@@ -3,7 +3,6 @@ import {
   Package,
   Tags,
   Warehouse,
-  AlertCircle,
   ShoppingCart,
   Users,
   BarChart3,
@@ -31,7 +30,6 @@ export const navGroups = [
     label: 'Inventory',
     items: [
       { label: 'Inventory', path: '/admin/inventory', icon: Warehouse },
-      { label: 'Low Stock', path: '/admin/inventory/low-stock', icon: AlertCircle },
     ],
   },
   {
@@ -42,8 +40,10 @@ export const navGroups = [
     ],
   },
   {
-    label: 'Analytics',
-    items: [
+    label: 'Reports',
+    expandable: true,
+    icon: BarChart3,
+    children: [
       { label: 'Sales Report', path: '/admin/reports/sales', icon: BarChart3, end: true },
       { label: 'Product Report', path: '/admin/reports/products', icon: PieChart, end: true },
       { label: 'Customer Report', path: '/admin/reports/customers', icon: UserRound, end: true },

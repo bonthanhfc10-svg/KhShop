@@ -38,7 +38,7 @@ export default function CustomerReport() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {kpis.map((k) => (
-          <div key={k.label} className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+          <div key={k.label} className="rounded-lg border border-admin-border bg-admin-card p-5 shadow-sm">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100">
               <k.icon size={18} className="text-neutral-700" />
             </div>
@@ -51,7 +51,7 @@ export default function CustomerReport() {
       <Card title="Top Customers" subtitle={`By total spending · ${formatPrice(totalRevenue)} combined`} bodyClassName="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-neutral-100 text-xs uppercase tracking-wider text-neutral-500">
+            <tr className="border-b border-admin-border-subtle text-xs uppercase tracking-wider text-neutral-500">
               <th className="px-5 py-3 font-semibold">Customer</th>
               <th className="px-5 py-3 font-semibold">Joined</th>
               <th className="px-5 py-3 text-right font-semibold">Orders</th>

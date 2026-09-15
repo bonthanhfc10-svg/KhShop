@@ -42,7 +42,7 @@ export default function CustomerDetails() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Profile card */}
-        <div className="border border-neutral-200 bg-white p-6 text-center shadow-sm">
+        <div className="border border-admin-border bg-admin-card p-6 text-center shadow-sm">
           <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 text-xl font-bold text-white">
             {initials}
           </span>
@@ -52,7 +52,7 @@ export default function CustomerDetails() {
             <StatusBadge status={customer.status === 'active' ? 'Active' : 'Inactive'} />
           </div>
 
-          <div className="mt-6 space-y-3 border-t border-neutral-100 pt-4 text-left text-sm">
+          <div className="mt-6 space-y-3 border-t border-admin-border-subtle pt-4 text-left text-sm">
             <p className="flex items-center gap-2.5 text-neutral-600">
               <Mail size={15} className="text-neutral-400" /> {customer.email}
             </p>
@@ -68,14 +68,14 @@ export default function CustomerDetails() {
         {/* Stats + orders */}
         <div className="space-y-6 lg:col-span-2">
           <div className="grid grid-cols-2 gap-4">
-            <div className="border border-neutral-200 bg-white p-5 shadow-sm">
+            <div className="border border-admin-border bg-admin-card p-5 shadow-sm">
               <div className="flex items-center gap-2 text-neutral-500">
                 <ShoppingBag size={15} />
                 <span className="text-sm font-medium">Total Orders</span>
               </div>
               <p className="mt-3 font-sans text-2xl font-bold text-neutral-900">{customer.orders}</p>
             </div>
-            <div className="border border-neutral-200 bg-white p-5 shadow-sm">
+            <div className="border border-admin-border bg-admin-card p-5 shadow-sm">
               <div className="flex items-center gap-2 text-neutral-500">
                 <DollarSign size={15} />
                 <span className="text-sm font-medium">Total Spent</span>
@@ -84,14 +84,14 @@ export default function CustomerDetails() {
             </div>
           </div>
 
-          <div className="border border-neutral-200 bg-white shadow-sm">
-            <div className="border-b border-neutral-100 px-5 py-4">
+          <div className="border border-admin-border bg-admin-card shadow-sm">
+            <div className="border-b border-admin-border-subtle px-5 py-4">
               <h3 className="font-sans text-base font-semibold text-neutral-900">Order History</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-neutral-100 text-xs uppercase text-neutral-500">
+                  <tr className="border-b border-admin-border-subtle text-xs uppercase text-neutral-500">
                     <th className="px-5 py-3 font-semibold">Order</th>
                     <th className="px-5 py-3 font-semibold">Date</th>
                     <th className="px-5 py-3 font-semibold">Status</th>
@@ -123,8 +123,8 @@ export default function CustomerDetails() {
             </div>
           </div>
 
-          <div className="border border-neutral-200 bg-white shadow-sm">
-            <div className="border-b border-neutral-100 px-5 py-4">
+          <div className="border border-admin-border bg-admin-card shadow-sm">
+            <div className="border-b border-admin-border-subtle px-5 py-4">
               <h3 className="font-sans text-base font-semibold text-neutral-900">Shipping Addresses</h3>
             </div>
             <div className="p-5">

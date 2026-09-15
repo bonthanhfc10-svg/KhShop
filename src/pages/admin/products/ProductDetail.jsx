@@ -53,7 +53,7 @@ export default function ProductDetail() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
-          <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-lg border border-admin-border bg-admin-card shadow-sm">
             <img src={product.image} alt={product.name} className="h-64 w-full object-cover" />
             <div className="p-5">
               <p className="text-xs uppercase tracking-wider text-neutral-400">Price</p>
@@ -81,7 +81,7 @@ export default function ProductDetail() {
                 <p className="mt-1 text-sm text-neutral-700">{product.description}</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-1.5 border-t border-neutral-100 pt-4">
+            <div className="flex flex-wrap gap-1.5 border-t border-admin-border-subtle pt-4">
               {product.featured && <span className="rounded-full bg-neutral-900 px-3 py-1 text-xs font-medium text-white">Featured</span>}
               {product.newArrival && <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700">New Arrival</span>}
               {product.bestSeller && <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">Best Seller</span>}
@@ -91,7 +91,7 @@ export default function ProductDetail() {
           <Card title="Available Sizes" bodyClassName="p-5">
             <div className="flex flex-wrap gap-2">
               {product.sizes?.map((s) => (
-                <span key={s} className="rounded-lg border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700">
+                <span key={s} className="rounded-lg border border-admin-border px-3 py-1.5 text-sm font-medium text-neutral-700">
                   {s}
                 </span>
               ))}
@@ -101,7 +101,7 @@ export default function ProductDetail() {
           <Card title="Color Variants" bodyClassName="divide-y divide-neutral-100">
             {(product.colors || []).map((c) => (
               <div key={c.id} className="flex items-center gap-4 px-5 py-4">
-                <img src={c.image} alt={c.name} className="h-14 w-14 shrink-0 rounded-lg border border-neutral-100 object-cover" />
+                <img src={c.image} alt={c.name} className="h-14 w-14 shrink-0 rounded-lg border border-admin-border-subtle object-cover" />
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-neutral-900">{c.name}</p>
                   <p className="text-xs text-neutral-400">{c.sku}</p>

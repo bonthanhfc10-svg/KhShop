@@ -36,12 +36,12 @@ export default function LowStock() {
             Products running low or out of stock
           </p>
         </div>
-        <AdminButton to="/admin/products/create" variant="primary">
+        <AdminButton to="/admin/products/create" variant="success">
           + Add Product
         </AdminButton>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-lg border border-admin-border bg-admin-card p-3 shadow-sm sm:flex-row sm:items-center">
         <SearchInput value={search} onChange={setSearch} placeholder="Search low stock items..." />
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-2 text-xs text-neutral-500">
@@ -51,11 +51,11 @@ export default function LowStock() {
         </div>
       </div>
 
-      <div className="overflow-hidden border border-neutral-200 bg-white shadow-sm">
+      <div className="overflow-hidden border border-admin-border bg-admin-card shadow-sm">
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-neutral-100 bg-neutral-50/60 text-xs uppercase tracking-wider text-neutral-500">
+              <tr className="border-b border-admin-border-subtle bg-admin-table-header text-xs uppercase tracking-wider text-neutral-500">
                 <th className="px-5 py-3 font-semibold">Product</th>
                 <th className="px-5 py-3 font-semibold">SKU</th>
                 <th className="px-5 py-3 font-semibold">Color</th>
@@ -93,7 +93,7 @@ export default function LowStock() {
           </table>
         </div>
 
-        <div className="divide-y divide-neutral-100 md:hidden">
+        <div className="divide-y divide-admin-border-subtle md:hidden">
           {filtered.map((i) => (
             <div key={`${i.id}-${i.sku}-${i.size}`} className="p-4">
               <div className="flex items-center justify-between">
