@@ -51,36 +51,36 @@ export default function LowStock() {
         </div>
       </div>
 
-      <div className="overflow-hidden border border-admin-border bg-admin-card shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-admin-border bg-admin-card shadow-sm">
         <div className="hidden overflow-x-auto md:block">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-admin-border-subtle bg-admin-table-header text-xs uppercase tracking-wider text-neutral-500">
-                <th className="px-5 py-3 font-semibold">Product</th>
-                <th className="px-5 py-3 font-semibold">SKU</th>
-                <th className="px-5 py-3 font-semibold">Color</th>
-                <th className="px-5 py-3 font-semibold">Size</th>
-                <th className="px-5 py-3 font-semibold">Stock</th>
-                <th className="px-5 py-3 font-semibold">Status</th>
-                <th className="px-5 py-3 text-right font-semibold">Action</th>
+              <tr className="border-b-2 border-admin-border bg-admin-table-header">
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Product</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">SKU</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Color</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Size</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Stock</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-admin-border-subtle">
               {filtered.map((i) => (
-                <tr key={`${i.id}-${i.sku}-${i.size}`} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50/60">
-                  <td className="px-5 py-3 font-medium text-neutral-900">{i.product}</td>
-                  <td className="px-5 py-3 text-neutral-500">{i.sku}</td>
-                  <td className="px-5 py-3 text-neutral-700">{i.color}</td>
-                  <td className="px-5 py-3 text-neutral-700">{i.size}</td>
-                  <td className="px-5 py-3">
-                    <span className={`font-semibold ${i.stock === 0 ? 'text-red-600' : 'text-amber-600'}`}>
+                <tr key={`${i.id}-${i.sku}-${i.size}`} className="transition-colors hover:bg-admin-primary-light/20">
+                  <td className="px-5 py-3.5 text-sm font-medium text-slate-900">{i.product}</td>
+                  <td className="px-5 py-3.5 text-sm text-slate-500 font-mono">{i.sku}</td>
+                  <td className="px-5 py-3.5 text-sm text-slate-600">{i.color}</td>
+                  <td className="px-5 py-3.5 text-sm text-slate-600">{i.size}</td>
+                  <td className="px-5 py-3.5">
+                    <span className={`text-sm font-semibold ${i.stock === 0 ? 'text-red-600' : 'text-amber-600'}`}>
                       {i.stock}
                     </span>
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3.5">
                     <StatusBadge status={i.status} />
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3.5">
                     <div className="flex justify-end">
                       <AdminButton variant="secondary" size="sm" to="/admin/inventory">
                         Manage
@@ -97,13 +97,13 @@ export default function LowStock() {
           {filtered.map((i) => (
             <div key={`${i.id}-${i.sku}-${i.size}`} className="p-4">
               <div className="flex items-center justify-between">
-                <p className="font-medium text-neutral-900">{i.product}</p>
+                <p className="text-sm font-semibold text-slate-900">{i.product}</p>
                 <StatusBadge status={i.status} />
               </div>
-              <p className="text-xs text-neutral-400">{i.sku} · {i.color} · {i.size}</p>
+              <p className="text-xs text-slate-400">{i.sku} &middot; {i.color} &middot; {i.size}</p>
               <div className="mt-2 flex items-center justify-between text-sm">
-                <span className="text-neutral-700">{i.stock} in stock</span>
-                <Link to="/admin/inventory" className="text-sm font-semibold text-neutral-700 hover:text-neutral-900">
+                <span className="text-slate-600">{i.stock} in stock</span>
+                <Link to="/admin/inventory" className="text-sm font-semibold text-slate-700 hover:text-slate-900">
                   Manage
                 </Link>
               </div>

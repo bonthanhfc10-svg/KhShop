@@ -7,6 +7,7 @@ const variants = {
   primary: 'bg-admin-primary text-white hover:bg-admin-primary-hover shadow-sm shadow-admin-primary/20',
   secondary: 'border border-admin-border bg-admin-card-elevated text-slate-700 hover:bg-admin-surface-subtle hover:border-slate-300',
   danger: 'bg-admin-danger text-white hover:bg-red-700 shadow-sm shadow-admin-danger/20',
+  cancel: 'bg-[#EF4444] text-white hover:bg-[#DC2626] shadow-sm shadow-[#EF4444]/20',
   success: 'bg-[#25A9EB] text-white hover:bg-[#2098D3] shadow-sm shadow-[#25A9EB]/20',
   ghost: 'text-slate-600 hover:bg-admin-border/40 hover:text-slate-900',
   outline: 'border-2 border-admin-primary text-admin-primary hover:bg-admin-primary hover:text-white',

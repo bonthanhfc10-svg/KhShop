@@ -31,10 +31,10 @@ export default function Orders() {
   if (loading) return <AdminLoading />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
-        <h1 className="font-sans text-2xl font-bold text-neutral-900">Orders</h1>
-        <p className="mt-1 text-sm text-neutral-500">Manage and track all customer orders · {filtered.length} orders</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Orders</h1>
+        <p className="mt-1 text-sm text-slate-500">Manage and track all customer orders &middot; {filtered.length} orders</p>
       </div>
 
       <div className="flex flex-col gap-3 rounded-lg border border-admin-border bg-admin-card p-3 shadow-sm sm:flex-row sm:items-center">
@@ -45,7 +45,7 @@ export default function Orders() {
               key={s}
               onClick={() => setStatus(s)}
               className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                status === s ? 'bg-[#25A9EB] text-white' : 'text-neutral-500 hover:bg-neutral-100'
+                status === s ? 'bg-[#25A9EB] text-white' : 'text-slate-500 hover:bg-slate-100'
               }`}
             >
               {s}
@@ -54,38 +54,38 @@ export default function Orders() {
         </div>
       </div>
 
-      <div className="overflow-hidden border border-admin-border bg-admin-card shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-admin-border bg-admin-card shadow-sm">
         <div className="hidden overflow-x-auto md:block">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-admin-border-subtle bg-admin-table-header text-xs uppercase tracking-wider text-neutral-500">
-                <th className="px-5 py-3 font-semibold">Order</th>
-                <th className="px-5 py-3 font-semibold">Customer</th>
-                <th className="px-5 py-3 font-semibold">Date</th>
-                <th className="px-5 py-3 font-semibold">Items</th>
-                <th className="px-5 py-3 font-semibold">Payment</th>
-                <th className="px-5 py-3 font-semibold">Status</th>
-                <th className="px-5 py-3 text-right font-semibold">Total</th>
+              <tr className="border-b-2 border-admin-border bg-admin-table-header">
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Order</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Customer</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Date</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Items</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Payment</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Total</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-admin-border-subtle">
               {filtered.map((o) => (
                 <tr
                   key={o.id}
                   onClick={() => navigate(`/admin/orders/${o.id}`)}
-                  className="cursor-pointer border-b border-neutral-50 transition-colors last:border-0 hover:bg-neutral-50/60"
+                  className="cursor-pointer transition-colors hover:bg-admin-primary-light/20"
                 >
-                  <td className="px-5 py-3 font-semibold text-neutral-900">{o.id}</td>
-                  <td className="px-5 py-3 text-neutral-700">{o.customer}</td>
-                  <td className="px-5 py-3 text-neutral-500">{formatDate(o.date)}</td>
-                  <td className="px-5 py-3 text-neutral-700">{o.items} items</td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3.5 text-sm font-semibold text-slate-900">{o.id}</td>
+                  <td className="px-5 py-3.5 text-sm text-slate-600">{o.customer}</td>
+                  <td className="px-5 py-3.5 text-sm text-slate-500">{formatDate(o.date)}</td>
+                  <td className="px-5 py-3.5 text-sm text-slate-600">{o.items} items</td>
+                  <td className="px-5 py-3.5">
                     <StatusBadge status={o.payment} />
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3.5">
                     <StatusBadge status={o.status} />
                   </td>
-                  <td className="px-5 py-3 text-right font-semibold text-neutral-900">{formatPrice(o.total)}</td>
+                  <td className="px-5 py-3.5 text-right text-sm font-semibold text-slate-900">{formatPrice(o.total)}</td>
                 </tr>
               ))}
             </tbody>
@@ -96,20 +96,20 @@ export default function Orders() {
           {filtered.map((o) => (
             <div key={o.id} className="cursor-pointer p-4" onClick={() => navigate(`/admin/orders/${o.id}`)}>
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-neutral-900">{o.id}</span>
+                <span className="text-sm font-semibold text-slate-900">{o.id}</span>
                 <StatusBadge status={o.status} />
               </div>
-              <p className="mt-1 text-sm text-neutral-600">{o.customer}</p>
-              <p className="text-xs text-neutral-400">{formatDate(o.date)} · {o.items} items</p>
-              <p className="mt-2 font-semibold text-neutral-900">{formatPrice(o.total)}</p>
+              <p className="mt-1 text-sm text-slate-600">{o.customer}</p>
+              <p className="text-xs text-slate-400">{formatDate(o.date)} &middot; {o.items} items</p>
+              <p className="mt-2 text-sm font-semibold text-slate-900">{formatPrice(o.total)}</p>
             </div>
           ))}
         </div>
 
         {!loading && filtered.length === 0 && (
           <div className="px-5 py-14 text-center">
-            <p className="font-medium text-neutral-700">No orders found</p>
-            <p className="text-sm text-neutral-400">Try adjusting your search or filters.</p>
+            <p className="text-sm font-semibold text-slate-700">No orders found</p>
+            <p className="mt-1 text-sm text-slate-400">Try adjusting your search or filters.</p>
           </div>
         )}
       </div>

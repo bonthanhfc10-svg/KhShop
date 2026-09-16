@@ -12,6 +12,7 @@ const EditProduct = lazy(() => import('../pages/admin/products/EditProduct'));
 const ProductDetail = lazy(() => import('../pages/admin/products/ProductDetail'));
 const Categories = lazy(() => import('../pages/admin/categories/Categories'));
 const CreateCategory = lazy(() => import('../pages/admin/categories/CreateCategory'));
+const EditCategory = lazy(() => import('../pages/admin/categories/EditCategory'));
 const Orders = lazy(() => import('../pages/admin/orders/Orders'));
 const OrderDetails = lazy(() => import('../pages/admin/orders/OrderDetails'));
 const Customers = lazy(() => import('../pages/admin/customers/Customers'));
@@ -27,6 +28,10 @@ const Collections = lazy(() => import('../pages/admin/store/Collections'));
 const Settings = lazy(() => import('../pages/admin/settings/Settings'));
 const AdminUsers = lazy(() => import('../pages/admin/settings/AdminUsers'));
 const CreateAdminUser = lazy(() => import('../pages/admin/settings/CreateAdminUser'));
+const Suppliers = lazy(() => import('../pages/admin/suppliers/Suppliers'));
+const SupplierDetail = lazy(() => import('../pages/admin/suppliers/SupplierDetail'));
+const CreateSupplier = lazy(() => import('../pages/admin/suppliers/CreateSupplier'));
+const EditSupplier = lazy(() => import('../pages/admin/suppliers/EditSupplier'));
 
 const Load = ({ children }) => (
   <Suspense fallback={<LoginLoading />}>{children}</Suspense>
@@ -53,6 +58,7 @@ export const AdminRoutes = () => {
         <Route path="products/:id/edit" element={<Load><EditProduct /></Load>} />
         <Route path="categories" element={<Load><Categories /></Load>} />
         <Route path="categories/create" element={<Load><CreateCategory /></Load>} />
+        <Route path="categories/:id/edit" element={<Load><EditCategory /></Load>} />
         <Route path="orders" element={<Load><Orders /></Load>} />
         <Route path="orders/:id" element={<Load><OrderDetails /></Load>} />
         <Route path="customers" element={<Load><Customers /></Load>} />
@@ -70,6 +76,10 @@ export const AdminRoutes = () => {
         <Route path="settings" element={<Load><Settings /></Load>} />
         <Route path="settings/admin-users" element={<Load><AdminUsers /></Load>} />
         <Route path="settings/admin-users/create" element={<Load><CreateAdminUser /></Load>} />
+        <Route path="suppliers" element={<Load><Suppliers /></Load>} />
+        <Route path="suppliers/create" element={<Load><CreateSupplier /></Load>} />
+        <Route path="suppliers/:id" element={<Load><SupplierDetail /></Load>} />
+        <Route path="suppliers/:id/edit" element={<Load><EditSupplier /></Load>} />
       </Route>
     </Routes>
   );

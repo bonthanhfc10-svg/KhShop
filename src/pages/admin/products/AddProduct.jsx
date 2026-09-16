@@ -7,17 +7,31 @@ import { productService } from '../../../services/admin/productService';
 export default function AddProduct() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (form) => {
     setSubmitting(true);
+    setErrors({});
     try {
-      await productService.create({
-        ...form,
-        price: Number(form.price) || 0,
-        stock: Number(form.stock) || 0,
-        salePrice: form.salePrice ? Number(form.salePrice) : null,
-      });
+      const payload = {
+        name: form.name,
+        slug: form.slug,
+        description: form.description,
+        category_id: form.category_id,
+        brand_id: form.brand_id,
+        price: form.price,
+        discount_type: form.discount_type,
+        discount_value: form.discount_value,
+        is_active: form.is_active,
+        variants: form.variants,
+      };
+      await productService.create(payload);
       navigate('/admin/products', { state: { toast: 'Created successfully' } });
+    } catch (err) {
+      const response = err.response;
+      if (response?.status === 422 && response?.data?.errors) {
+        setErrors(response.data.errors);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -39,7 +53,17 @@ export default function AddProduct() {
       </div>
 
       <div className="rounded-xl border border-admin-border bg-admin-card p-6 shadow-sm">
-        <ProductForm onSubmit={handleSubmit} submitLabel="Create Product" submitting={submitting} buttonVariant="success" />
+        {Object.keys(errors).length > 0 && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
+            <p className="text-sm font-semibold text-red-700">Please fix the following errors:</p>
+            <ul className="mt-2 list-inside list-disc text-sm text-red-600">
+              {Object.entries(errors).map(([field, messages]) => (
+                <li key={field}>{Array.isArray(messages) ? messages[0] : messages}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <ProductForm onSubmit={handleSubmit} onCancel={() => navigate('/admin/products')} submitLabel="Create Product" submitting={submitting} buttonVariant="success" />
       </div>
     </div>
   );

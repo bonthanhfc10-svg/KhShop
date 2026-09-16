@@ -22,7 +22,7 @@ export default function ConfirmModal({
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-2">
-        <AdminButton variant="secondary" onClick={onClose}>
+        <AdminButton variant="cancel" onClick={onClose}>
           Cancel
         </AdminButton>
         <AdminButton

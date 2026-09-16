@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Pencil, Trash2, Shield } from 'lucide-react';
-import Card from '../../../components/admin/common/Card';
+import { Shield, Plus } from 'lucide-react';
+import AdminButton from '../../../components/admin/common/AdminButton';
+import AdminActionButtons from '../../../components/admin/common/AdminActionButtons';
 import ConfirmModal from '../../../components/admin/common/ConfirmModal';
 import StatusBadge from '../../../components/admin/common/StatusBadge';
-import AdminButton from '../../../components/admin/common/AdminButton';
 import Toast from '../../../components/admin/common/Toast';
 import useToast from '../../../hooks/useToast';
 
@@ -40,62 +40,98 @@ export default function AdminUsers() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-sans text-2xl font-bold text-neutral-900">Admin Users</h1>
-          <p className="mt-1 text-sm text-neutral-500">Manage administrator and staff accounts.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Admin Users</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Manage administrator and staff accounts &middot; {users.length} users
+          </p>
         </div>
-        <AdminButton to="/admin/settings/admin-users/create" variant="success"><span className="inline-flex items-center gap-2">Add User</span></AdminButton>
+        <AdminButton to="/admin/settings/admin-users/create" variant="success">
+          <Plus size={16} /> Add User
+        </AdminButton>
       </div>
 
-      <Card bodyClassName="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-neutral-100 bg-neutral-50/60 text-xs uppercase tracking-wider text-neutral-500">
-              <th className="px-5 py-3 font-semibold">User</th>
-              <th className="px-5 py-3 font-semibold">Email</th>
-              <th className="px-5 py-3 font-semibold">Role</th>
-              <th className="px-5 py-3 font-semibold">Status</th>
-              <th className="px-5 py-3 font-semibold">Last Login</th>
-              <th className="px-5 py-3 text-right font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50/60">
-                <td className="px-5 py-3">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
-                      {u.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
-                    </span>
-                    <span className="font-medium text-neutral-900">{u.name}</span>
-                  </div>
-                </td>
-                <td className="px-5 py-3 text-neutral-500">{u.email}</td>
-                <td className="px-5 py-3">
-                  <span className={roleStyle(u.role)}>
-                    {u.role === 'admin' && <Shield size={12} />}
-                    {u.role}
-                  </span>
-                </td>
-                <td className="px-5 py-3"><StatusBadge status={u.status} /></td>
-                <td className="px-5 py-3 text-neutral-500">{u.lastLogin}</td>
-                <td className="px-5 py-3">
-                  <div className="flex justify-end gap-1">
-                    <button aria-label="Edit user" className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900">
-                      <Pencil size={16} />
-                    </button>
-                    <button onClick={() => setDeleteTarget(u)} aria-label="Delete user" className="rounded-lg p-2 text-red-500 hover:bg-red-50">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
+      {/* Table */}
+      <div className="overflow-hidden rounded-xl border border-admin-border bg-admin-card shadow-sm">
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b-2 border-admin-border bg-admin-table-header">
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">User</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Email</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Role</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Last Login</th>
+                <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+            </thead>
+            <tbody className="divide-y divide-admin-border-subtle">
+              {users.map((u) => (
+                <tr key={u.id} className="transition-colors hover:bg-admin-primary-light/20">
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
+                        {u.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
+                      </span>
+                      <span className="text-sm font-semibold text-slate-900">{u.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3.5 text-sm text-slate-500">{u.email}</td>
+                  <td className="px-5 py-3.5">
+                    <span className={roleStyle(u.role)}>
+                      {u.role === 'admin' && <Shield size={12} />}
+                      {u.role}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <StatusBadge status={u.status} />
+                  </td>
+                  <td className="px-5 py-3.5 text-sm text-slate-500">{u.lastLogin}</td>
+                  <td className="px-5 py-3.5">
+                    <AdminActionButtons
+                      onDelete={() => setDeleteTarget(u)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile cards */}
+        <div className="divide-y divide-admin-border-subtle md:hidden">
+          {users.map((u) => (
+            <div key={u.id} className="p-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
+                  {u.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-slate-900">{u.name}</p>
+                  <p className="truncate text-xs text-slate-400">{u.email}</p>
+                </div>
+                <StatusBadge status={u.status} />
+              </div>
+              <div className="mt-3 flex items-center justify-between text-sm">
+                <span className="text-slate-500">{u.role} &middot; Last login: {u.lastLogin}</span>
+                <AdminActionButtons
+                  onDelete={() => setDeleteTarget(u)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {users.length === 0 && (
+          <div className="px-5 py-14 text-center">
+            <p className="text-sm font-semibold text-slate-700">No admin users found</p>
+            <p className="mt-1 text-sm text-slate-400">Get started by adding a user.</p>
+          </div>
+        )}
+      </div>
 
       <ConfirmModal
         open={!!deleteTarget}

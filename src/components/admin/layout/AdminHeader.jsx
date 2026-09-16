@@ -9,8 +9,9 @@ export default function AdminHeader({
   onToggleMobile,
   collapsed,
   onToggleCollapse,
+  onLogout,
 }) {
-  const { admin, logout } = useAdminAuth();
+  const { admin } = useAdminAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -32,8 +33,7 @@ export default function AdminHeader({
 
   const handleLogout = () => {
     setMenuOpen(false);
-    logout();
-    navigate('/admin/login');
+    onLogout();
   };
 
   return (

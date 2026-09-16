@@ -104,7 +104,7 @@ export default function CreateBanner() {
       </div>
 
       <div className="flex items-center justify-end gap-3 border-t border-admin-border pt-6">
-        <AdminButton variant="secondary" onClick={() => navigate('/admin/store/banners')}>Cancel</AdminButton>
+        <AdminButton variant="cancel" onClick={() => navigate('/admin/store/banners')}>Cancel</AdminButton>
         <AdminButton variant="success" onClick={handleSave}>Create Banner</AdminButton>
       </div>
     </div>

@@ -16,6 +16,7 @@ const loadStoredAdmin = () => {
 export const AdminAuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(loadStoredAdmin);
   const [loading, setLoading] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState(null);
   const { updateUser } = useAuth();
 
@@ -49,12 +50,21 @@ export const AdminAuthProvider = ({ children }) => {
     }
   }, [updateUser]);
 
-  const logout = useCallback(() => {
-    storage.remove('user');
-    storage.remove('token');
-    setAdmin(null);
-    updateUser(null);
-  }, [updateUser]);
+  const logout = useCallback(async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await authService.logout();
+    } catch {
+      // Token may already be expired/invalid — still clear local state
+    } finally {
+      storage.remove('user');
+      storage.remove('token');
+      setAdmin(null);
+      updateUser(null);
+      setLoggingOut(false);
+    }
+  }, [updateUser, loggingOut]);
 
   const value = useMemo(
     () => ({
@@ -62,11 +72,12 @@ export const AdminAuthProvider = ({ children }) => {
       isAuthenticated: Boolean(admin),
       isAdmin: admin?.role === 'admin' || admin?.role === 'superAdmin',
       loading,
+      loggingOut,
       error,
       login,
       logout,
     }),
-    [admin, loading, error, login, logout]
+    [admin, loading, loggingOut, error, login, logout]
   );
 
   return (

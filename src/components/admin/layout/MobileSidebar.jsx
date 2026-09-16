@@ -1,7 +1,7 @@
 import { X } from 'lucide-react';
 import { AdminSidebarContent } from './AdminSidebar';
 
-export default function MobileSidebar({ open, onClose, onLogout }) {
+export default function MobileSidebar({ open, onClose, onLogout, loggingOut = false }) {
   return (
     <>
       {open && (
@@ -23,7 +23,7 @@ export default function MobileSidebar({ open, onClose, onLogout }) {
         >
           <X size={18} />
         </button>
-        <AdminSidebarContent onNavigate={onClose} onLogout={onLogout} />
+        <AdminSidebarContent onNavigate={onClose} onLogout={onLogout} loggingOut={loggingOut} />
       </aside>
     </>
   );

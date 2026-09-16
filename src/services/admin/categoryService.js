@@ -1,78 +1,49 @@
-import { mockAdminCategories } from '../../data/adminMock';
+import { createApiClient } from '../../utils/createApiClient';
 
-let _categories = JSON.parse(JSON.stringify(mockAdminCategories));
-let _nextId = 100;
-
-const delay = (ms = 150) => new Promise((r) => setTimeout(r, ms));
+const api = createApiClient();
 
 export const categoryService = {
-  async getAll() {
-    await delay();
-    return _categories;
+  async getAll(params = {}) {
+    const { data } = await api.get('/v1/category', { params });
+    return data?.data?.categories || [];
   },
 
   async getById(id) {
-    await delay();
-    for (const cat of _categories) {
-      if (cat.id === Number(id)) return cat;
-      if (cat.children) {
-        const child = cat.children.find((c) => c.id === Number(id));
-        if (child) return child;
-      }
-    }
-    return null;
+    const { data } = await api.get(`/v1/category/${id}`);
+    return data?.data?.category || null;
   },
 
   async create(categoryData) {
-    await delay();
-    const newCategory = {
-      id: _nextId++,
-      ...categoryData,
-      slug: categoryData.name.toLowerCase().replace(/\s+/g, '-'),
-      status: categoryData.status || 'Active',
-      products: 0,
-      children: [],
-    };
-    _categories.push(newCategory);
-    return newCategory;
+    const formData = new FormData();
+    if (categoryData.name) formData.append('name', categoryData.name);
+    if (categoryData.description) formData.append('description', categoryData.description);
+    if (categoryData.parent_id) formData.append('parent_id', categoryData.parent_id);
+    if (categoryData.imageFile) formData.append('image_path', categoryData.imageFile);
+
+    const { data } = await api.post('/v1/category', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data?.data?.category;
   },
 
   async update(id, categoryData) {
-    await delay();
-    for (let i = 0; i < _categories.length; i++) {
-      if (_categories[i].id === Number(id)) {
-        _categories[i] = { ..._categories[i], ...categoryData };
-        return _categories[i];
-      }
-      if (_categories[i].children) {
-        for (let j = 0; j < _categories[i].children.length; j++) {
-          if (_categories[i].children[j].id === Number(id)) {
-            _categories[i].children[j] = { ..._categories[i].children[j], ...categoryData };
-            return _categories[i].children[j];
-          }
-        }
-      }
-    }
-    throw new Error('Category not found');
+    const formData = new FormData();
+    formData.append('_method', 'PATCH');
+    if (categoryData.name) formData.append('name', categoryData.name);
+    if (categoryData.description !== undefined) formData.append('description', categoryData.description);
+    if (categoryData.is_active !== undefined) formData.append('is_active', categoryData.is_active ? '1' : '0');
+    if (categoryData.parent_id !== undefined) formData.append('parent_id', categoryData.parent_id ?? '');
+    if (categoryData.imageFile) formData.append('image_path', categoryData.imageFile);
+
+    const { data } = await api.post(`/v1/category/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data?.data?.category;
   },
 
   async delete(id) {
-    await delay();
-    const idx = _categories.findIndex((c) => c.id === Number(id));
-    if (idx !== -1) {
-      _categories.splice(idx, 1);
-      return true;
-    }
-    for (const cat of _categories) {
-      if (cat.children) {
-        const childIdx = cat.children.findIndex((c) => c.id === Number(id));
-        if (childIdx !== -1) {
-          cat.children.splice(childIdx, 1);
-          return true;
-        }
-      }
-    }
-    throw new Error('Category not found');
+    const { data } = await api.delete(`/v1/category/${id}`);
+    return data;
   },
 };
 

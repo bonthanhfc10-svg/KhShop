@@ -86,7 +86,7 @@ export default function CreateAdminUser() {
       </div>
 
       <div className="flex items-center justify-end gap-3 border-t border-admin-border pt-6">
-        <AdminButton variant="secondary" onClick={() => navigate('/admin/settings/admin-users')}>Cancel</AdminButton>
+        <AdminButton variant="cancel" onClick={() => navigate('/admin/settings/admin-users')}>Cancel</AdminButton>
         <AdminButton variant="success" onClick={handleSave}>Create User</AdminButton>
       </div>
     </div>
