@@ -76,8 +76,17 @@ export const AdminAuthProvider = ({ children }) => {
       error,
       login,
       logout,
+      updateUser: (fields) => {
+        setAdmin((prev) => {
+          if (!prev) return prev;
+          const next = { ...prev, ...fields };
+          storage.set('user', next);
+          updateUser(next);
+          return next;
+        });
+      },
     }),
-    [admin, loading, loggingOut, error, login, logout]
+    [admin, loading, loggingOut, error, login, logout, updateUser]
   );
 
   return (

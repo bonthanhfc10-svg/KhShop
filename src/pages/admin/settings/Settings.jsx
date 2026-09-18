@@ -60,8 +60,20 @@ export default function Settings() {
     async (e) => {
       e.preventDefault();
       if (!form) return;
+      const payload = {
+        ...form,
+        store: {
+          ...form.store,
+          tax_rate: form.store?.tax_rate === '' || form.store?.tax_rate == null ? 0 : Number(form.store.tax_rate),
+        },
+        checkout: {
+          ...form.checkout,
+          shipping_fee: form.checkout?.shipping_fee === '' || form.checkout?.shipping_fee == null ? 0 : Number(form.checkout.shipping_fee),
+          free_shipping_threshold: form.checkout?.free_shipping_threshold === '' || form.checkout?.free_shipping_threshold == null ? 0 : Number(form.checkout.free_shipping_threshold),
+        },
+      };
       try {
-        await updateSettings(form);
+        await updateSettings(payload);
       } catch {
         // error handled by hook
       }
@@ -191,8 +203,8 @@ export default function Settings() {
                     type="number"
                     min="0"
                     step="0.01"
-                    value={form.store?.tax_rate ?? 0}
-                    onChange={(e) => updateGroup('store', 'tax_rate', parseFloat(e.target.value) || 0)}
+                    value={form.store?.tax_rate ?? ''}
+                    onChange={(e) => updateGroup('store', 'tax_rate', e.target.value)}
                     className={inputCls}
                   />
                 </div>
@@ -221,8 +233,8 @@ export default function Settings() {
                     type="number"
                     min="0"
                     step="0.01"
-                    value={form.checkout?.shipping_fee ?? 0}
-                    onChange={(e) => updateGroup('checkout', 'shipping_fee', parseFloat(e.target.value) || 0)}
+                    value={form.checkout?.shipping_fee ?? ''}
+                    onChange={(e) => updateGroup('checkout', 'shipping_fee', e.target.value)}
                     className={inputCls}
                   />
                 </div>
@@ -232,8 +244,8 @@ export default function Settings() {
                     type="number"
                     min="0"
                     step="0.01"
-                    value={form.checkout?.free_shipping_threshold ?? 0}
-                    onChange={(e) => updateGroup('checkout', 'free_shipping_threshold', parseFloat(e.target.value) || 0)}
+                    value={form.checkout?.free_shipping_threshold ?? ''}
+                    onChange={(e) => updateGroup('checkout', 'free_shipping_threshold', e.target.value)}
                     className={inputCls}
                   />
                 </div>

@@ -63,6 +63,11 @@ export const authService = {
     const { data } = await api.get('/v1/profile');
     return data;
   },
+
+  async updateProfile(payload) {
+    const { data } = await api.put('/v1/profile', payload);
+    return data;
+  },
 };
 
 export default authService;

@@ -11,7 +11,7 @@ export default function CartItem({ item, onRemove, onUpdateQuantity }) {
         <img
           src={item.colorImage || item.image}
           alt={item.name}
-          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          className="h-full w-full object-contain transition-transform duration-300 hover:scale-105"
           loading="lazy"
         />
       </Link>
@@ -30,6 +30,9 @@ export default function CartItem({ item, onRemove, onUpdateQuantity }) {
               {item.size && <span className="mr-3">Size: {item.size}</span>}
               {item.color && <span>Color: {item.color}</span>}
             </p>
+            {item.stock === 0 && (
+              <p className="mt-1 text-xs font-semibold text-red-600">Out of Stock</p>
+            )}
           </div>
           <button
             onClick={() => onRemove(item.id, item.size, item.color)}
@@ -54,7 +57,8 @@ export default function CartItem({ item, onRemove, onUpdateQuantity }) {
             </span>
             <button
               onClick={() => onUpdateQuantity(item.id, item.size, item.color, item.quantity + 1)}
-              className="flex h-8 w-8 items-center justify-center text-neutral-600 hover:text-black"
+              disabled={item.stock != null && item.quantity >= item.stock}
+              className="flex h-8 w-8 items-center justify-center text-neutral-600 hover:text-black disabled:pointer-events-none disabled:opacity-40"
               aria-label="Increase quantity"
             >
               <Plus size={14} />

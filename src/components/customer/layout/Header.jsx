@@ -36,7 +36,7 @@ function getMenuSlugFromPath(pathname) {
   return slug;
 }
 
-export default function Header({ navigation = [] }) {
+export default function Header({ navigation = [], onLogout }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -344,6 +344,7 @@ export default function Header({ navigation = [] }) {
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         navigation={navigation}
+        onLogout={onLogout}
       />
     </header>
   );

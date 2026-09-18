@@ -184,17 +184,19 @@ function PriceFacet({
     typeof onToggle === 'function'
       ? onToggle()
       : setLocalOpen((o) => !o);
-  const [localMin, setLocalMin] = useState(value?.min ?? min);
-  const [localMax, setLocalMax] = useState(value?.max ?? max);
+  const [localMin, setLocalMin] = useState(value?.min ?? min ?? '');
+  const [localMax, setLocalMax] = useState(value?.max ?? max ?? '');
 
   useEffect(() => {
-    setLocalMin(value?.min ?? min);
-    setLocalMax(value?.max ?? max);
+    setLocalMin(value?.min ?? min ?? '');
+    setLocalMax(value?.max ?? max ?? '');
   }, [value, min, max]);
 
   const apply = () => {
-    const normalizedMin = Math.min(localMin, localMax);
-    const normalizedMax = Math.max(localMin, localMax);
+    const numMin = localMin === '' ? min : Number(localMin);
+    const numMax = localMax === '' ? max : Number(localMax);
+    const normalizedMin = Math.min(numMin, numMax);
+    const normalizedMax = Math.max(numMin, numMax);
     onChange({ min: normalizedMin, max: normalizedMax });
   };
 
@@ -235,7 +237,7 @@ function PriceFacet({
             <input
               type="number"
               value={localMin}
-              onChange={(e) => setLocalMin(Number(e.target.value))}
+              onChange={(e) => setLocalMin(e.target.value)}
               onBlur={apply}
               className="input-kh px-3 py-2"
               aria-label="Minimum price"
@@ -244,7 +246,7 @@ function PriceFacet({
             <input
               type="number"
               value={localMax}
-              onChange={(e) => setLocalMax(Number(e.target.value))}
+              onChange={(e) => setLocalMax(e.target.value)}
               onBlur={apply}
               className="input-kh px-3 py-2"
               aria-label="Maximum price"

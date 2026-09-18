@@ -83,6 +83,12 @@ export const productService = {
       });
     }
 
+    if (productData.supplier_ids && Array.isArray(productData.supplier_ids)) {
+      productData.supplier_ids.forEach((id, index) => {
+        formData.append(`supplier_ids[${index}]`, id);
+      });
+    }
+
     const { data } = await api.post('/v1/admin/product', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -124,6 +130,12 @@ export const productService = {
         if (variant.imageFile) {
           formData.append(`variants[${index}][image]`, variant.imageFile);
         }
+      });
+    }
+
+    if (productData.supplier_ids && Array.isArray(productData.supplier_ids)) {
+      productData.supplier_ids.forEach((id, index) => {
+        formData.append(`supplier_ids[${index}]`, id);
       });
     }
 

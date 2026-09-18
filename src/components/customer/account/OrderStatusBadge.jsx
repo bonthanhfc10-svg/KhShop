@@ -12,7 +12,7 @@ export default function OrderStatusBadge({ status, className = '' }) {
   const cls = statusStyles[status] || 'bg-neutral-100 text-neutral-600 border-neutral-200';
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${cls} ${className}`}
+      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${cls} ${className}`}
     >
       {status}
     </span>

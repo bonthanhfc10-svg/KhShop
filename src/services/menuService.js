@@ -37,11 +37,19 @@ export const menuService = {
       slug: menu.slug,
       path: `/products/${menu.slug}`,
       featureTitle: `Shop ${menu.name}`,
-      categories: (menu.children || []).map((child) => ({
-        name: child.name,
-        path: buildCategoryPath(menu.slug, child.slug),
-      })),
+      categories: menu.slug === 'sale'
+        ? []
+        : (menu.children || []).map((child) => ({
+            name: child.name,
+            path: buildCategoryPath(menu.slug, child.slug),
+          })),
     }));
+
+    // Remove Sale children from rawMenus so MenuCategory page won't show subcategory grid
+    const saleRaw = rawMenus.find((m) => m.slug === 'sale');
+    if (saleRaw) {
+      saleRaw.children = [];
+    }
 
     const hasSale = apiNav.some((m) => m.slug === 'sale');
     if (!hasSale) {
@@ -51,7 +59,7 @@ export const menuService = {
         path: '/products/sale',
         featureTitle: 'Shop Sale',
         isSale: true,
-        categories: SALE_FALLBACK_CATEGORIES.map((c) => ({ ...c })),
+        categories: [],
       });
       rawMenus.push({
         name: 'Sale',

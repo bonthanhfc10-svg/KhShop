@@ -137,15 +137,15 @@ export default function OrderDetail() {
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-sans text-2xl font-bold text-neutral-900">#{order.id}</h2>
-          <p className="mt-1 text-sm text-neutral-500">
+          <h2 className="font-sans text-3xl font-bold text-neutral-900">#{order.id}</h2>
+          <p className="mt-1.5 text-base text-neutral-500">
             Placed on {formatDate(order.created_at)}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <OrderStatusBadge status={order.status} />
+          <OrderStatusBadge status={order.status} className="text-sm px-3 py-1" />
           {order.payment_status && (
-            <span className="text-xs text-neutral-500">
+            <span className="text-sm text-neutral-500">
               Payment: {order.payment_status}
             </span>
           )}
@@ -153,8 +153,8 @@ export default function OrderDetail() {
       </div>
 
       {cancelError && (
-        <div className="mt-4 flex items-start gap-3 border border-red-200 bg-red-50 px-5 py-4">
-          <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-500" />
+        <div className="mt-4 flex items-start gap-3 border border-red-200 bg-red-50 px-6 py-5">
+          <AlertCircle size={20} className="mt-0.5 shrink-0 text-red-500" />
           <p className="text-sm text-red-700">{cancelError}</p>
         </div>
       )}
@@ -162,41 +162,41 @@ export default function OrderDetail() {
       {/* Order Info */}
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <div className="border border-neutral-200 bg-white p-6">
-          <h3 className="mb-3 font-sans text-xs font-bold uppercase tracking-widest text-neutral-900">
+          <h3 className="mb-3 font-sans text-xs font-bold uppercase tracking-widest text-neutral-500">
             Order Type
           </h3>
-          <p className="text-sm text-neutral-700 capitalize">{order.order_type || '—'}</p>
+          <p className="text-base text-neutral-700 capitalize">{order.order_type || '—'}</p>
         </div>
         <div className="border border-neutral-200 bg-white p-6">
-          <h3 className="mb-3 font-sans text-xs font-bold uppercase tracking-widest text-neutral-900">
+          <h3 className="mb-3 font-sans text-xs font-bold uppercase tracking-widest text-neutral-500">
             Payment Status
           </h3>
-          <p className="text-sm text-neutral-700 capitalize">{order.payment_status || '—'}</p>
+          <p className="text-base text-neutral-700 capitalize">{order.payment_status || '—'}</p>
         </div>
       </div>
 
       {/* Shipping */}
       <div className="mt-6 border border-neutral-200 bg-white p-6">
-        <h3 className="mb-4 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
+        <h3 className="mb-4 font-sans text-xs font-bold uppercase tracking-widest text-neutral-500">
           Shipping
         </h3>
-        <div className="space-y-2 text-sm text-neutral-700">
+        <div className="space-y-2 text-base text-neutral-700">
           {order.receiver_phone && (
-            <p><span className="font-medium">Phone:</span> {order.receiver_phone}</p>
+            <p><span className="font-semibold">Phone:</span> {order.receiver_phone}</p>
           )}
           {order.shipping_address && (
-            <p><span className="font-medium">Address:</span> {order.shipping_address}</p>
+            <p><span className="font-semibold">Address:</span> {order.shipping_address}</p>
           )}
           {order.note && (
-            <p><span className="font-medium">Note:</span> {order.note}</p>
+            <p><span className="font-semibold">Note:</span> {order.note}</p>
           )}
         </div>
       </div>
 
       {/* Items */}
       <div className="mt-6 border border-neutral-200 bg-white">
-        <div className="border-b border-neutral-200 px-6 py-4">
-          <h3 className="font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
+        <div className="border-b border-neutral-200 px-8 py-5">
+          <h3 className="font-sans text-sm font-bold uppercase tracking-widest text-neutral-500">
             Items ({items.length})
           </h3>
         </div>
@@ -206,8 +206,8 @@ export default function OrderDetail() {
             const productLink = slug ? `/${slug}` : '#';
 
             return (
-              <div key={item.id || idx} className="flex gap-4 px-6 py-4">
-                <Link to={productLink} className="block h-20 w-16 shrink-0 overflow-hidden bg-neutral-100">
+              <div key={item.id || idx} className="flex gap-5 px-8 py-5">
+                <Link to={productLink} className="block h-24 w-20 shrink-0 overflow-hidden bg-neutral-100">
                   <img
                     src={getItemImage(item)}
                     alt={getItemName(item)}
@@ -216,17 +216,17 @@ export default function OrderDetail() {
                 </Link>
                 <div className="flex flex-1 items-center justify-between gap-4">
                   <div>
-                    <Link to={productLink} className="font-sans font-bold text-neutral-900 hover:underline">
+                    <Link to={productLink} className="font-sans text-base font-bold text-neutral-900 hover:underline">
                       {getItemName(item)}
                     </Link>
-                    <p className="text-sm text-neutral-500">
+                    <p className="mt-1 text-sm text-neutral-500">
                       {getItemSize(item) && `Size: ${getItemSize(item)}`}
                       {getItemColor(item) && ` · ${getItemColor(item)}`}
                       {' × '}
                       {getItemQty(item)}
                     </p>
                   </div>
-                  <p className="font-bold text-neutral-900">
+                  <p className="text-base font-bold text-neutral-900">
                     {formatPrice(getItemSubtotal(item))}
                   </p>
                 </div>
@@ -238,30 +238,30 @@ export default function OrderDetail() {
 
       {/* Summary */}
       <div className="mt-6 border border-neutral-200 bg-white p-6">
-        <h3 className="mb-4 font-sans text-sm font-bold uppercase tracking-widest text-neutral-900">
+        <h3 className="mb-4 font-sans text-xs font-bold uppercase tracking-widest text-neutral-500">
           Summary
         </h3>
-        <div className="space-y-3 text-sm">
+        <div className="space-y-3 text-base">
           {order.total_amount != null && (
             <div className="flex justify-between">
               <span className="text-neutral-600">Total</span>
-              <span className="font-medium text-neutral-900">{formatPrice(order.total_amount)}</span>
+              <span className="font-semibold text-neutral-900">{formatPrice(order.total_amount)}</span>
             </div>
           )}
           {order.discount_amount != null && Number(order.discount_amount) > 0 && (
             <div className="flex justify-between">
               <span className="text-neutral-600">Discount</span>
-              <span className="font-medium text-accent">-{formatPrice(order.discount_amount)}</span>
+              <span className="font-semibold text-accent">-{formatPrice(order.discount_amount)}</span>
             </div>
           )}
           {order.tax_amount != null && (
             <div className="flex justify-between">
               <span className="text-neutral-600">Tax</span>
-              <span className="font-medium text-neutral-900">{formatPrice(order.tax_amount)}</span>
+              <span className="font-semibold text-neutral-900">{formatPrice(order.tax_amount)}</span>
             </div>
           )}
           {order.net_amount != null && (
-            <div className="flex justify-between border-t border-neutral-200 pt-3 text-base font-bold text-neutral-900">
+            <div className="flex justify-between border-t border-neutral-200 pt-3 text-lg font-bold text-neutral-900">
               <span>Net Amount</span>
               <span>{formatPrice(order.net_amount)}</span>
             </div>

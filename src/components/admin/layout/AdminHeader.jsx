@@ -100,7 +100,7 @@ export default function AdminHeader({
               <div className="py-1.5">
                 <button
                   role="menuitem"
-                  onClick={() => { setMenuOpen(false); navigate('/admin/customers'); }}
+                  onClick={() => { setMenuOpen(false); navigate('/admin/account'); }}
                   className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-admin-surface-subtle"
                 >
                   <User size={15} className="text-slate-400" /> Profile

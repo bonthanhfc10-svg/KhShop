@@ -34,6 +34,7 @@ export default function EditProduct() {
         discount_value: form.discount_value,
         is_active: form.is_active,
         variants: form.variants.map(({ stock, ...rest }) => rest),
+        supplier_ids: form.supplier_ids || [],
       };
       await productService.update(id, payload);
       navigate('/admin/products', { state: { toast: 'Updated successfully' } });

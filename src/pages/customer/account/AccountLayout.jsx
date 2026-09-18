@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -8,6 +9,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../../store/AuthContext';
+import ConfirmModal from '../../../components/common/ConfirmModal';
 
 const links = [
   { label: 'Dashboard', path: '/account', icon: LayoutDashboard, end: true },
@@ -20,11 +22,23 @@ const links = [
 export default function AccountLayout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const handleLogout = useCallback(() => {
+    setConfirmOpen(true);
+  }, []);
+
+  const handleConfirmLogout = useCallback(async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+      setConfirmOpen(false);
+      navigate('/');
+    } catch {
+      setLoggingOut(false);
+    }
+  }, [logout, navigate]);
 
   return (
     <main className="bg-neutral-50">
@@ -79,6 +93,16 @@ export default function AccountLayout({ children }) {
           <div>{children}</div>
         </div>
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        onClose={() => { if (!loggingOut) setConfirmOpen(false); }}
+        onConfirm={handleConfirmLogout}
+        title="Logout"
+        message="Are you sure you want to logout? Your current account session will be ended."
+        confirmLabel="Logout"
+        loading={loggingOut}
+      />
     </main>
   );
 }

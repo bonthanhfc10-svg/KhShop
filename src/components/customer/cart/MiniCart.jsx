@@ -159,7 +159,7 @@ function MiniCartItem({ item, onClose }) {
         <img
           src={item.colorImage || item.image}
           alt={item.name}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain"
           loading="lazy"
         />
       </Link>
@@ -173,6 +173,9 @@ function MiniCartItem({ item, onClose }) {
               {item.size && `Size: ${item.size} · `}
               {item.color}
             </p>
+            {item.stock === 0 && (
+              <p className="mt-0.5 text-xs font-semibold text-red-600">Out of Stock</p>
+            )}
           </div>
           <button
             onClick={() => removeFromCart(item.id, item.size, item.color)}
@@ -201,7 +204,8 @@ function MiniCartItem({ item, onClose }) {
               onClick={() =>
                 updateQuantity(item.id, item.size, item.color, item.quantity + 1)
               }
-              className="flex h-7 w-7 items-center justify-center text-neutral-600 hover:text-black"
+              disabled={item.stock != null && item.quantity >= item.stock}
+              className="flex h-7 w-7 items-center justify-center text-neutral-600 hover:text-black disabled:pointer-events-none disabled:opacity-40"
               aria-label="Increase quantity"
             >
               <Plus size={12} />

@@ -17,7 +17,7 @@ export default function WishlistGrid({ wishlist }) {
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4">
       {wishlist.map((item) => {
-        const mapped = mapApiProductList(item.product);
+        const mapped = item.product.variants ? mapApiProductList(item.product) : item.product;
         return (
           <ProductCard
             key={item.product_id || item.id}

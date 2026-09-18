@@ -20,10 +20,12 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
   const discount = product.discount;
   const selectedColorName = selectedColor?.name || null;
   const selectedColorImage = selectedColor?.image || product.images?.[0];
+  const selectedSizeObj = selectedColor?.sizes?.find((s) => s.name === selectedSize);
+  const selectedVariantStock = hasSizes ? (selectedSizeObj?.stock ?? 0) : product.stock;
+  const isOutOfStock = selectedVariantStock === 0;
 
   const handleAddToCart = async () => {
-    if ((hasSizes && !selectedSize) || !selectedColorName || addingToCart) return;
-    const selectedSizeObj = selectedColor?.sizes?.find((s) => s.name === selectedSize);
+    if ((hasSizes && !selectedSize) || !selectedColorName || addingToCart || isOutOfStock) return;
     await addToCart(product, {
       variant_id: selectedSizeObj?.variant_id || null,
       size: selectedSize,
@@ -109,7 +111,8 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
           <div className="inline-flex items-center border border-neutral-300">
             <button
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="flex h-12 w-12 items-center justify-center text-neutral-600 hover:text-black"
+              disabled={isOutOfStock}
+              className="flex h-12 w-12 items-center justify-center text-neutral-600 hover:text-black disabled:pointer-events-none disabled:opacity-40"
               aria-label="Decrease quantity"
             >
               <Minus size={16} />
@@ -118,23 +121,28 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
               {quantity}
             </span>
             <button
-              onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
-              className="flex h-12 w-12 items-center justify-center text-neutral-600 hover:text-black"
+              onClick={() => setQuantity((q) => Math.min(selectedVariantStock, q + 1))}
+              disabled={isOutOfStock}
+              className="flex h-12 w-12 items-center justify-center text-neutral-600 hover:text-black disabled:pointer-events-none disabled:opacity-40"
               aria-label="Increase quantity"
             >
               <Plus size={16} />
             </button>
           </div>
-          <span className="ml-4 text-sm text-neutral-500">
-            {product.stock} in stock
-          </span>
+          {isOutOfStock ? (
+            <span className="ml-4 text-sm font-semibold text-red-600">Out of Stock</span>
+          ) : (
+            <span className="ml-4 text-sm text-neutral-500">
+              {selectedVariantStock} in stock
+            </span>
+          )}
         </div>
 
         {/* Actions */}
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={handleAddToCart}
-            disabled={(hasSizes && !selectedSize) || !selectedColorName || addingToCart}
+            disabled={(hasSizes && !selectedSize) || !selectedColorName || addingToCart || isOutOfStock}
             className="btn-primary flex-1 py-5"
           >
             {addingToCart ? (
@@ -145,6 +153,8 @@ export default function ProductDetails({ product, selectedColor, onColorChange }
               <>
                 <Check size={18} /> Added to Bag
               </>
+            ) : isOutOfStock ? (
+              'Out of Stock'
             ) : (
               <>
                 <ShoppingBag size={18} /> Add to Cart

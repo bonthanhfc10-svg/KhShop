@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Power, Plus, Eye, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import AdminButton from '../../../components/admin/common/AdminButton';
 import AdminActionButtons from '../../../components/admin/common/AdminActionButtons';
 import ConfirmModal from '../../../components/admin/common/ConfirmModal';
@@ -56,18 +56,6 @@ export default function Banners() {
     } finally {
       setDeleting(false);
       setDeleteTarget(null);
-    }
-  };
-
-  const toggleStatus = async (b) => {
-    try {
-      await bannerService.updateStatus(b.id, !b.is_active);
-      setBanners((prev) =>
-        prev.map((x) => (x.id === b.id ? { ...x, is_active: !x.is_active } : x))
-      );
-      show(`Banner ${b.is_active ? 'disabled' : 'enabled'} successfully`);
-    } catch (err) {
-      show(err?.response?.data?.message || 'Failed to update status');
     }
   };
 
@@ -159,13 +147,6 @@ export default function Banners() {
                     </td>
                     <td className="px-5 py-3.5">
                       <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => toggleStatus(b)}
-                          className="inline-flex items-center gap-1.5 rounded-md border border-admin-border bg-admin-card-elevated px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-admin-surface-subtle hover:text-slate-900"
-                        >
-                          <Power size={12} />
-                          {b.is_active ? 'Disable' : 'Enable'}
-                        </button>
                         <AdminActionButtons
                           onEdit={() => navigate(`/admin/store/banners/${b.id}/edit`)}
                           onDelete={() => setDeleteTarget(b)}
@@ -202,13 +183,6 @@ export default function Banners() {
                 <div className="mt-3 flex items-center justify-between">
                   <p className="truncate text-xs text-slate-500">{b.description || 'No description'}</p>
                   <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => toggleStatus(b)}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-admin-border bg-admin-card-elevated px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-admin-surface-subtle hover:text-slate-900"
-                    >
-                      <Power size={12} />
-                      {b.is_active ? 'Disable' : 'Enable'}
-                    </button>
                     <AdminActionButtons
                       onEdit={() => navigate(`/admin/store/banners/${b.id}/edit`)}
                       onDelete={() => setDeleteTarget(b)}

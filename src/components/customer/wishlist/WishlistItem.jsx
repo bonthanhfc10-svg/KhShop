@@ -17,9 +17,11 @@ export default function WishlistItem({ wishlistItem, product }) {
     await removeFromWishlist(wishlistItem.id);
   };
 
+  const isOutOfStock = product.stock === 0;
+
   const handleAdd = async (e) => {
     e.preventDefault();
-    if (addingToCart) return;
+    if (addingToCart || isOutOfStock) return;
     const firstSize = product.sizes?.[0];
     const sizeName = typeof firstSize === 'string' ? firstSize : firstSize?.name;
     await addToCart(product, {
@@ -67,7 +69,7 @@ export default function WishlistItem({ wishlistItem, product }) {
         </p>
         <button
           onClick={handleAdd}
-          disabled={addingToCart}
+          disabled={addingToCart || isOutOfStock}
           className="btn-secondary mt-3 w-full py-2.5 text-[11px]"
         >
           {addingToCart ? (
@@ -75,7 +77,7 @@ export default function WishlistItem({ wishlistItem, product }) {
           ) : (
             <ShoppingBag size={14} />
           )}
-          {addingToCart ? 'Adding…' : 'Add to Cart'}
+          {isOutOfStock ? 'Out of Stock' : addingToCart ? 'Adding…' : 'Add to Cart'}
         </button>
       </div>
     </div>

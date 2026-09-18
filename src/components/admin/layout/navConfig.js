@@ -13,6 +13,7 @@ import {
   Settings,
   Shield,
   Truck,
+  UserCircle,
 } from 'lucide-react';
 
 export const navGroups = [
@@ -66,6 +67,7 @@ export const navGroups = [
     label: 'System',
     expandable: true,
     items: [
+      { label: 'Account', path: '/admin/account', icon: UserCircle, end: true },
       { label: 'Settings', path: '/admin/settings', icon: Settings, end: true },
       { label: 'Admin Users', path: '/admin/settings/admin-users', icon: Shield, end: true },
     ],

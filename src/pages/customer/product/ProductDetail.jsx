@@ -1,6 +1,8 @@
 ﻿import { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useProduct } from '../../../hooks/useProducts';
+import { useReviews } from '../../../hooks/useReviews';
+import { useAuth } from '../../../store/AuthContext';
 import Loading from '../../../components/common/Loading';
 import NotFound from '../error/NotFound';
 import DetailBreadcrumb from '../../../components/common/DetailBreadcrumb';
@@ -13,8 +15,8 @@ export default function ProductDetail() {
   const { productSlug } = useParams();
   const location = useLocation();
   const { product, loading, error } = useProduct(productSlug);
+  const { user } = useAuth();
   const breadcrumbContext = location.state?.breadcrumbContext || [];
-  const [reviews, setReviews] = useState([]);
 
   const defaultColor = product?.colors?.[0];
   const [selectedColorId, setSelectedColorId] = useState(() => defaultColor?.id ?? null);
@@ -37,22 +39,15 @@ export default function ProductDetail() {
 
   const handleColorChange = (color) => setSelectedColorId(color.id);
 
-  useEffect(() => {
-    if (product?.reviewList?.length) {
-      setReviews(product.reviewList);
-    } else if (product?.reviews) {
-      setReviews([
-        {
-          id: 1,
-          author: 'Customer',
-          rating: 5,
-          date: new Date().toISOString().slice(0, 10),
-          title: 'Great product!',
-          body: 'Really happy with this purchase. Would recommend.',
-        },
-      ]);
-    }
-  }, [product]);
+  const {
+    reviews,
+    stats,
+    loading: reviewsLoading,
+    error: reviewsError,
+    createReview,
+    updateReview,
+    deleteReview,
+  } = useReviews(product?.id);
 
   if (loading) return <main className="container-kh"><Loading full /></main>;
   if (error) return <main className="container-kh py-20 text-center text-neutral-500">{error}</main>;
@@ -75,7 +70,17 @@ export default function ProductDetail() {
 
       <section className="container-kh mt-8 border-t border-neutral-200 pt-12">
         <h2 className="heading-display mb-8 text-2xl sm:text-3xl">Reviews</h2>
-        <ProductReviews product={product} reviews={reviews} />
+        <ProductReviews
+          productId={product.id}
+          reviews={reviews}
+          stats={stats}
+          loading={reviewsLoading}
+          error={reviewsError}
+          currentUser={user}
+          onCreate={createReview}
+          onUpdate={updateReview}
+          onDelete={deleteReview}
+        />
       </section>
 
       <RelatedProducts product={product} categorySlug={product.categorySlug} breadcrumbContext={breadcrumbContext} />

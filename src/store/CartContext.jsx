@@ -23,6 +23,7 @@ function mapBackendCartItem(item) {
     color_id: v.color?.id,
     size_id: v.size?.id || null,
     cart_item_id: item.id,
+    stock: v.stock ?? null,
   };
 }
 
@@ -152,12 +153,16 @@ export const CartProvider = ({ children }) => {
         .then(() => fetchAuthCart())
         .finally(() => setAddingToCart(false));
     } else {
+      const stock = product.stock;
+      if (stock === 0) return Promise.resolve();
+
       setGuestCart((prev) => {
         const key = variant_id || `${product.id}-${size}-${color}`;
         const index = prev.findIndex((i) => i.key === key);
         if (index !== -1) {
           const next = [...prev];
-          next[index] = { ...next[index], quantity: next[index].quantity + quantity };
+          const newQty = next[index].quantity + quantity;
+          next[index] = { ...next[index], quantity: stock != null ? Math.min(newQty, stock) : newQty };
           return next;
         }
         return [
@@ -172,8 +177,9 @@ export const CartProvider = ({ children }) => {
             size,
             color,
             colorImage,
-            quantity,
+            quantity: stock != null ? Math.min(quantity, stock) : quantity,
             variant_id,
+            stock: stock ?? null,
           },
         ];
       });

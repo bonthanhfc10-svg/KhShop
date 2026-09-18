@@ -111,20 +111,20 @@ export default function Orders() {
   return (
     <AccountLayout>
       <div className="mt-2">
-        <div className="mb-6">
-          <h1 className="font-sans text-2xl font-bold text-neutral-900">
+        <div className="mb-8">
+          <h1 className="font-sans text-3xl font-bold text-neutral-900">
             My Orders
           </h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-2 text-base text-neutral-500">
             Track and manage your orders
           </p>
         </div>
 
-        <div className="mb-6 space-y-4">
+        <div className="mb-8 space-y-4">
           <div className="relative">
             <Search
-              size={16}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400"
+              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
             />
             <input
               type="text"
@@ -132,7 +132,7 @@ export default function Orders() {
               onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search by order number..."
               aria-label="Search orders"
-              className="input-kh pl-10"
+              className="input-kh pl-11 py-3"
             />
           </div>
 
@@ -144,7 +144,7 @@ export default function Orders() {
                 <button
                   key={f.key}
                   onClick={() => handleFilterChange(f.key)}
-                  className={`flex shrink-0 items-center gap-1.5 border px-3.5 py-2 text-xs font-semibold transition-colors ${
+                  className={`flex shrink-0 items-center gap-1.5 border px-4 py-2.5 text-sm font-semibold transition-colors ${
                     isActive
                       ? 'border-black bg-black text-white'
                       : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400 hover:text-black'
@@ -152,7 +152,7 @@ export default function Orders() {
                 >
                   {f.label}
                   <span
-                    className={`ml-0.5 text-[10px] font-bold ${
+                    className={`ml-0.5 text-xs font-bold ${
                       isActive ? 'text-white/70' : 'text-neutral-400'
                     }`}
                   >
@@ -165,13 +165,13 @@ export default function Orders() {
         </div>
 
         {error && (
-          <div className="mb-6 flex items-start gap-3 border border-red-200 bg-red-50 px-5 py-4">
-            <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-500" />
+          <div className="mb-8 flex items-start gap-3 border border-red-200 bg-red-50 px-6 py-5">
+            <AlertCircle size={20} className="mt-0.5 shrink-0 text-red-500" />
             <div>
-              <p className="text-sm font-medium text-red-700">
+              <p className="text-base font-medium text-red-700">
                 Failed to load orders
               </p>
-              <p className="mt-0.5 text-sm text-red-600">{error}</p>
+              <p className="mt-1 text-sm text-red-600">{error}</p>
             </div>
           </div>
         )}
@@ -201,15 +201,15 @@ export default function Orders() {
         {!loading && !error && filtered.length > 0 && (
           <>
             <div className="hidden overflow-x-auto border border-neutral-200 bg-white md:block">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-neutral-200 bg-neutral-50 text-xs font-bold uppercase tracking-wider text-neutral-500">
-                    <th className="px-6 py-4">Order</th>
-                    <th className="px-6 py-4">Date</th>
-                    <th className="px-6 py-4">Items</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Total</th>
-                    <th className="px-6 py-4 text-right">Details</th>
+                    <th className="px-8 py-4">Order</th>
+                    <th className="px-8 py-4">Date</th>
+                    <th className="px-8 py-4">Items</th>
+                    <th className="px-8 py-4">Status</th>
+                    <th className="px-8 py-4 text-right">Total</th>
+                    <th className="px-8 py-4 text-right">Details</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
@@ -218,28 +218,28 @@ export default function Orders() {
                       key={order.id}
                       className="transition-colors hover:bg-neutral-50"
                     >
-                      <td className="px-6 py-4 font-semibold text-neutral-900">
+                      <td className="px-8 py-5 text-base font-bold text-neutral-900">
                         #{order.id}
                       </td>
-                      <td className="px-6 py-4 text-sm text-neutral-600">
+                      <td className="px-8 py-5 text-base text-neutral-600">
                         {formatDate(order.created_at)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-neutral-600">
+                      <td className="px-8 py-5 text-base text-neutral-600">
                         {ITEMS_LABEL(getItemCount(order))}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-8 py-5">
                         <OrderStatusBadge status={order.status} />
                       </td>
-                      <td className="px-6 py-4 text-right font-bold text-neutral-900">
+                      <td className="px-8 py-5 text-right text-base font-bold text-neutral-900">
                         {formatPrice(order.total_amount)}
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-8 py-5 text-right">
                         <Link
                           to={`/account/orders/${order.id}`}
-                          className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-neutral-900 transition-colors hover:text-neutral-500"
+                          className="inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-widest text-neutral-900 transition-colors hover:text-neutral-500"
                         >
                           View
-                          <ChevronRight size={14} />
+                          <ChevronRight size={15} />
                         </Link>
                       </td>
                     </tr>
@@ -253,31 +253,31 @@ export default function Orders() {
                 <Link
                   key={order.id}
                   to={`/account/orders/${order.id}`}
-                  className="block p-4 transition-colors hover:bg-neutral-50"
+                  className="block p-5 transition-colors hover:bg-neutral-50"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-neutral-900">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg font-bold text-neutral-900">
                           #{order.id}
                         </span>
                         <OrderStatusBadge status={order.status} />
                       </div>
-                      <p className="mt-1 text-xs text-neutral-500">
+                      <p className="mt-1.5 text-sm text-neutral-500">
                         {formatDate(order.created_at)}
                       </p>
                     </div>
-                    <span className="shrink-0 text-right font-bold text-neutral-900">
+                    <span className="shrink-0 text-right text-lg font-bold text-neutral-900">
                       {formatPrice(order.total_amount)}
                     </span>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between border-t border-neutral-100 pt-3">
-                    <span className="text-xs text-neutral-500">
+                  <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-4">
+                    <span className="text-sm text-neutral-500">
                       {ITEMS_LABEL(getItemCount(order))}
                     </span>
                     <ChevronRight
-                      size={16}
+                      size={18}
                       className="shrink-0 text-neutral-400"
                     />
                   </div>

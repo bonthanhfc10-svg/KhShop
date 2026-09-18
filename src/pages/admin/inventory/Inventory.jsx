@@ -33,7 +33,7 @@ export default function Inventory() {
   const [localSearch, setLocalSearch] = useState(filters.search);
   const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
   const [adjustTarget, setAdjustTarget] = useState(null);
-  const [adjustQty, setAdjustQty] = useState(0);
+  const [adjustQty, setAdjustQty] = useState('');
   const [adjustReason, setAdjustReason] = useState('');
   const [adjusting, setAdjusting] = useState(false);
   const { toasts, show, remove } = useToast();
@@ -53,11 +53,12 @@ export default function Inventory() {
 
   const handleAdjust = async () => {
     if (!adjustTarget) return;
+    const qty = adjustQty === '' ? 0 : Number(adjustQty);
     setAdjusting(true);
     try {
-      const newStock = Math.max(0, adjustTarget.stock + adjustQty);
+      const newStock = Math.max(0, adjustTarget.stock + qty);
       await updateStock(adjustTarget.id, newStock);
-      setAdjustQty(0);
+      setAdjustQty('');
       setAdjustReason('');
       setAdjustTarget(null);
       show('Stock updated successfully');
@@ -233,12 +234,12 @@ export default function Inventory() {
               type="number"
               min="0"
               value={adjustQty}
-              onChange={(e) => setAdjustQty(Number(e.target.value))}
+              onChange={(e) => setAdjustQty(e.target.value)}
               className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15"
               placeholder="Enter new stock quantity"
             />
             <p className="mt-1 text-xs text-slate-400">
-              Will set stock to {Math.max(0, (adjustTarget?.stock || 0) + adjustQty)}
+              Will set stock to {Math.max(0, (adjustTarget?.stock || 0) + (adjustQty === '' ? 0 : Number(adjustQty)))}
             </p>
           </div>
           <div>

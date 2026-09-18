@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import AdminButton from '../common/AdminButton';
 import { Plus, Trash2, AlertTriangle, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { productService } from '../../../services/admin/productService';
+import { supplierService } from '../../../services/admin/supplierService';
 
 const DEFAULT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45'];
 const DEFAULT_COLORS = ['Black', 'White', 'Grey', 'Red', 'Blue', 'Navy', 'Green', 'Brown', 'Beige', 'Pink', 'Yellow', 'Orange'];
@@ -92,6 +93,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
   const [sizes, setSizes] = useState([]);
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
 
   useEffect(() => {
     Promise.all([
@@ -99,11 +101,13 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
       productService.getSizes({ per_page: 100 }).catch(() => ({ items: [] })),
       productService.getBrands({ per_page: 100 }).catch(() => ({ items: [] })),
       productService.getCategories({ per_page: 100 }).catch(() => ({ items: [] })),
-    ]).then(([c, s, b, cat]) => {
+      supplierService.getAll().catch(() => []),
+    ]).then(([c, s, b, cat, sup]) => {
       setColors(c.items || c || []);
       setSizes(s.items || s || []);
       setBrands(b.items || b || []);
       setCategories(cat.items || cat || []);
+      setSuppliers(Array.isArray(sup) ? sup : (sup?.items || []));
     });
   }, []);
 
@@ -117,6 +121,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
     discountType: initial.discount_type || 'none',
     discountValue: initial.discount_value || '',
     is_active: initial.is_active ?? true,
+    supplier_ids: (initial.suppliers || []).map((s) => s.id),
   });
 
   const [availableSizes, setAvailableSizes] = useState(() => {
@@ -260,8 +265,8 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
         color_id: colorObj ? colorObj.id : undefined,
         size_id: sizeObj ? sizeObj.id : undefined,
         sku: v.sku,
-        stock: Number(v.stock) || 0,
-        price_modifier: Number(v.price_modifier) || 0,
+        stock: v.stock === '' || v.stock == null ? 0 : Number(v.stock),
+        price_modifier: v.price_modifier === '' || v.price_modifier == null ? 0 : Number(v.price_modifier),
         is_active: v.is_active,
         image: v.image || null,
         imageFile: v.imageFile || null,
@@ -272,12 +277,13 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
       ...form,
       category_id: form.category_id ? Number(form.category_id) : null,
       brand_id: form.brand_id ? Number(form.brand_id) : null,
-      price: Number(form.price) || 0,
+      price: form.price === '' || form.price == null ? 0 : Number(form.price),
       discount_type: form.discountType === 'none' ? null : form.discountType,
-      discount_value: form.discountType === 'none' ? null : Number(form.discountValue) || 0,
+      discount_value: form.discountType === 'none' ? null : (form.discountValue === '' || form.discountValue == null ? 0 : Number(form.discountValue)),
       is_active: form.is_active,
       salePrice,
       variants: mappedVariants,
+      supplier_ids: form.supplier_ids,
     });
   };
 
@@ -319,6 +325,32 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
               ))}
             </select>
           </div>
+        </div>
+        <div className="mt-4">
+          <label className={labelCls}>Supplier</label>
+          {suppliers.length === 0 ? (
+            <p className="text-sm text-neutral-400">No suppliers available</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {suppliers.map((sup) => (
+                <label key={sup.id} className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 bg-admin-card-elevated px-3 py-2 text-sm transition-colors hover:bg-neutral-50">
+                  <input
+                    type="checkbox"
+                    checked={form.supplier_ids.includes(sup.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        update('supplier_ids', [...form.supplier_ids, sup.id]);
+                      } else {
+                        update('supplier_ids', form.supplier_ids.filter((id) => id !== sup.id));
+                      }
+                    }}
+                    className="h-4 w-4 accent-black"
+                  />
+                  <span className="text-neutral-700">{sup.name}</span>
+                </label>
+              ))}
+            </div>
+          )}
         </div>
         <div className="mt-4">
           <label className={labelCls}>Description</label>

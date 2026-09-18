@@ -32,7 +32,7 @@ export function mapApiProductList(raw) {
     colors: [...colorMap.values()],
     sizes: [...sizeMap.values()],
     totalColors: raw.total_colors || 0,
-    stock: firstVariant?.stock ?? 0,
+    stock: (raw.variants || []).reduce((sum, v) => sum + (v.stock ?? 0), 0),
     isNew: false,
     brand: null,
     categorySlug: null,

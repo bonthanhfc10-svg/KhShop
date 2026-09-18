@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../store/CartContext';
 import { useWishlist } from '../store/WishlistContext';
 import { orderService } from '../services/orderService';
+import { addressService } from '../services/addressService';
 
 export default function useCheckout() {
   const { cart, cartTotal, cartLoaded, loading, fetchAuthCart } = useCart();
@@ -15,6 +16,25 @@ export default function useCheckout() {
     orderType: 'delivery',
     note: '',
   });
+  const [addressPrefilled, setAddressPrefilled] = useState(false);
+
+  useEffect(() => {
+    if (addressPrefilled) return;
+    addressService.getAll().then((res) => {
+      const addresses = res?.data?.addresses || [];
+      const defaultAddr = addresses.find((a) => a.is_default) || addresses[0];
+      if (defaultAddr) {
+        setValues((v) => ({
+          ...v,
+          receiverPhone: v.receiverPhone || defaultAddr.receiver_phone || '',
+          shippingAddress: v.shippingAddress || [defaultAddr.address_line, defaultAddr.city_province].filter(Boolean).join(', ') || '',
+        }));
+      }
+      setAddressPrefilled(true);
+    }).catch(() => {
+      setAddressPrefilled(true);
+    });
+  }, [addressPrefilled]);
   const [errors, setErrors] = useState({});
   const [placing, setPlacing] = useState(false);
   const [apiError, setApiError] = useState(null);

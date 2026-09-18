@@ -22,6 +22,11 @@ export default function ProductCard({ product, breadcrumbContext, onRemove }) {
 
         {/* badges */}
         <div className="absolute left-3 top-3 flex flex-col items-start gap-2">
+          {product.stock === 0 && (
+            <span className="bg-red-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
+              Out of Stock
+            </span>
+          )}
           {product.isNew && (
             <span className="bg-black px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
               New

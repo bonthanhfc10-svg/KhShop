@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { X, ChevronDown, ChevronRight, Heart, User } from 'lucide-react';
 import { useAuth } from '../../../store/AuthContext';
 
-export default function MobileMenu({ open, onClose, navigation = [] }) {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+export default function MobileMenu({ open, onClose, navigation = [], onLogout }) {
+  const { user } = useAuth();
   const [expanded, setExpanded] = useState(null);
 
   useEffect(() => {
@@ -21,9 +20,8 @@ export default function MobileMenu({ open, onClose, navigation = [] }) {
   }, [open]);
 
   const handleLogout = () => {
-    logout();
     onClose();
-    navigate('/');
+    onLogout();
   };
 
   if (!open) return null;
@@ -70,17 +68,19 @@ export default function MobileMenu({ open, onClose, navigation = [] }) {
                     >
                       {item.name}
                     </Link>
-                    <button
-                      onClick={() => toggle(item.name)}
-                      className="flex h-10 w-12 items-center justify-center text-neutral-500 transition-colors hover:text-black"
-                      aria-label={isOpen ? `Collapse ${item.name}` : `Expand ${item.name}`}
-                      aria-expanded={isOpen}
-                    >
-                      <ChevronDown
-                        size={18}
-                        className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                      />
-                    </button>
+                    {(item.categories || []).length > 0 && (
+                      <button
+                        onClick={() => toggle(item.name)}
+                        className="flex h-10 w-12 items-center justify-center text-neutral-500 transition-colors hover:text-black"
+                        aria-label={isOpen ? `Collapse ${item.name}` : `Expand ${item.name}`}
+                        aria-expanded={isOpen}
+                      >
+                        <ChevronDown
+                          size={18}
+                          className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    )}
                   </div>
 
                   {isOpen && (

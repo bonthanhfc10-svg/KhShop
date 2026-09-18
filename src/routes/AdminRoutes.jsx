@@ -38,6 +38,7 @@ const Suppliers = lazy(() => import('../pages/admin/suppliers/Suppliers'));
 const SupplierDetail = lazy(() => import('../pages/admin/suppliers/SupplierDetail'));
 const CreateSupplier = lazy(() => import('../pages/admin/suppliers/CreateSupplier'));
 const EditSupplier = lazy(() => import('../pages/admin/suppliers/EditSupplier'));
+const AdminAccount = lazy(() => import('../pages/admin/account/AdminAccount'));
 
 const Load = ({ children }) => (
   <Suspense fallback={<LoginLoading />}>{children}</Suspense>
@@ -92,6 +93,7 @@ export const AdminRoutes = () => {
         <Route path="suppliers/create" element={<Load><CreateSupplier /></Load>} />
         <Route path="suppliers/:id" element={<Load><SupplierDetail /></Load>} />
         <Route path="suppliers/:id/edit" element={<Load><EditSupplier /></Load>} />
+        <Route path="account" element={<Load><AdminAccount /></Load>} />
       </Route>
     </Routes>
   );
