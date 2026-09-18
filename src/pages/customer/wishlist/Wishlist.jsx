@@ -35,7 +35,7 @@ export default function Wishlist() {
               title="Your wishlist is empty"
               description="Save the pieces you love and come back to them anytime."
               actionLabel="Continue Shopping"
-              actionTo="/products/women"
+              actionTo="/women"
             />
           ) : (
             <WishlistGrid wishlist={wishlist} />

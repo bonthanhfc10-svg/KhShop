@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { customerService } from '../services/admin/customerService';
+import { adminUserService } from '../services/admin/adminUserService';
 
-export function useCustomers() {
-  const [customers, setCustomers] = useState([]);
+export function useAdminUsers() {
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({ currentPage: 1, lastPage: 1, perPage: 15, total: 0 });
-  const [filters, setFilters] = useState({ search: '', is_active: 'all' });
+  const [filters, setFilters] = useState({ search: '', role_id: '', is_active: 'all' });
   const abortRef = useRef(null);
 
   const load = useCallback(async (page = 1, perPage = 15, filterOverrides = null) => {
@@ -20,18 +20,19 @@ export function useCustomers() {
       const activeFilters = filterOverrides !== null ? filterOverrides : filters;
       const params = { page, per_page: perPage };
       if (activeFilters.search) params.search = activeFilters.search;
+      if (activeFilters.role_id) params.role_id = activeFilters.role_id;
       if (activeFilters.is_active && activeFilters.is_active !== 'all') {
         params.is_active = activeFilters.is_active;
       }
 
-      const result = await customerService.getAll(params, controller.signal);
+      const result = await adminUserService.getAll(params, controller.signal);
       if (!controller.signal.aborted) {
-        setCustomers(result.items);
+        setUsers(result.items);
         setPagination(result.pagination);
       }
     } catch (err) {
       if (!controller.signal.aborted) {
-        setError(err?.response?.data?.message || 'Failed to load customers.');
+        setError(err?.response?.data?.message || 'Failed to load users.');
       }
     } finally {
       if (!controller.signal.aborted) {
@@ -58,7 +59,7 @@ export function useCustomers() {
   }, [load, pagination.perPage]);
 
   return {
-    customers,
+    users,
     loading,
     error,
     pagination,

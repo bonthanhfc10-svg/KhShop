@@ -31,7 +31,7 @@ export default function WishlistItem({ wishlistItem, product }) {
 
   return (
     <div className="group relative block">
-      <Link to={`/product/${product.slug || product.id}`} className="card-image aspect-[4/5]">
+      <Link to={`/${product.slug || product.id}`} className="card-image aspect-[4/5]">
         <img
           src={product.images?.[0]}
           alt={product.name}
@@ -52,7 +52,7 @@ export default function WishlistItem({ wishlistItem, product }) {
         )}
       </button>
       <div className="pt-3">
-        <Link to={`/product/${product.slug || product.id}`}>
+        <Link to={`/${product.slug || product.id}`}>
           <h3 className="font-sans text-sm font-bold text-neutral-900 hover:underline">
             {product.name}
           </h3>

@@ -152,7 +152,7 @@ function MiniCartItem({ item, onClose }) {
   return (
     <div className="flex gap-4 border-b border-neutral-200 py-5">
       <Link
-        to={`/product/${item.id}`}
+        to={`/${item.id}`}
         onClick={onClose}
         className="block h-24 w-20 shrink-0 overflow-hidden bg-neutral-100"
       >

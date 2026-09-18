@@ -1,22 +1,38 @@
-import { useState, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Upload, X } from 'lucide-react';
 import Card from '../../../components/admin/common/Card';
 import AdminButton from '../../../components/admin/common/AdminButton';
+import AdminLoading from '../../../components/common/Loading';
 import { bannerService } from '../../../services/admin/bannerService';
 
-export default function CreateBanner() {
+export default function EditBanner() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const [form, setForm] = useState(null);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
+  const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    is_active: true,
-  });
+
+  useEffect(() => {
+    bannerService.getById(id).then((banner) => {
+      if (!banner) {
+        setError('Banner not found');
+        return;
+      }
+      setForm({
+        title: banner.title || '',
+        description: banner.description || '',
+        is_active: banner.is_active ?? true,
+      });
+      setImagePreview(banner.image_path || null);
+    }).catch((err) => {
+      setError(err?.response?.data?.message || 'Failed to load banner.');
+    });
+  }, [id]);
 
   const set = (k) => (e) => {
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -41,13 +57,13 @@ export default function CreateBanner() {
     setSaving(true);
     setErrors({});
     try {
-      await bannerService.create({
+      await bannerService.update(id, {
         title: form.title,
-        description: form.description || undefined,
-        imageFile,
+        description: form.description || '',
+        imageFile: imageFile || undefined,
         is_active: form.is_active,
       });
-      navigate('/admin/store/banners', { state: { toast: 'Banner created successfully' } });
+      navigate('/admin/store/banners', { state: { toast: 'Banner updated successfully' } });
     } catch (err) {
       if (err?.response?.status === 422) {
         setErrors(err.response.data.errors || {});
@@ -56,6 +72,23 @@ export default function CreateBanner() {
       setSaving(false);
     }
   };
+
+  if (error && !form) {
+    return (
+      <div className="space-y-5">
+        <Link to="/admin/store/banners" className="mb-2 inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-900">
+          <ArrowLeft size={16} /> Back to banners
+        </Link>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Edit Banner</h1>
+        <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-center">
+          <p className="text-sm font-semibold text-red-700">{error}</p>
+          <AdminButton variant="primary" onClick={() => navigate('/admin/store/banners')} className="mt-3">Go Back</AdminButton>
+        </div>
+      </div>
+    );
+  }
+
+  if (!form) return <AdminLoading />;
 
   const inputCls = 'w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15';
   const labelCls = 'mb-1.5 block text-sm font-medium text-neutral-700';
@@ -71,8 +104,8 @@ export default function CreateBanner() {
           >
             <ArrowLeft size={16} /> Back to banners
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Add Banner</h1>
-          <p className="mt-1 text-sm text-slate-500">Create a new homepage or promotional banner.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Edit Banner</h1>
+          <p className="mt-1 text-sm text-slate-500">Update banner information.</p>
         </div>
       </div>
 
@@ -95,7 +128,7 @@ export default function CreateBanner() {
             </div>
           </Card>
 
-          <Card title="Banner Image" subtitle="Upload the banner image">
+          <Card title="Banner Image" subtitle="Upload or replace the banner image">
             <div className="p-5">
               {imagePreview ? (
                 <div className="relative">
@@ -146,8 +179,8 @@ export default function CreateBanner() {
 
           <div className="flex justify-end gap-2">
             <AdminButton variant="cancel" onClick={() => navigate('/admin/store/banners')}>Cancel</AdminButton>
-            <AdminButton variant="success" onClick={handleSave} disabled={saving || !form.title || !imageFile}>
-              {saving ? 'Saving...' : 'Create Banner'}
+            <AdminButton variant="success" onClick={handleSave} disabled={saving || !form.title}>
+              {saving ? 'Saving...' : 'Update Banner'}
             </AdminButton>
           </div>
         </div>

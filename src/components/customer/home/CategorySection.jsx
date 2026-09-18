@@ -12,7 +12,7 @@ export default function CategorySection() {
         {categories.map((cat) => (
           <Link
             key={cat.id}
-            to={`/products/${cat.slug}`}
+            to={`/category/${cat.slug}`}
             className="group relative block overflow-hidden bg-neutral-100"
           >
             <div className="aspect-[3/4] overflow-hidden">

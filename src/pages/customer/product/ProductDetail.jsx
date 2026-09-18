@@ -10,9 +10,9 @@ import ProductReviews from '../../../components/customer/product/ProductReviews'
 import RelatedProducts from '../../../components/customer/product/RelatedProducts';
 
 export default function ProductDetail() {
-  const { id: slug } = useParams();
+  const { productSlug } = useParams();
   const location = useLocation();
-  const { product, loading, error } = useProduct(slug);
+  const { product, loading, error } = useProduct(productSlug);
   const breadcrumbContext = location.state?.breadcrumbContext || [];
   const [reviews, setReviews] = useState([]);
 

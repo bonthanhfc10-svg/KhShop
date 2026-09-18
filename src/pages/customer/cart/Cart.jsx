@@ -47,7 +47,7 @@ export default function Cart() {
           title="Your cart is empty"
           description="Looks like you haven't added anything yet. Let's fix that."
           actionLabel="Continue Shopping"
-          actionTo="/products/women"
+          actionTo="/women"
         />
       </main>
     );

@@ -35,7 +35,6 @@ export default function TopProducts({ products = [] }) {
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-admin-primary/10 text-xs font-bold text-admin-primary">
                     {i + 1}
                   </span>
-                  <img src={p.image} alt={p.name} className="h-10 w-10 shrink-0 rounded-lg border border-admin-border-subtle bg-admin-surface-subtle object-cover" />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-slate-900">{p.name}</p>
                     <p className="text-xs text-slate-500">{p.categoryName || 'Product'}</p>

@@ -1,28 +1,7 @@
 import api from './api';
 
-const CATEGORY_ROUTE_MAP = {
-  shoes: 'shoes',
-  clothing: 'clothing',
-  accessories: 'accessories',
-  sport: 'sport',
-  running: 'running',
-  football: 'football',
-  training: 'training',
-  volleyball: 'volleyball',
-  'girl-shoes': 'girl-shoes',
-  'boy-shoes': 'boy-shoes',
-  'boy-clothing': 'boy-clothing',
-  'girl-clothing': 'girl-clothing',
-};
-
 function buildCategoryPath(parentSlug, childSlug) {
-  const prefix = parentSlug + '-';
-  let category = childSlug.startsWith(prefix)
-    ? childSlug.slice(prefix.length)
-    : childSlug;
-  category = category.replace(/^-+/, '');
-  const mapped = CATEGORY_ROUTE_MAP[category] || category;
-  return `/products/${parentSlug}/${mapped}`;
+  return `/products/${parentSlug}/${childSlug}`;
 }
 
 const SALE_FALLBACK_CATEGORIES = [

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, Link, useLocation, useSearchParams } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
 import CategoryBanner from '../../../components/customer/shop/CategoryBanner';
@@ -7,38 +7,33 @@ import Loading from '../../../components/common/Loading';
 import NotFound from '../error/NotFound';
 import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import { useMenus } from '../../../store/MenuContext';
-import { findMenuBySlug, findCategoryBySlug } from '../../../services/menuService';
+import { findMenuBySlug } from '../../../services/menuService';
 import useShopFilters from '../../../hooks/useShopFilters';
 
-function buildDescription(groupName, categoryName) {
-  if (!categoryName)
-    return `${groupName} collection at KhShop. Modern style meets unbeatable prices for men and women. Premium quality, modern style, limited time only.`;
-  return `${groupName} ${categoryName} at KhShop. Modern style meets unbeatable prices for men and women. Premium quality, modern style, limited time only.`;
+function buildDescription(groupName) {
+  return `${groupName} collection at KhShop. Modern style meets unbeatable prices for men and women. Premium quality, modern style, limited time only.`;
 }
 
-function buildBreadcrumb(group, category) {
-  const crumbs = [{ label: 'Home', path: '/' }];
-  crumbs.push({ label: group.name, path: group.path });
-  if (category) crumbs.push({ label: category.name, path: category.path });
-  return crumbs;
+function buildBreadcrumb(group) {
+  return [
+    { label: 'Home', path: '/' },
+    { label: group.name, path: group.path },
+  ];
 }
 
 export default function MenuCategory() {
-  const { menuSlug, categorySlug } = useParams();
+  const { menuSlug: urlMenuSlug } = useParams();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const { rawMenus, menuLoading } = useMenus();
   const searchQuery = searchParams.get('search') || null;
 
-  const rawMenu = findMenuBySlug(rawMenus, menuSlug);
-  const rawCategory = categorySlug
-    ? findCategoryBySlug(rawMenus, menuSlug, categorySlug)
-    : null;
+  const rawMenu = findMenuBySlug(rawMenus, urlMenuSlug);
 
   const {
     draftFilters,
     draftSort,
     appliedFilters,
-    appliedSort,
     page,
     changeDraftFilter,
     changeDraftSort,
@@ -48,7 +43,6 @@ export default function MenuCategory() {
     buildRequestParams,
   } = useShopFilters({
     menuSlug: rawMenu?.slug || null,
-    categorySlug: rawCategory?.slug || null,
     search: searchQuery,
   });
 
@@ -65,74 +59,48 @@ export default function MenuCategory() {
       }
     : null;
 
-  const category = rawCategory
-    ? {
-        name: rawCategory.name,
-        slug: rawCategory.slug,
-        path: `/products/${menuSlug}/${rawCategory.slug}`,
-      }
-    : null;
-
-  // Build breadcrumb context for product cards
   const breadcrumbContext = useMemo(() => {
     const context = [];
-    if (group) {
-      context.push({ label: group.name, path: group.path });
-    }
-    if (category) {
-      context.push({ label: category.name, path: category.path });
-    }
+    if (group) context.push({ label: group.name, path: group.path });
     return context.length > 0 ? context : null;
-  }, [group, category]);
+  }, [group]);
 
   const productParams = useMemo(() => buildRequestParams(), [buildRequestParams]);
-
   const { products, loading, error, totalPages, totalCount } = useProducts('list', productParams);
 
   const filterParams = useMemo(() => {
     const params = {};
     if (rawMenu) params.menuSlug = rawMenu.slug;
-    if (rawCategory) params.categorySlug = rawCategory.slug;
     return params;
-  }, [rawMenu, rawCategory]);
+  }, [rawMenu]);
 
   const { filters: filterData } = useProductFilters(filterParams);
 
   const breadcrumb = useMemo(
-    () => (group ? buildBreadcrumb(group, category) : []),
-    [group, category]
+    () => (group ? buildBreadcrumb(group) : []),
+    [group]
   );
 
   if (menuLoading) return <main className="container-kh"><Loading full /></main>;
   if (!group) return <NotFound />;
 
-  const bannerImage =
-    rawMenu?.banner?.image_path || '/images/default-banner.jpg';
-
-  const showGroupBanner = !category;
-  const showSubcategories = showGroupBanner && group.categories.length > 0;
+  const bannerImage = rawMenu?.banner?.image_path || '/images/default-banner.jpg';
+  const showSubcategories = group.categories.length > 0;
 
   const subcategories = group.categories.map((cat) => {
-    const rawChild = (rawMenu?.children || []).find(
-      (c) => c.slug === cat.path.split('/').pop()
-    );
-    return {
-      ...cat,
-      image: rawChild?.image_path || null,
-    };
+    const rawChild = (rawMenu?.children || []).find((c) => c.slug === cat.slug);
+    return { ...cat, image: rawChild?.image_path || null };
   });
 
   return (
     <main>
-      {showGroupBanner && (
-        <CategoryBanner
-          image={bannerImage}
-          eyebrow="KhShop"
-          title={group.name}
-          subtitle={buildDescription(group.name, null)}
-          ctaPath={group.path}
-        />
-      )}
+      <CategoryBanner
+        image={bannerImage}
+        eyebrow="KhShop"
+        title={group.name}
+        subtitle={buildDescription(group.name)}
+        ctaPath={group.path}
+      />
 
       <div className="container-kh pt-8">
         <nav
@@ -188,51 +156,26 @@ export default function MenuCategory() {
         </div>
       )}
 
-      {showGroupBanner && (
-        <ShopLayout
-          title={`${group.name}'s Products`}
-          description=""
-          products={products}
-          loading={loading}
-          error={error}
-          filterData={filterData}
-          draftFilters={draftFilters}
-          draftSort={draftSort}
-          appliedFilters={appliedFilters}
-          page={page}
-          totalPages={totalPages}
-          totalCount={totalCount}
-          onFilterChange={changeDraftFilter}
-          onSortChange={changeDraftSort}
-          onApplyFilters={applyFilters}
-          onResetFilters={resetFilters}
-          onPageChange={setPage}
-          breadcrumbContext={breadcrumbContext}
-        />
-      )}
-
-      {category && (
-        <ShopLayout
-          title={`${group.name} ${category.name}`}
-          description={buildDescription(group.name, category.name)}
-          products={products}
-          loading={loading}
-          error={error}
-          filterData={filterData}
-          draftFilters={draftFilters}
-          draftSort={draftSort}
-          appliedFilters={appliedFilters}
-          page={page}
-          totalPages={totalPages}
-          totalCount={totalCount}
-          onFilterChange={changeDraftFilter}
-          onSortChange={changeDraftSort}
-          onApplyFilters={applyFilters}
-          onResetFilters={resetFilters}
-          onPageChange={setPage}
-          breadcrumbContext={breadcrumbContext}
-        />
-      )}
+      <ShopLayout
+        title={`${group.name}'s Products`}
+        description=""
+        products={products}
+        loading={loading}
+        error={error}
+        filterData={filterData}
+        draftFilters={draftFilters}
+        draftSort={draftSort}
+        appliedFilters={appliedFilters}
+        page={page}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        onFilterChange={changeDraftFilter}
+        onSortChange={changeDraftSort}
+        onApplyFilters={applyFilters}
+        onResetFilters={resetFilters}
+        onPageChange={setPage}
+        breadcrumbContext={breadcrumbContext}
+      />
     </main>
   );
 }

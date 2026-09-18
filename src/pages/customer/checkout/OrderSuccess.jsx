@@ -57,7 +57,7 @@ export default function OrderSuccess() {
   return (
     <main>
       <div className="container-kh flex flex-col items-center px-6 py-20 text-center sm:py-28">
-        <CheckCircle2 size={64} className="text-accent" />
+        <CheckCircle2 size={64} className="text-green-500" />
         <h1 className="heading-display mt-6 text-3xl sm:text-5xl">
           Thank You!
         </h1>

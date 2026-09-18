@@ -48,12 +48,9 @@ export default function ProductReport() {
             {products.map((p) => (
               <tr key={p.id} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50/60">
                 <td className="px-5 py-3">
-                  <div className="flex items-center gap-3">
-                    <img src={p.image} alt={p.name} className="h-10 w-10 shrink-0 rounded-lg border border-neutral-100 object-cover" />
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-neutral-900">{p.name}</p>
-                      <p className="text-xs text-neutral-400">{p.categoryName}</p>
-                    </div>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-neutral-900">{p.name}</p>
+                    <p className="text-xs text-neutral-400">{p.categoryName}</p>
                   </div>
                 </td>
                 <td className="px-5 py-3 text-right font-semibold text-neutral-900">{p.sold} sold</td>

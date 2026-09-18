@@ -7,11 +7,10 @@ import Loading from '../components/common/Loading';
 // Dynamic Imports
 const Home = lazy(() => import('../pages/customer/Home'));
 const Shop = lazy(() => import('../pages/customer/shop/Shop'));
-const Category = lazy(() => import('../pages/customer/shop/Category'));
 const MenuCategory = lazy(() => import('../pages/customer/shop/MenuCategory'));
-const Search = lazy(() => import('../pages/customer/shop/Search'));
-const Sale = lazy(() => import('../pages/customer/shop/Sale'));
+const Category = lazy(() => import('../pages/customer/shop/Category'));
 const ProductDetail = lazy(() => import('../pages/customer/product/ProductDetail'));
+const Search = lazy(() => import('../pages/customer/shop/Search'));
 const Cart = lazy(() => import('../pages/customer/cart/Cart'));
 const Wishlist = lazy(() => import('../pages/customer/wishlist/Wishlist'));
 const Checkout = lazy(() => import('../pages/customer/checkout/Checkout'));
@@ -43,19 +42,22 @@ export default function AppRoutes() {
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
-          
-          {/* Shop Routes */}
-          <Route path="/products" element={<Shop />} />
-          <Route path="/products/sale" element={<Sale />} />
-          <Route path="/products/shoes" element={<Category />} />
-          <Route path="/products/clothing" element={<Category />} />
-          <Route path="/products/accessories" element={<Category />} />
-          <Route path="/products/:menuSlug" element={<MenuCategory />} />
-          <Route path="/products/:menuSlug/:categorySlug" element={<MenuCategory />} />
 
-          {/* Product & Cart */}
+          {/* Shop */}
+          <Route path="/shop" element={<Shop />} />
+
+          {/* Product Menu + Category Routes (nested) */}
+          <Route path="/products/:menuSlug/:categorySlug" element={<Category />} />
+          <Route path="/products/:menuSlug" element={<MenuCategory />} />
+
+          {/* Legacy standalone category route (backward compat) */}
+          <Route path="/category/:categorySlug" element={<Category />} />
+
+          {/* Product Detail (catch-all after explicit routes) */}
+          <Route path="/:productSlug" element={<ProductDetail />} />
+
+          {/* Other Routes */}
           <Route path="/search" element={<Search />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />

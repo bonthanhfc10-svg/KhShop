@@ -65,7 +65,7 @@ export default function ProductCard({ product, breadcrumbContext, onRemove }) {
         {/* view button */}
         <div className="pointer-events-none absolute inset-x-3 bottom-3 translate-y-14 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
           <button
-            onClick={() => navigate(`/product/${product.slug}`, { state: { breadcrumbContext } })}
+            onClick={() => navigate(`/${product.slug}`, { state: { breadcrumbContext } })}
             className="flex w-full items-center justify-center gap-2 bg-black py-3 text-[11px] font-bold uppercase tracking-widest text-white transition-colors hover:bg-neutral-800"
           >
             View

@@ -194,7 +194,7 @@ export default function Orders() {
             actionLabel={
               search || statusFilter !== 'all' ? undefined : 'Continue Shopping'
             }
-            actionTo={search || statusFilter !== 'all' ? undefined : '/products/women'}
+            actionTo={search || statusFilter !== 'all' ? undefined : '/women'}
           />
         )}
 

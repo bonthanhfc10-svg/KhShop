@@ -24,10 +24,16 @@ const ProductReport = lazy(() => import('../pages/admin/reports/ProductReport'))
 const CustomerReport = lazy(() => import('../pages/admin/reports/CustomerReport'));
 const Banners = lazy(() => import('../pages/admin/store/Banners'));
 const CreateBanner = lazy(() => import('../pages/admin/store/CreateBanner'));
+const EditBanner = lazy(() => import('../pages/admin/store/EditBanner'));
 const Collections = lazy(() => import('../pages/admin/store/Collections'));
+const CreateCollection = lazy(() => import('../pages/admin/store/CreateCollection'));
+const EditCollection = lazy(() => import('../pages/admin/store/EditCollection'));
+const CollectionDetail = lazy(() => import('../pages/admin/store/CollectionDetail'));
 const Settings = lazy(() => import('../pages/admin/settings/Settings'));
 const AdminUsers = lazy(() => import('../pages/admin/settings/AdminUsers'));
 const CreateAdminUser = lazy(() => import('../pages/admin/settings/CreateAdminUser'));
+const EditAdminUser = lazy(() => import('../pages/admin/settings/EditAdminUser'));
+const AdminUserDetail = lazy(() => import('../pages/admin/settings/AdminUserDetail'));
 const Suppliers = lazy(() => import('../pages/admin/suppliers/Suppliers'));
 const SupplierDetail = lazy(() => import('../pages/admin/suppliers/SupplierDetail'));
 const CreateSupplier = lazy(() => import('../pages/admin/suppliers/CreateSupplier'));
@@ -72,10 +78,16 @@ export const AdminRoutes = () => {
         <Route path="store" element={<Navigate to="/admin/store/banners" replace />} />
         <Route path="store/banners" element={<Load><Banners /></Load>} />
         <Route path="store/banners/create" element={<Load><CreateBanner /></Load>} />
+        <Route path="store/banners/:id/edit" element={<Load><EditBanner /></Load>} />
         <Route path="store/collections" element={<Load><Collections /></Load>} />
+        <Route path="store/collections/create" element={<Load><CreateCollection /></Load>} />
+        <Route path="store/collections/:id" element={<Load><CollectionDetail /></Load>} />
+        <Route path="store/collections/:id/edit" element={<Load><EditCollection /></Load>} />
         <Route path="settings" element={<Load><Settings /></Load>} />
         <Route path="settings/admin-users" element={<Load><AdminUsers /></Load>} />
         <Route path="settings/admin-users/create" element={<Load><CreateAdminUser /></Load>} />
+        <Route path="settings/admin-users/:id" element={<Load><AdminUserDetail /></Load>} />
+        <Route path="settings/admin-users/:id/edit" element={<Load><EditAdminUser /></Load>} />
         <Route path="suppliers" element={<Load><Suppliers /></Load>} />
         <Route path="suppliers/create" element={<Load><CreateSupplier /></Load>} />
         <Route path="suppliers/:id" element={<Load><SupplierDetail /></Load>} />

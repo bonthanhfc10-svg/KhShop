@@ -66,6 +66,7 @@ export function useProduct(slug) {
       return;
     }
     let active = true;
+    setProduct(null);
     setLoading(true);
     setError(null);
 

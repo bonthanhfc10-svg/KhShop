@@ -21,11 +21,19 @@ import { useCart } from '../../../store/CartContext';
 import { useAuth } from '../../../store/AuthContext';
 
 function getMenuSlugFromPath(pathname) {
-  if (!pathname.startsWith('/products/')) return null;
-
   const segments = pathname.split('/').filter(Boolean);
 
-  return segments[1] || null;
+  if (segments[0] === 'products' && segments[1]) {
+    return segments[1];
+  }
+
+  const slug = segments[0] || null;
+
+  if (!slug || slug === 'product' || slug === 'products' || slug === 'search' || slug === 'cart' || slug === 'wishlist' || slug === 'checkout' || slug === 'login' || slug === 'register' || slug === 'account' || slug === 'admin' || slug === 'shop' || slug === 'category') {
+    return null;
+  }
+
+  return slug;
 }
 
 export default function Header({ navigation = [] }) {

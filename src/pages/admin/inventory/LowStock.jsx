@@ -1,31 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import SearchInput from '../../../components/admin/common/SearchInput';
 import StatusBadge from '../../../components/admin/common/StatusBadge';
 import AdminButton from '../../../components/admin/common/AdminButton';
 import AdminLoading from '../../../components/common/Loading';
-import { inventoryService } from '../../../services/admin/inventoryService';
+import Pagination from '../../../components/common/Pagination';
+import { useLowStock } from '../../../hooks/useInventory';
 
 export default function LowStock() {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const {
+    items,
+    loading,
+    error,
+    pagination,
+    goToPage,
+    applyFilters,
+  } = useLowStock();
 
-  const load = () =>
-    inventoryService.getAll().then(setItems).finally(() => setLoading(false));
-  useEffect(() => {
-    load();
-  }, []);
+  const [localSearch, setLocalSearch] = useState('');
 
-  const filtered = items.filter((i) => {
-    const matchSearch =
-      !search ||
-      i.product.toLowerCase().includes(search.toLowerCase()) ||
-      i.sku.toLowerCase().includes(search.toLowerCase());
-    return matchSearch && (i.status === 'Low Stock' || i.status === 'Out of Stock');
-  });
+  const handleSearchCommit = useCallback(() => {
+    applyFilters({ search: localSearch });
+  }, [localSearch, applyFilters]);
 
   if (loading) return <AdminLoading />;
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="font-sans text-2xl font-bold text-neutral-900">Low Stock Alert</h1>
+          <p className="mt-1 text-sm text-neutral-500">Products running low or out of stock</p>
+        </div>
+        <div className="flex flex-col items-center py-16">
+          <p className="text-sm text-red-600">{error}</p>
+          <AdminButton variant="secondary" className="mt-4" onClick={() => applyFilters({ search: localSearch })}>
+            Retry
+          </AdminButton>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -33,7 +49,7 @@ export default function LowStock() {
         <div>
           <h1 className="font-sans text-2xl font-bold text-neutral-900">Low Stock Alert</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Products running low or out of stock
+            Products running low or out of stock &middot; {pagination.total} variants
           </p>
         </div>
         <AdminButton to="/admin/products/create" variant="success">
@@ -42,7 +58,17 @@ export default function LowStock() {
       </div>
 
       <div className="flex flex-col gap-3 rounded-lg border border-admin-border bg-admin-card p-3 shadow-sm sm:flex-row sm:items-center">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search low stock items..." />
+        <div className="flex flex-1 items-center gap-2">
+          <SearchInput
+            value={localSearch}
+            onChange={setLocalSearch}
+            onCommit={handleSearchCommit}
+            placeholder="Search low stock items..."
+          />
+          <AdminButton variant="primary" size="sm" onClick={handleSearchCommit}>
+            <Search size={14} /> Search
+          </AdminButton>
+        </div>
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-2 text-xs text-neutral-500">
             <span className="flex h-2 w-2 rounded-full bg-amber-500" /> Low Stock
@@ -66,58 +92,73 @@ export default function LowStock() {
               </tr>
             </thead>
             <tbody className="divide-y divide-admin-border-subtle">
-              {filtered.map((i) => (
-                <tr key={`${i.id}-${i.sku}-${i.size}`} className="transition-colors hover:bg-admin-primary-light/20">
-                  <td className="px-5 py-3.5 text-sm font-medium text-slate-900">{i.product}</td>
-                  <td className="px-5 py-3.5 text-sm text-slate-500 font-mono">{i.sku}</td>
-                  <td className="px-5 py-3.5 text-sm text-slate-600">{i.color}</td>
-                  <td className="px-5 py-3.5 text-sm text-slate-600">{i.size}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`text-sm font-semibold ${i.stock === 0 ? 'text-red-600' : 'text-amber-600'}`}>
-                      {i.stock}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <StatusBadge status={i.status} />
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex justify-end">
-                      <AdminButton variant="secondary" size="sm" to="/admin/inventory">
-                        Manage
-                      </AdminButton>
-                    </div>
+              {items.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-14 text-center">
+                    <p className="font-medium text-neutral-700">No low stock items</p>
+                    <p className="text-sm text-neutral-400">All products are sufficiently stocked.</p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                items.map((i) => (
+                  <tr key={`${i.id}-${i.sku}`} className="transition-colors hover:bg-admin-primary-light/20">
+                    <td className="px-5 py-3.5 text-sm font-medium text-slate-900">{i.product}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-500 font-mono">{i.sku}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-600">{i.color}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-600">{i.size}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`text-sm font-semibold ${i.stock === 0 ? 'text-red-600' : 'text-amber-600'}`}>
+                        {i.stock}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <StatusBadge status={i.status} />
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <div className="flex justify-end">
+                        <AdminButton variant="secondary" size="sm" to="/admin/inventory">
+                          Manage
+                        </AdminButton>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         <div className="divide-y divide-admin-border-subtle md:hidden">
-          {filtered.map((i) => (
-            <div key={`${i.id}-${i.sku}-${i.size}`} className="p-4">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-slate-900">{i.product}</p>
-                <StatusBadge status={i.status} />
-              </div>
-              <p className="text-xs text-slate-400">{i.sku} &middot; {i.color} &middot; {i.size}</p>
-              <div className="mt-2 flex items-center justify-between text-sm">
-                <span className="text-slate-600">{i.stock} in stock</span>
-                <Link to="/admin/inventory" className="text-sm font-semibold text-slate-700 hover:text-slate-900">
-                  Manage
-                </Link>
-              </div>
+          {items.length === 0 ? (
+            <div className="px-5 py-14 text-center">
+              <p className="font-medium text-neutral-700">No low stock items</p>
+              <p className="text-sm text-neutral-400">All products are sufficiently stocked.</p>
             </div>
-          ))}
+          ) : (
+            items.map((i) => (
+              <div key={`${i.id}-${i.sku}`} className="p-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">{i.product}</p>
+                  <StatusBadge status={i.status} />
+                </div>
+                <p className="text-xs text-slate-400">{i.sku} &middot; {i.color} &middot; {i.size}</p>
+                <div className="mt-2 flex items-center justify-between text-sm">
+                  <span className="text-slate-600">{i.stock} in stock</span>
+                  <Link to="/admin/inventory" className="text-sm font-semibold text-slate-700 hover:text-slate-900">
+                    Manage
+                  </Link>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-
-        {!loading && filtered.length === 0 && (
-          <div className="px-5 py-14 text-center">
-            <p className="font-medium text-neutral-700">No low stock items</p>
-            <p className="text-sm text-neutral-400">All products are sufficiently stocked.</p>
-          </div>
-        )}
       </div>
+
+      {pagination.lastPage > 1 && (
+        <div className="flex items-center justify-end rounded-xl border border-admin-border bg-admin-card px-5 py-3 shadow-sm">
+          <Pagination page={pagination.currentPage} totalPages={pagination.lastPage} onChange={goToPage} />
+        </div>
+      )}
     </div>
   );
 }

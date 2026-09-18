@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -10,51 +10,37 @@ import {
   Legend,
 } from 'recharts';
 import Card from '../common/Card';
+import { reportService } from '../../../services/admin/reportService';
+import { formatPrice } from '../../../utils/formatPrice';
 
 const periods = ['7D', '30D', '3M', '1Y'];
-
-const mockSeries = {
-  '7D': [
-    { d: 'Mon', sales: 4200, orders: 210 },
-    { d: 'Tue', sales: 3800, orders: 195 },
-    { d: 'Wed', sales: 5100, orders: 245 },
-    { d: 'Thu', sales: 4600, orders: 230 },
-    { d: 'Fri', sales: 5700, orders: 270 },
-    { d: 'Sat', sales: 4900, orders: 255 },
-    { d: 'Sun', sales: 5300, orders: 262 },
-  ],
-  '30D': [
-    { d: 'W1', sales: 24000, orders: 1150 },
-    { d: 'W2', sales: 27500, orders: 1320 },
-    { d: 'W3', sales: 25900, orders: 1240 },
-    { d: 'W4', sales: 30200, orders: 1460 },
-  ],
-  '3M': [
-    { d: 'Jun', sales: 72000, orders: 3480 },
-    { d: 'Jul', sales: 69800, orders: 3320 },
-    { d: 'Aug', sales: 75400, orders: 3650 },
-  ],
-  '1Y': [
-    { d: 'Jan', sales: 56000, orders: 2650 },
-    { d: 'Feb', sales: 58000, orders: 2780 },
-    { d: 'Mar', sales: 61000, orders: 2900 },
-    { d: 'Apr', sales: 59500, orders: 2820 },
-    { d: 'May', sales: 64000, orders: 3050 },
-    { d: 'Jun', sales: 67000, orders: 3180 },
-    { d: 'Jul', sales: 65500, orders: 3110 },
-    { d: 'Aug', sales: 70000, orders: 3340 },
-  ],
-};
 
 const currencyTick = (value) => {
   if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
   return `$${value}`;
 };
 
-export default function SalesChart() {
+export default function SalesChart({ initialData = [] }) {
   const [period, setPeriod] = useState('7D');
-  const data = mockSeries[period];
-  const total = data.reduce((s, d) => s + d.sales, 0);
+  const [data, setData] = useState(initialData);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    reportService
+      .getSalesChart(period)
+      .then((res) => {
+        if (!mounted) return;
+        setData(Array.isArray(res) ? res : []);
+      })
+      .finally(() => mounted && setLoading(false));
+    return () => {
+      mounted = false;
+    };
+  }, [period]);
+
+  const total = data.reduce((s, d) => s + (d.sales || 0), 0);
 
   return (
     <Card
@@ -66,6 +52,7 @@ export default function SalesChart() {
             <button
               key={p}
               onClick={() => setPeriod(p)}
+              disabled={loading}
               className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-all duration-150 ${
                 period === p ? 'bg-admin-card-elevated text-admin-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'
               }`}
@@ -80,9 +67,8 @@ export default function SalesChart() {
       <div className="mb-5 flex items-end justify-between gap-4">
         <div>
           <p className="text-2xl font-bold tracking-tight text-slate-900">
-            ${total.toLocaleString()}
+            {formatPrice(total)}
           </p>
-          <p className="mt-1 text-sm font-medium text-emerald-700">+12.5% vs previous period</p>
         </div>
         <div className="flex gap-4 text-sm text-slate-500">
           <span className="inline-flex items-center gap-1.5">
@@ -99,7 +85,7 @@ export default function SalesChart() {
           <LineChart data={data} margin={{ top: 5, right: 8, left: -12, bottom: 0 }}>
             <CartesianGrid stroke="#D6DBE5" strokeDasharray="3 3" vertical={false} />
             <XAxis
-              dataKey="d"
+              dataKey="date"
               tick={{ fontSize: 12, fill: '#64748b' }}
               axisLine={false}
               tickLine={false}
@@ -113,7 +99,7 @@ export default function SalesChart() {
             />
             <Tooltip
               formatter={(value, name) =>
-                name === 'Sales' ? [`$${Number(value).toLocaleString()}`, name] : [value, name]
+                name === 'sales' ? [formatPrice(value), 'Sales'] : [value, 'Orders']
               }
               contentStyle={{
                 borderRadius: 8,
@@ -130,6 +116,7 @@ export default function SalesChart() {
             <Line
               type="monotone"
               dataKey="sales"
+              name="Sales"
               stroke="#4338CA"
               strokeWidth={2.5}
               dot={{ r: 3, fill: '#4338CA' }}
@@ -138,6 +125,7 @@ export default function SalesChart() {
             <Line
               type="monotone"
               dataKey="orders"
+              name="Orders"
               stroke="#94a3b8"
               strokeWidth={1.5}
               strokeDasharray="4 4"

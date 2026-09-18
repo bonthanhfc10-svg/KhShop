@@ -33,7 +33,7 @@ export default function EditProduct() {
         discount_type: form.discount_type,
         discount_value: form.discount_value,
         is_active: form.is_active,
-        variants: form.variants,
+        variants: form.variants.map(({ stock, ...rest }) => rest),
       };
       await productService.update(id, payload);
       navigate('/admin/products', { state: { toast: 'Updated successfully' } });

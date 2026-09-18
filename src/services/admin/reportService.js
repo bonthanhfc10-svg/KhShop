@@ -1,48 +1,41 @@
-import { mockAdminOrders, mockAdminCustomers, mockSalesData, mockSalesChart, mockTopProducts, mockTopCustomers } from '../../data/adminMock';
+import { createApiClient } from '../../utils/createApiClient';
 
-const delay = (ms = 150) => new Promise((r) => setTimeout(r, ms));
+const api = createApiClient();
 
 export const reportService = {
   async getSalesData(period = '7days') {
-    await delay();
-    return mockSalesData[period] || mockSalesData['7days'];
+    const { data } = await api.get(`/v1/admin/sale-report/data/${period}`);
+    return data?.data || { revenue: 0, orders: 0, avgOrder: 0, customers: 0 };
   },
 
   async getSalesChart(period = '7D') {
-    await delay();
-    return mockSalesChart[period] || mockSalesChart['7D'];
+    const { data } = await api.get(`/v1/admin/sale-report/chart/${period}`);
+    return data?.data || [];
   },
 
   async getTopProducts() {
-    await delay();
-    return mockTopProducts;
+    const { data } = await api.get('/v1/admin/sale-report/top-products');
+    return data?.data || [];
   },
 
   async getTopCustomers() {
-    await delay();
-    return mockTopCustomers;
+    const { data } = await api.get('/v1/admin/sale-report/top-customers');
+    return data?.data || { summary: {}, customers: [] };
   },
 
   async getDashboardStats() {
-    await delay();
-    const activeCustomers = mockAdminCustomers.filter((c) => c.status === 'Active').length;
-    const activeOrders = mockAdminOrders.filter((o) => o.status !== 'Delivered' && o.status !== 'Cancelled').length;
+    const salesData = await this.getSalesData('today');
     return {
-      ...mockSalesData.today,
-      totalCustomers: mockAdminCustomers.length,
-      activeCustomers,
-      activeOrders,
-      conversionRate: 3.2,
+      ...salesData,
+      totalCustomers: 0,
+      activeCustomers: 0,
+      activeOrders: 0,
+      conversionRate: 0,
     };
   },
 
   async getOrdersSummary() {
-    await delay();
-    const counts = { total: mockAdminOrders.length };
-    for (const o of mockAdminOrders) {
-      counts[o.status] = (counts[o.status] || 0) + 1;
-    }
-    return counts;
+    return { total: 0 };
   },
 };
 

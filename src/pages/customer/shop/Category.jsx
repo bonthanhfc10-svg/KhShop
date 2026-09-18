@@ -1,43 +1,52 @@
 ﻿import { useMemo } from 'react';
-import { useParams, useLocation, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import ShopLayout from '../../../components/customer/product/ShopLayout';
 import { useProducts, useProductFilters } from '../../../hooks/useProducts';
 import { useMenus } from '../../../store/MenuContext';
-import { getCategoryBySlug } from '../../../data/categories';
+import { findMenuBySlug } from '../../../services/menuService';
 import NotFound from '../error/NotFound';
 import useShopFilters from '../../../hooks/useShopFilters';
 
 export default function Category() {
-  const { slug } = useParams();
-  const location = useLocation();
+  const { menuSlug: urlMenuSlug, categorySlug } = useParams();
   const [searchParams] = useSearchParams();
   const { rawMenus } = useMenus();
-  const pathSlug = location.pathname.split('/').filter(Boolean).pop();
-  const category = getCategoryBySlug(slug) || getCategoryBySlug(pathSlug);
   const searchQuery = searchParams.get('search') || null;
 
-  const menuSlug = useMemo(() => {
-    if (!category || !rawMenus.length) return null;
-    const menu = rawMenus.find((m) =>
-      (m.children || []).some((c) => c.slug === category.slug)
-    );
-    return menu?.slug || null;
-  }, [category, rawMenus]);
+  const rawMenu = useMemo(() => {
+    if (urlMenuSlug) {
+      return findMenuBySlug(rawMenus, urlMenuSlug);
+    }
+    if (!categorySlug || !rawMenus.length) return null;
+    return rawMenus.find((m) =>
+      (m.children || []).some((c) => c.slug === categorySlug)
+    ) || null;
+  }, [urlMenuSlug, categorySlug, rawMenus]);
+
+  const resolvedMenuSlug = rawMenu?.slug || urlMenuSlug || null;
+
+  const childCategory = useMemo(() => {
+    if (!rawMenu || !categorySlug) return null;
+    const child = (rawMenu.children || []).find((c) => c.slug === categorySlug);
+    if (!child) return { name: categorySlug, slug: categorySlug, image_path: null };
+    return { name: child.name, slug: child.slug, image_path: child.image_path || null };
+  }, [rawMenu, categorySlug]);
 
   const breadcrumbContext = useMemo(() => {
-    if (!menuSlug || !category) return [];
-    const menu = rawMenus.find((m) => m.slug === menuSlug);
-    const context = [];
-    if (menu) context.push({ label: menu.name, path: `/products/${menu.slug}` });
-    context.push({ label: category.name, path: `/products/${menuSlug}/${category.slug}` });
+    const context = [{ label: 'Home', path: '/' }];
+    if (resolvedMenuSlug && rawMenu) {
+      context.push({ label: rawMenu.name, path: `/products/${resolvedMenuSlug}` });
+    }
+    if (childCategory) {
+      context.push({ label: childCategory.name, path: `/products/${resolvedMenuSlug}/${childCategory.slug}` });
+    }
     return context;
-  }, [menuSlug, category, rawMenus]);
+  }, [resolvedMenuSlug, rawMenu, childCategory]);
 
   const {
     draftFilters,
     draftSort,
     appliedFilters,
-    appliedSort,
     page,
     changeDraftFilter,
     changeDraftSort,
@@ -46,32 +55,29 @@ export default function Category() {
     setPage,
     buildRequestParams,
   } = useShopFilters({
-    menuSlug,
-    categorySlug: category?.slug || null,
+    menuSlug: resolvedMenuSlug,
+    categorySlug: childCategory?.slug || null,
     search: searchQuery,
   });
 
   const productParams = useMemo(() => buildRequestParams(), [buildRequestParams]);
-
   const { products, loading, error, totalPages, totalCount } = useProducts('list', productParams);
 
   const filterParams = useMemo(() => {
     const params = {};
-    if (menuSlug) params.menuSlug = menuSlug;
-    if (category?.slug) params.categorySlug = category.slug;
+    if (resolvedMenuSlug) params.menuSlug = resolvedMenuSlug;
+    if (childCategory?.slug) params.categorySlug = childCategory.slug;
     return params;
-  }, [menuSlug, category]);
+  }, [resolvedMenuSlug, childCategory]);
 
   const { filters: filterData } = useProductFilters(filterParams);
 
-  if (!category) {
-    return <NotFound />;
-  }
+  if (!childCategory) return <NotFound />;
 
   return (
     <ShopLayout
-      title={category.name}
-      description={category.description}
+      title={childCategory.name}
+      description=""
       products={products}
       loading={loading}
       error={error}

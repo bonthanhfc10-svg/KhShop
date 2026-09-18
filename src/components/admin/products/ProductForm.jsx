@@ -152,6 +152,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
   const [duplicateWarning, setDuplicateWarning] = useState('');
   const [newColorName, setNewColorName] = useState('');
   const [showAddColor, setShowAddColor] = useState(false);
+  const [trackInventory, setTrackInventory] = useState(true);
 
   const update = (key, value) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -380,6 +381,70 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
         </div>
       </section>
 
+      <section className={sectionCls}>
+        <h2 className="mb-4 font-sans text-lg font-semibold text-neutral-900">Inventory</h2>
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="trackInventory"
+            checked={trackInventory}
+            onChange={(e) => setTrackInventory(e.target.checked)}
+            className="h-4 w-4 accent-[#25A9EB]"
+          />
+          <label htmlFor="trackInventory" className="text-sm font-medium text-neutral-700">
+            Track inventory
+          </label>
+        </div>
+        {trackInventory && (
+          <div className="mt-4">
+            <p className="mb-3 text-sm text-neutral-500">
+              Stock is managed per variant. Each color + size combination has its own inventory count.
+            </p>
+            {variants.length > 0 ? (
+              <div className="overflow-x-auto rounded-lg border border-admin-border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-admin-border bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                      <th className="px-4 py-2.5">Size</th>
+                      <th className="px-4 py-2.5">Color</th>
+                      <th className="px-4 py-2.5">SKU</th>
+                      <th className="px-4 py-2.5 text-right">Stock</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-admin-border-subtle">
+                    {variants.map((v, i) => (
+                      <tr key={v.id} className="transition-colors hover:bg-admin-primary-light/20">
+                        <td className="px-4 py-2.5 text-xs text-neutral-700">{v.size || '—'}</td>
+                        <td className="px-4 py-2.5 text-xs text-neutral-700">{v.color || '—'}</td>
+                        <td className="px-4 py-2.5 font-mono text-xs text-neutral-500">{v.sku || '—'}</td>
+                        <td className="px-4 py-2.5 text-right">
+                          {editMode ? (
+                            <span className="text-xs text-slate-700">{v.stock ?? 0}</span>
+                          ) : (
+                            <input
+                              required
+                              type="number"
+                              min="0"
+                              value={v.stock}
+                              onChange={(e) => updateVariant(i, 'stock', e.target.value === '' ? '' : Number(e.target.value))}
+                              className="w-20 rounded border border-gray-300 bg-admin-card-elevated px-2.5 py-1.5 text-xs text-right outline-none transition-colors focus:border-[#25A9EB] focus:ring-1 focus:ring-[#25A9EB]/15"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-dashed border-admin-border-subtle py-6 text-center">
+                <p className="text-sm text-neutral-500">No variants yet. Add variants below to manage inventory.</p>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
       {!editMode && (
       <section className={sectionCls}>
         <h2 className="mb-2 font-sans text-lg font-semibold text-neutral-900">Colors</h2>
@@ -512,7 +577,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b-2 border-admin-border text-left text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                    <th className="px-4 py-3">Image</th>
+                    {!editMode && <th className="px-4 py-3">Image</th>}
                     <th className="px-4 py-3">Color</th>
                     <th className="px-4 py-3">Size</th>
                     <th className="px-4 py-3">SKU *</th>
@@ -525,6 +590,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
                 <tbody className="divide-y divide-admin-border-subtle">
                   {variants.map((v, i) => (
                     <tr key={v.id} className="transition-colors hover:bg-admin-primary-light/20">
+                      {!editMode && (
                       <td className="px-4 py-2.5">
                         <VariantImageUpload
                           imageUrl={v.image}
@@ -540,6 +606,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
                           }}
                         />
                       </td>
+                      )}
                       <td className="px-4 py-2.5">
                         <select
                           value={v.color}
@@ -576,6 +643,9 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
                         />
                       </td>
                       <td className="px-4 py-2.5">
+                        {editMode ? (
+                          <span className="block w-20 rounded border border-transparent px-2.5 py-1.5 text-xs text-slate-700">{v.stock ?? 0}</span>
+                        ) : (
                         <input
                           required
                           type="number"
@@ -584,6 +654,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
                           onChange={(e) => updateVariant(i, 'stock', e.target.value === '' ? '' : Number(e.target.value))}
                           className="w-20 rounded border border-gray-300 bg-admin-card-elevated px-2.5 py-1.5 text-xs outline-none transition-colors focus:border-[#25A9EB] focus:ring-1 focus:ring-[#25A9EB]/15"
                         />
+                        )}
                       </td>
                       <td className="px-4 py-2.5">
                         <input
@@ -633,6 +704,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
                     </div>
                   </div>
 
+                  {!editMode && (
                   <div className="mb-3">
                     <VariantImageUpload
                       imageUrl={v.image}
@@ -648,6 +720,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
                       }}
                     />
                   </div>
+                  )}
 
                   <div className="grid grid-cols-2 gap-2.5">
                     <div>
@@ -689,6 +762,9 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
                     </div>
                     <div>
                       <label className="mb-1 block text-xs font-medium text-neutral-500">Stock *</label>
+                      {editMode ? (
+                        <span className="block w-full rounded border border-transparent px-2.5 py-1.5 text-xs text-slate-700">{v.stock ?? 0}</span>
+                      ) : (
                       <input
                         required
                         type="number"
@@ -697,6 +773,7 @@ export default function ProductForm({ initial = {}, onSubmit, onCancel, submitLa
                         onChange={(e) => updateVariant(i, 'stock', e.target.value === '' ? '' : Number(e.target.value))}
                         className="w-full rounded border border-gray-300 bg-admin-card-elevated px-2.5 py-1.5 text-xs outline-none focus:border-[#25A9EB] focus:ring-1 focus:ring-[#25A9EB]/15"
                       />
+                      )}
                     </div>
                     <div>
                       <label className="mb-1 block text-xs font-medium text-neutral-500">Price Modifier ($)</label>

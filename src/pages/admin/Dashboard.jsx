@@ -5,23 +5,21 @@ import SalesChart from '../../components/admin/dashboard/SalesChart';
 import RecentOrders from '../../components/admin/dashboard/RecentOrders';
 import TopProducts from '../../components/admin/dashboard/TopProducts';
 import LowStockProducts from '../../components/admin/dashboard/LowStockProducts';
-import { productService } from '../../services/admin/productService';
-import { orderService } from '../../services/admin/orderService';
+import { dashboardService } from '../../services/admin/dashboardService';
 import { formatPrice } from '../../utils/formatPrice';
 import AdminLoading from '../../components/common/Loading';
 
 export default function Dashboard() {
-  const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    Promise.all([productService.getAll(), orderService.getAll()])
-      .then(([p, o]) => {
+    dashboardService
+      .getDashboard()
+      .then((res) => {
         if (!mounted) return;
-        setProducts(p);
-        setOrders(o);
+        setData(res);
       })
       .finally(() => mounted && setLoading(false));
     return () => {
@@ -31,6 +29,11 @@ export default function Dashboard() {
 
   if (loading) return <AdminLoading />;
 
+  const summary = data?.summary ?? {};
+  const recentOrders = data?.recent_orders ?? [];
+  const topProducts = data?.top_products ?? [];
+  const lowStock = data?.low_stock ?? [];
+
   return (
     <div className="space-y-6">
       {/* Page header */}
@@ -39,17 +42,14 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
           <p className="mt-1 text-sm text-slate-500">Welcome back, Admin</p>
         </div>
-        <span className="inline-flex items-center rounded-lg border border-admin-border bg-admin-card px-3.5 py-2 text-sm font-medium text-slate-600">
-          Sep 01, 2026 - Sep 07, 2026
-        </span>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Total Sales" value={formatPrice(24580)} change={12.5} icon={DollarSign} theme="green" />
-        <StatCard label="Total Orders" value="1,248" change={8.2} icon={ShoppingCart} theme="blue" />
-        <StatCard label="Total Customers" value="5,432" change={14.3} icon={Users} theme="violet" />
-        <StatCard label="Total Products" value="328" change={5.4} icon={Package} theme="amber" />
+        <StatCard label="Total Sales" value={formatPrice(summary.total_sales ?? 0)} icon={DollarSign} theme="green" />
+        <StatCard label="Total Orders" value={(summary.total_orders ?? 0).toLocaleString()} icon={ShoppingCart} theme="blue" />
+        <StatCard label="Total Customers" value={(summary.total_customers ?? 0).toLocaleString()} icon={Users} theme="violet" />
+        <StatCard label="Total Products" value={(summary.total_products ?? 0).toLocaleString()} icon={Package} theme="amber" />
       </div>
 
       {/* Charts row */}
@@ -58,17 +58,17 @@ export default function Dashboard() {
           <SalesChart />
         </div>
         <div className="xl:col-span-1">
-          <TopProducts products={products} />
+          <TopProducts products={topProducts} />
         </div>
       </div>
 
       {/* Orders row */}
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
         <div className="xl:col-span-2">
-          <RecentOrders orders={orders} />
+          <RecentOrders orders={recentOrders} />
         </div>
         <div className="xl:col-span-1">
-          <LowStockProducts products={products} />
+          <LowStockProducts products={lowStock} />
         </div>
       </div>
     </div>

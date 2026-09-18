@@ -5,7 +5,8 @@ import { formatPrice } from '../../../utils/formatPrice';
 import { formatDate } from '../../../utils/formatDate';
 
 export default function RecentOrders({ orders = [] }) {
-  const recent = orders.slice(0, 5);
+  const safeOrders = Array.isArray(orders) ? orders : [];
+  const recent = safeOrders.slice(0, 5);
   return (
     <Card
       title="Recent Orders"
@@ -32,22 +33,30 @@ export default function RecentOrders({ orders = [] }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-admin-border-subtle">
-          {recent.map((order) => (
-            <tr key={order.id} className="transition-colors hover:bg-admin-primary-light/20">
-              <td className="px-5 py-3.5 text-sm font-semibold text-admin-primary">{order.id}</td>
-              <td className="px-5 py-3.5 text-sm text-slate-700">{order.customer}</td>
-              <td className="px-5 py-3.5 text-sm text-slate-500">{formatDate(order.date)}</td>
-              <td className="px-5 py-3.5">
-                <StatusBadge status={order.payment || 'Paid'} />
-              </td>
-              <td className="px-5 py-3.5">
-                <StatusBadge status={order.status} />
-              </td>
-              <td className="px-5 py-3.5 text-right text-sm font-semibold text-slate-900">
-                {formatPrice(order.total)}
+          {recent.length === 0 ? (
+            <tr>
+              <td colSpan={6} className="px-5 py-10 text-center text-sm text-slate-500">
+                No recent orders
               </td>
             </tr>
-          ))}
+          ) : (
+            recent.map((order) => (
+              <tr key={order.id} className="transition-colors hover:bg-admin-primary-light/20">
+                <td className="px-5 py-3.5 text-sm font-semibold text-admin-primary">#{order.id}</td>
+                <td className="px-5 py-3.5 text-sm text-slate-700">{order.customer || '—'}</td>
+                <td className="px-5 py-3.5 text-sm text-slate-500">{formatDate(order.date)}</td>
+                <td className="px-5 py-3.5">
+                  <StatusBadge status={order.payment || 'unpaid'} />
+                </td>
+                <td className="px-5 py-3.5">
+                  <StatusBadge status={order.status} />
+                </td>
+                <td className="px-5 py-3.5 text-right text-sm font-semibold text-slate-900">
+                  {formatPrice(order.total)}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </Card>

@@ -14,7 +14,7 @@ export default function OrderSummary({ items, subtotal, shipping, discount = 0 }
         {items.map((item) => (
           <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-3">
             <Link
-              to={`/product/${item.id}`}
+              to={`/${item.id}`}
               className="block h-16 w-14 shrink-0 overflow-hidden bg-neutral-200"
             >
               <img src={item.image} alt={item.name} className="h-full w-full object-cover" />

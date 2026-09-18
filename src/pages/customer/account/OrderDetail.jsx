@@ -203,7 +203,7 @@ export default function OrderDetail() {
         <div className="divide-y divide-neutral-100">
           {items.map((item, idx) => {
             const slug = getItemSlug(item);
-            const productLink = slug ? `/product/${slug}` : '#';
+            const productLink = slug ? `/${slug}` : '#';
 
             return (
               <div key={item.id || idx} className="flex gap-4 px-6 py-4">

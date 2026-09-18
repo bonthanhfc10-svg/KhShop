@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Plus, Eye } from 'lucide-react';
+import { Plus, Eye, Search } from 'lucide-react';
 import AdminButton from '../../../components/admin/common/AdminButton';
 import AdminActionButtons from '../../../components/admin/common/AdminActionButtons';
 import ConfirmModal from '../../../components/admin/common/ConfirmModal';
 import StatusBadge from '../../../components/admin/common/StatusBadge';
 import Toast from '../../../components/admin/common/Toast';
+import SearchInput from '../../../components/admin/common/SearchInput';
 import useToast from '../../../hooks/useToast';
 import AdminLoading from '../../../components/common/Loading';
 import { supplierService } from '../../../services/admin/supplierService';
@@ -16,6 +17,7 @@ export default function Suppliers() {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -57,6 +59,10 @@ export default function Suppliers() {
     }
   };
 
+  const handleSearchCommit = useCallback(() => {
+    setSearch(searchInput);
+  }, [searchInput]);
+
   const filtered = suppliers.filter((s) =>
     !search ||
     s.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -96,13 +102,11 @@ export default function Suppliers() {
 
       {/* Search */}
       <div className="flex items-center gap-3 rounded-xl border border-admin-border bg-admin-card p-4 shadow-sm">
-        <div className="relative flex-1">
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search suppliers..."
-            className="w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15"
-          />
+        <div className="flex flex-1 items-center gap-2">
+          <SearchInput value={searchInput} onChange={setSearchInput} onCommit={handleSearchCommit} placeholder="Search suppliers..." />
+          <AdminButton variant="primary" size="sm" onClick={handleSearchCommit}>
+            <Search size={14} /> Search
+          </AdminButton>
         </div>
       </div>
 

@@ -1,46 +1,35 @@
-import { mockAdminCustomers } from '../../data/adminMock';
+import { createApiClient } from '../../utils/createApiClient';
 
-const delay = (ms = 150) => new Promise((r) => setTimeout(r, ms));
+const api = createApiClient();
+
+function extractPagination(response, key) {
+  const paginator = response?.data?.[key];
+  if (!paginator) return { items: [], pagination: { currentPage: 1, lastPage: 1, perPage: 15, total: 0 } };
+  return {
+    items: paginator.data || [],
+    pagination: {
+      currentPage: paginator.current_page || 1,
+      lastPage: paginator.last_page || 1,
+      perPage: paginator.per_page || 15,
+      total: paginator.total || 0,
+    },
+  };
+}
 
 export const customerService = {
-  async getAll(params = {}) {
-    await delay();
-    let list = [...mockAdminCustomers];
-
-    if (params.search) {
-      const q = params.search.toLowerCase();
-      list = list.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.email.toLowerCase().includes(q)
-      );
-    }
-    if (params.status) {
-      list = list.filter((c) => c.status === params.status);
-    }
-
-    return list;
+  async getAll(params = {}, signal) {
+    const { data } = await api.get('/v1/admin/customer', { params, signal });
+    return extractPagination(data, 'customers');
   },
 
-  async getById(id) {
-    await delay();
-    return mockAdminCustomers.find((c) => c.id === Number(id)) || null;
+  async getById(id, signal) {
+    const { data } = await api.get(`/v1/admin/customer/${id}`, { signal });
+    return data?.data || null;
   },
 
-  async getOrders(customerId) {
-    await delay();
-    const { mockAdminOrders } = await import('../../data/adminMock');
-    const customer = mockAdminCustomers.find((c) => c.id === Number(customerId));
-    if (!customer) return [];
-    return mockAdminOrders.filter((o) => o.email === customer.email);
-  },
-
-  async updateStatus(id, status) {
-    await delay();
-    const customer = mockAdminCustomers.find((c) => c.id === Number(id));
-    if (!customer) throw new Error('Customer not found');
-    customer.status = status;
-    return customer;
+  async updateStatus(id, isActive) {
+    const { data } = await api.patch(`/v1/admin/customer/${id}/status`, { is_active: isActive });
+    return data?.data?.customer || null;
   },
 };
 

@@ -1,59 +1,40 @@
-import { mockAdminOrders } from '../../data/adminMock';
+import { createApiClient } from '../../utils/createApiClient';
 
-let _orders = [...mockAdminOrders];
+const api = createApiClient();
 
-const delay = (ms = 150) => new Promise((r) => setTimeout(r, ms));
+function extractPagination(response, key) {
+  const paginator = response?.data?.[key];
+  if (!paginator) return { items: [], pagination: { currentPage: 1, lastPage: 1, perPage: 15, total: 0 } };
+  return {
+    items: paginator.data || [],
+    pagination: {
+      currentPage: paginator.current_page || 1,
+      lastPage: paginator.last_page || 1,
+      perPage: paginator.per_page || 15,
+      total: paginator.total || 0,
+    },
+  };
+}
 
 export const orderService = {
-  async getAll(params = {}) {
-    await delay();
-    let list = [..._orders];
-
-    if (params.search) {
-      const q = params.search.toLowerCase();
-      list = list.filter(
-        (o) =>
-          o.id.toLowerCase().includes(q) ||
-          o.customer.toLowerCase().includes(q) ||
-          o.email.toLowerCase().includes(q)
-      );
-    }
-    if (params.status) {
-      list = list.filter((o) => o.status === params.status);
-    }
-
-    return list;
+  async getAll(params = {}, signal) {
+    const { data } = await api.get('/v1/admin/order', { params, signal });
+    return extractPagination(data, 'orders');
   },
 
-  async getById(id) {
-    await delay();
-    const order = _orders.find((o) => o.id === id);
-    if (!order) return null;
-
-    const { products } = await import('../../data/products');
-    return {
-      ...order,
-      items: order.items
-        ? order.items.map((item) => {
-            const product = products.find((p) => p.id === item.id) || products[0];
-            return { ...item, name: product.name, image: product.images?.[0] };
-          })
-        : [],
-      timeline: [
-        { label: 'Order Placed', date: order.date, done: true },
-        { label: 'Processing', date: order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? order.date : null, done: order.status !== 'Pending' },
-        { label: 'Shipped', date: order.status === 'Shipped' || order.status === 'Delivered' ? order.date : null, done: order.status === 'Shipped' || order.status === 'Delivered' },
-        { label: 'Delivered', date: order.status === 'Delivered' ? order.date : null, done: order.status === 'Delivered' },
-      ],
-    };
+  async getById(id, signal) {
+    const { data } = await api.get(`/v1/admin/order/${id}`, { signal });
+    return data?.data?.order || null;
   },
 
   async updateStatus(id, status) {
-    await delay();
-    const order = _orders.find((o) => o.id === id);
-    if (!order) throw new Error('Order not found');
-    order.status = status;
-    return order;
+    const { data } = await api.patch(`/v1/admin/order/${id}/status`, { status });
+    return data?.data?.order || null;
+  },
+
+  async cancel(id) {
+    const { data } = await api.patch(`/v1/admin/order/${id}/cancel`);
+    return data?.data?.order || null;
   },
 };
 

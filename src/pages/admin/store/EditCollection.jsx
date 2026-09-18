@@ -1,0 +1,205 @@
+import { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, Upload, X } from 'lucide-react';
+import Card from '../../../components/admin/common/Card';
+import AdminButton from '../../../components/admin/common/AdminButton';
+import AdminLoading from '../../../components/common/Loading';
+import { collectionService } from '../../../services/admin/collectionService';
+
+export default function EditCollection() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const [form, setForm] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [error, setError] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+
+  useEffect(() => {
+    collectionService.getById(id).then((collection) => {
+      if (!collection) {
+        setError('Collection not found');
+        return;
+      }
+      setForm({
+        name: collection.name || '',
+        description: collection.description || '',
+        is_active: collection.is_active ?? true,
+        sort_order: collection.sort_order ?? 0,
+      });
+      setImagePreview(collection.image_path || null);
+    }).catch((err) => {
+      setError(err?.response?.data?.message || 'Failed to load collection.');
+    });
+  }, [id]);
+
+  const set = (k) => (e) => {
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+    setErrors((prev) => ({ ...prev, [k]: undefined }));
+  };
+
+  const handleImageSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    setErrors((prev) => ({ ...prev, image: undefined }));
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setErrors({});
+    try {
+      await collectionService.update(id, {
+        name: form.name,
+        description: form.description || '',
+        imageFile: imageFile || undefined,
+        is_active: form.is_active,
+        sort_order: form.sort_order,
+      });
+      navigate('/admin/store/collections', { state: { toast: 'Collection updated successfully' } });
+    } catch (err) {
+      if (err?.response?.status === 422) {
+        setErrors(err.response.data.errors || {});
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (error && !form) {
+    return (
+      <div className="space-y-5">
+        <Link to="/admin/store/collections" className="mb-2 inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-900">
+          <ArrowLeft size={16} /> Back to collections
+        </Link>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Edit Collection</h1>
+        <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-center">
+          <p className="text-sm font-semibold text-red-700">{error}</p>
+          <AdminButton variant="primary" onClick={() => navigate('/admin/store/collections')} className="mt-3">Go Back</AdminButton>
+        </div>
+      </div>
+    );
+  }
+
+  if (!form) return <AdminLoading />;
+
+  const inputCls = 'w-full rounded-lg border border-gray-300 bg-admin-card-elevated px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-[#25A9EB] focus:ring-2 focus:ring-[#25A9EB]/15';
+  const labelCls = 'mb-1.5 block text-sm font-medium text-neutral-700';
+  const errorCls = 'mt-1 text-xs text-red-500';
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <Link
+            to="/admin/store/collections"
+            className="mb-2 inline-flex items-center gap-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900"
+          >
+            <ArrowLeft size={16} /> Back to collections
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Edit Collection</h1>
+          <p className="mt-1 text-sm text-slate-500">Update collection information.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
+          <Card title="Collection Information" subtitle="Basic details for the collection">
+            <div className="p-5">
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className={labelCls}>Name *</label>
+                  <input value={form.name} onChange={set('name')} className={inputCls} placeholder="e.g. Summer Collection" />
+                  {errors.name && <p className={errorCls}>{errors.name[0]}</p>}
+                </div>
+                <div>
+                  <label className={labelCls}>Description</label>
+                  <textarea value={form.description} onChange={set('description')} className={inputCls} rows={3} placeholder="Optional description" />
+                  {errors.description && <p className={errorCls}>{errors.description[0]}</p>}
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="Collection Image" subtitle="Upload or replace the collection image">
+            <div className="p-5">
+              {imagePreview ? (
+                <div className="relative">
+                  <img src={imagePreview} alt="Preview" className="h-48 w-full rounded-lg border border-admin-border object-cover" />
+                  <button
+                    onClick={removeImage}
+                    className="absolute right-2 top-2 rounded-full bg-black/60 p-1.5 text-white transition-colors hover:bg-black/80"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex h-48 w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-admin-border bg-admin-card-elevated transition-colors hover:border-[#25A9EB]"
+                >
+                  <Upload className="h-8 w-8 text-neutral-400" />
+                  <p className="mt-2 text-sm text-neutral-500">Click to upload collection image</p>
+                  <p className="text-xs text-neutral-400">PNG, JPG, WEBP up to 2MB</p>
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="hidden"
+                onChange={handleImageSelect}
+              />
+              {errors.image && <p className={errorCls}>{errors.image[0]}</p>}
+            </div>
+          </Card>
+        </div>
+
+        <div className="space-y-6">
+          <Card title="Settings" subtitle="Collection configuration">
+            <div className="p-5 space-y-4">
+              <div>
+                <label className={labelCls}>Status</label>
+                <select
+                  value={form.is_active ? 'active' : 'inactive'}
+                  onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.value === 'active' }))}
+                  className={inputCls}
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>Sort Order</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.sort_order}
+                  onChange={set('sort_order')}
+                  className={inputCls}
+                />
+                {errors.sort_order && <p className={errorCls}>{errors.sort_order[0]}</p>}
+              </div>
+            </div>
+          </Card>
+
+          <div className="flex justify-end gap-2">
+            <AdminButton variant="cancel" onClick={() => navigate('/admin/store/collections')}>Cancel</AdminButton>
+            <AdminButton variant="success" onClick={handleSave} disabled={saving || !form.name}>
+              {saving ? 'Saving...' : 'Update Collection'}
+            </AdminButton>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

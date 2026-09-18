@@ -8,25 +8,28 @@ import { formatDate } from '../../../utils/formatDate';
 
 export default function CustomerReport() {
   const [customers, setCustomers] = useState([]);
+  const [summary, setSummary] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    reportService.getTopCustomers().then((data) => {
-      if (mounted) setCustomers(data);
+    reportService.getTopCustomers().then((result) => {
+      if (mounted) {
+        setCustomers(result.customers || []);
+        setSummary(result.summary || {});
+      }
     }).finally(() => mounted && setLoading(false));
     return () => { mounted = false; };
   }, []);
 
   if (loading) return <AdminLoading />;
 
-  const totalRevenue = customers.reduce((s, c) => s + c.totalSpent, 0);
-  const returnRate = 32;
+  const totalRevenue = customers.reduce((s, c) => s + (c.totalSpent || 0), 0);
 
   const kpis = [
-    { label: 'New Customers', value: '1,204', icon: UserPlus },
-    { label: 'Returning Customers', value: '4,228', icon: UserCheck },
-    { label: 'Return Rate', value: `${returnRate}%`, icon: Users },
+    { label: 'New Customers', value: (summary.new_customers ?? 0).toLocaleString(), icon: UserPlus },
+    { label: 'Returning Customers', value: (summary.returning_customers ?? 0).toLocaleString(), icon: UserCheck },
+    { label: 'Return Rate', value: `${summary.return_rate ?? 0}%`, icon: Users },
   ];
 
   return (
