@@ -156,14 +156,6 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="mt-6 rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-4 text-sm text-neutral-500">
-            <p className="font-semibold text-neutral-700">Demo credentials:</p>
-            <p className="mt-1">
-              Email: <code className="text-neutral-900">bonthanhfc10@gmail.com</code>
-              <br />
-              Password: <code className="text-neutral-900">2222</code>
-            </p>
-          </div>
         </div>
       </div>
     </div>

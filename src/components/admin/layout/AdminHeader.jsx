@@ -83,7 +83,9 @@ export default function AdminHeader({
               <span className="block text-sm font-semibold leading-tight text-slate-800">
                 {admin?.name || 'Admin'}
               </span>
-              <span className="block text-xs leading-tight text-slate-500">Administrator</span>
+              <span className="block text-xs leading-tight text-slate-500">
+                {admin?.role === 'superAdmin' ? 'Super Admin' : admin?.role === 'staff' ? 'Staff' : 'Admin'}
+              </span>
             </span>
             <ChevronDown size={14} className={`hidden text-slate-400 sm:block transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`} />
           </button>
