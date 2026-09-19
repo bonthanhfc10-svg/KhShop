@@ -25,7 +25,11 @@ export default function Profile() {
       const profileData = await authService.getProfile();
       const profileUser = profileData.data || profileData?.user;
       if (profileUser) {
-        updateUser(profileUser);
+        updateUser({
+          name: profileUser.name || '',
+          email: profileUser.email || '',
+          phone: profileUser.phone || '',
+        });
         setForm({
           name: profileUser.name || '',
           email: profileUser.email || '',
@@ -63,7 +67,11 @@ export default function Profile() {
       });
       const updatedUser = res.data || res?.user;
       if (updatedUser) {
-        updateUser(updatedUser);
+        updateUser({
+          name: updatedUser.name || form.name,
+          email: updatedUser.email || form.email,
+          phone: updatedUser.phone || form.phone,
+        });
       } else {
         updateUser({ name: form.name, phone: form.phone });
       }

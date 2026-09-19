@@ -2,13 +2,17 @@ import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { LogOut, ChevronDown } from 'lucide-react';
 import { navGroups } from './navConfig';
+import { staffNavGroups } from './staffNavConfig';
 
-export function AdminSidebarContent({ onNavigate, onLogout, collapsed = false, loggingOut = false }) {
+export function AdminSidebarContent({ onNavigate, onLogout, collapsed = false, loggingOut = false, role }) {
   const location = useLocation();
+  const isStaff = role === 'staff';
+  const currentNavGroups = isStaff ? staffNavGroups : navGroups;
+  const panelLabel = isStaff ? 'Staff Panel' : 'Admin Panel';
 
   const [expandedGroups, setExpandedGroups] = useState(() => {
     const initial = {};
-    navGroups.forEach((group) => {
+    currentNavGroups.forEach((group) => {
       if (group.expandable && group.items) {
         const isChildActive = group.items.some((child) =>
           child.end
@@ -42,7 +46,7 @@ export function AdminSidebarContent({ onNavigate, onLogout, collapsed = false, l
               KHShop
             </p>
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400">
-              Admin Panel
+              {panelLabel}
             </p>
           </div>
         )}
@@ -50,7 +54,7 @@ export function AdminSidebarContent({ onNavigate, onLogout, collapsed = false, l
 
       {/* Navigation */}
       <nav className="no-scrollbar flex-1 overflow-y-auto px-3 py-5" aria-label="Admin navigation">
-        {navGroups.map((group, gi) => {
+        {currentNavGroups.map((group, gi) => {
           const isGroupExpanded = expandedGroups[group.label] || false;
           const isExpandable = group.expandable && !group.hideLabel;
           return (
@@ -131,7 +135,7 @@ export function AdminSidebarContent({ onNavigate, onLogout, collapsed = false, l
   );
 }
 
-export default function AdminSidebar({ collapsed = false, onNavigate, onLogout, loggingOut = false }) {
+export default function AdminSidebar({ collapsed = false, onNavigate, onLogout, loggingOut = false, role }) {
   return (
     <aside
       className={`hidden h-full flex-col transition-all duration-300 lg:flex ${
@@ -144,6 +148,7 @@ export default function AdminSidebar({ collapsed = false, onNavigate, onLogout, 
         onNavigate={onNavigate}
         onLogout={onLogout}
         loggingOut={loggingOut}
+        role={role}
       />
     </aside>
   );

@@ -15,9 +15,9 @@ export default function OrderSummary({ items, subtotal, shipping, discount = 0 }
           <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-3">
             <Link
               to={`/${item.id}`}
-              className="block h-16 w-14 shrink-0 overflow-hidden bg-neutral-200"
+              className="block h-16 w-14 shrink-0 overflow-hidden bg-white"
             >
-              <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+              <img src={item.image} alt={item.name} className="h-full w-full object-contain" />
             </Link>
             <div className="flex-1">
               <p className="text-sm font-semibold text-neutral-900">{item.name}</p>

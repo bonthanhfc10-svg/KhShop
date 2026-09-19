@@ -120,7 +120,7 @@ export default function AdminUsers() {
           </p>
         </div>
         <AdminButton to="/admin/settings/admin-users/create" variant="success">
-          <Plus size={16} /> Add User
+          <Plus size={16} /> Add Staff
         </AdminButton>
       </div>
 
@@ -204,7 +204,7 @@ export default function AdminUsers() {
                         <AdminButton variant="ghost" size="sm" to={`/admin/settings/admin-users/${u.id}`}>View</AdminButton>
                         <AdminActionButtons
                           onEdit={() => navigate(`/admin/settings/admin-users/${u.id}/edit`)}
-                          onDelete={() => setDeleteTarget(u)}
+                          onDelete={u.id !== admin?.id ? () => setDeleteTarget(u) : undefined}
                         />
                       </div>
                     </td>
@@ -241,7 +241,7 @@ export default function AdminUsers() {
                     <AdminButton variant="ghost" size="sm" to={`/admin/settings/admin-users/${u.id}`}>View</AdminButton>
                     <AdminActionButtons
                       onEdit={() => navigate(`/admin/settings/admin-users/${u.id}/edit`)}
-                      onDelete={() => setDeleteTarget(u)}
+                      onDelete={u.id !== admin?.id ? () => setDeleteTarget(u) : undefined}
                     />
                   </div>
                 </div>

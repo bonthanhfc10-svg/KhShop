@@ -207,11 +207,11 @@ export default function OrderDetail() {
 
             return (
               <div key={item.id || idx} className="flex gap-5 px-8 py-5">
-                <Link to={productLink} className="block h-24 w-20 shrink-0 overflow-hidden bg-neutral-100">
+                <Link to={productLink} className="block h-24 w-20 shrink-0 overflow-hidden bg-white">
                   <img
                     src={getItemImage(item)}
                     alt={getItemName(item)}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 </Link>
                 <div className="flex flex-1 items-center justify-between gap-4">

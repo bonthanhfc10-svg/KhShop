@@ -71,9 +71,10 @@ export default function useCheckout() {
       const res = await orderService.createOrder(payload);
       const order = res?.data;
 
-      await Promise.all([fetchAuthCart(), loadAuthWishlist()]);
-
       navigate(`/order-success/${order.id}`, { replace: true });
+
+      fetchAuthCart();
+      loadAuthWishlist();
     } catch (err) {
       const message =
         err?.response?.data?.message || 'Failed to place order. Please try again.';

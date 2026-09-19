@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
       const data = await authService.login(credentials);
       const userData = data.data?.user || data.user || null;
 
-      if (userData?.role === 'admin' || userData?.role === 'superAdmin') {
+      if (userData?.role === 'admin' || userData?.role === 'superAdmin' || userData?.role === 'staff') {
         const message = 'Invalid email or password.';
         setError(message);
         throw new Error(message);
@@ -114,6 +114,8 @@ export const AuthProvider = ({ children }) => {
       isInitialized,
       isAuthenticated: Boolean(user),
       isAdmin: user?.role === 'admin' || user?.role === 'superAdmin',
+      isStaff: user?.role === 'staff',
+      isStaffOrAdmin: user?.role === 'staff' || user?.role === 'admin' || user?.role === 'superAdmin',
       loading,
       error,
       login,

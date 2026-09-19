@@ -3,12 +3,12 @@ import { useAuth } from '../../../store/AuthContext';
 import Loading from '../../common/Loading';
 
 export default function AdminRoute({ children }) {
-  const { user, isAdmin, isInitialized } = useAuth();
+  const { user, isStaffOrAdmin, isInitialized } = useAuth();
   const location = useLocation();
 
   if (!isInitialized) return <Loading full />;
 
-  if (!user || !isAdmin) {
+  if (!user || !isStaffOrAdmin) {
     return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
   }
 

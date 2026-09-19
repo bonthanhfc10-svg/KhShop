@@ -10,8 +10,9 @@ export default function AdminLayout({ crumbs = [] }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const { logout, loggingOut } = useAdminAuth();
+  const { admin, logout, loggingOut } = useAdminAuth();
   const navigate = useNavigate();
+  const role = admin?.role;
 
   const handleLogout = () => {
     setConfirmOpen(true);
@@ -30,12 +31,14 @@ export default function AdminLayout({ crumbs = [] }) {
         onNavigate={() => {}}
         onLogout={handleLogout}
         loggingOut={loggingOut}
+        role={role}
       />
       <MobileSidebar
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         onLogout={handleLogout}
         loggingOut={loggingOut}
+        role={role}
       />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
